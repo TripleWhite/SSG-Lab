@@ -31,6 +31,15 @@ interface AgentCardProps {
   recentActions: AgentAction[];
 }
 
+function PulsingDot() {
+  return (
+    <span className="relative flex h-2 w-2">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--ssg-green)] opacity-75" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--ssg-green)]" />
+    </span>
+  );
+}
+
 function StatItem({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
@@ -53,7 +62,10 @@ export function AgentCard({
     <Card>
       <div className="flex items-center justify-between mb-4">
         <CardTitle>{name}</CardTitle>
-        <Badge variant={statusVariant[status]}>{statusLabel[status]}</Badge>
+        <div className="flex items-center gap-2">
+          {status === "running" && <PulsingDot />}
+          <Badge variant={statusVariant[status]}>{statusLabel[status]}</Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-5 border-b border-[var(--border)] pb-5">

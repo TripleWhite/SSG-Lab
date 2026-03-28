@@ -1,5 +1,29 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import { Header } from "@/components/nav/header";
 import { MatchCard } from "@/components/matching/match-card";
+import { ToastContainer, showToast } from "@/components/ui/toast";
+
+type MatchType = "supply-demand" | "resource" | "investor" | "talent" | "cross-project" | "mentor";
+type MatchStatus = "pending" | "accepted" | "dismissed";
+
+const TYPE_FILTERS: { value: MatchType | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "supply-demand", label: "Supply-Demand" },
+  { value: "resource", label: "Resource" },
+  { value: "talent", label: "Talent" },
+  { value: "investor", label: "Investor" },
+  { value: "cross-project", label: "Cross-Project" },
+  { value: "mentor", label: "Mentor" },
+];
+
+const STATUS_FILTERS: { value: MatchStatus | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "pending", label: "Pending" },
+  { value: "accepted", label: "Accepted" },
+  { value: "dismissed", label: "Dismissed" },
+];
 
 const MATCHES = [
   {
@@ -110,6 +134,19 @@ const MATCHES = [
 ];
 
 export default function MatchingPage() {
+  const [activeType, setActiveType] = useState<MatchType | "all">("all");
+  const [activeStatus, setActiveStatus] = useState<MatchStatus | "all">("all");
+
+  const filtered = useMemo(
+    () =>
+      MATCHES.filter((m) => {
+        const typeMatch = activeType === "all" || m.type === activeType;
+        const statusMatch = activeStatus === "all" || m.status === activeStatus;
+        return typeMatch && statusMatch;
+      }),
+    [activeType, activeStatus]
+  );
+
   return (
     <div className="space-y-6">
       <Header
@@ -117,11 +154,64 @@ export default function MatchingPage() {
         description="Cross-employee, cross-project, and resource match discoveries"
       />
 
-      <div className="space-y-4">
-        {MATCHES.map((match) => (
-          <MatchCard key={match.id} {...match} />
-        ))}
+      {/* Type filters */}
+      <div className="space-y-3">
+        <div className="flex flex-wrap gap-1">
+          {TYPE_FILTERS.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setActiveType(f.value)}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                activeType === f.value
+                  ? "bg-[var(--ssg-green)] text-[var(--primary-foreground)]"
+                  : "text-[var(--muted-foreground)] hover:bg-[var(--border)] hover:text-[var(--foreground)]"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Status filters */}
+        <div className="flex flex-wrap gap-1">
+          {STATUS_FILTERS.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setActiveStatus(f.value)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                activeStatus === f.value
+                  ? "bg-[var(--ssg-green)]/10 text-[var(--ssg-green)] ring-1 ring-[var(--ssg-green)]/40"
+                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] ring-1 ring-[var(--border)]"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {filtered.length === 0 ? (
+        <div className="flex items-center justify-center py-20 text-sm text-[var(--muted-foreground)]">
+          No matches found for the selected filters.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filtered.map((match) => (
+            <MatchCard
+              key={match.id}
+              {...match}
+              onCreateTask={() =>
+                showToast(
+                  `Task created: Introduce ${match.sideA.entityName} to ${match.sideB.entityName}`
+                )
+              }
+              onDismiss={() => showToast("Match dismissed")}
+            />
+          ))}
+        </div>
+      )}
+
+      <ToastContainer />
     </div>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { Briefcase, Lightbulb, Bot, Target } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -51,7 +53,7 @@ const AGENT_ACTIVITY = [
   {
     time: "8m ago",
     agent: "Matching",
-    action: "Scored DesignAI ↔ Acme Ventures at 94%",
+    action: "Scored DesignAI \u2194 Acme Ventures at 94%",
   },
   {
     time: "14m ago",
@@ -96,17 +98,25 @@ export default function OverviewPage() {
           value={42}
           trend="+3 this week"
           icon={<Briefcase size={20} />}
+          animated
         />
         <StatCard
           label="Insights This Week"
           value={12}
           icon={<Lightbulb size={20} />}
+          animated
         />
-        <StatCard label="Agents Online" value="3/3" icon={<Bot size={20} />} />
+        <StatCard
+          label="Agents Online"
+          value="3/3"
+          icon={<Bot size={20} />}
+          animated
+        />
         <StatCard
           label="Match Accuracy"
           value="87%"
           icon={<Target size={20} />}
+          animated
         />
       </div>
 
@@ -129,7 +139,7 @@ export default function OverviewPage() {
                   <div className="space-y-1">
                     <p className="text-sm font-medium">
                       {m.sideA}{" "}
-                      <span className="text-[var(--muted-foreground)]">↔</span>{" "}
+                      <span className="text-[var(--muted-foreground)]">\u2194</span>{" "}
                       {m.sideB}
                     </p>
                     <p className="text-xs text-[var(--muted-foreground)]">
