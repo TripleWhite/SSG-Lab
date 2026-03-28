@@ -2,48 +2,150 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 type HealthStatus = "on-track" | "needs-attention" | "at-risk" | "overdue";
+type PipelineStage =
+  | "Initial Contact"
+  | "Due Diligence"
+  | "Investment Decision"
+  | "Acceleration"
+  | "Exit";
 
-const healthConfig: Record<HealthStatus, { label: string; variant: "success" | "warning" | "danger" }> = {
-  "on-track": { label: "On Track", variant: "success" },
-  "needs-attention": { label: "Needs Attention", variant: "warning" },
-  "at-risk": { label: "At Risk", variant: "danger" },
-  "overdue": { label: "Overdue", variant: "danger" },
+const healthConfig: Record<
+  HealthStatus,
+  { label: string; variant: "success" | "warning" | "danger"; dot: string }
+> = {
+  "on-track": {
+    label: "On Track",
+    variant: "success",
+    dot: "bg-emerald-400",
+  },
+  "needs-attention": {
+    label: "Needs Attention",
+    variant: "warning",
+    dot: "bg-amber-400",
+  },
+  "at-risk": { label: "At Risk", variant: "danger", dot: "bg-red-400" },
+  overdue: { label: "Overdue", variant: "danger", dot: "bg-red-600" },
 };
 
-interface ProjectCardProps {
+const stageVariant: Record<
+  PipelineStage,
+  "default" | "info" | "warning" | "success" | "danger"
+> = {
+  "Initial Contact": "info",
+  "Due Diligence": "warning",
+  "Investment Decision": "default",
+  Acceleration: "success",
+  Exit: "success",
+};
+
+export interface ProjectData {
+  id: string;
   company: string;
   founder: string;
+  stage: PipelineStage;
   health: HealthStatus;
   assignee: string;
-  daysInStage: number;
-  tags?: string[];
+  daysSinceContact: number;
+  lastActivityDate: string;
+  latestInsight: string;
+  nextAction: string;
+  tags: string[];
 }
 
-export function ProjectCard({ company, founder, health, assignee, daysInStage, tags }: ProjectCardProps) {
-  const { label, variant } = healthConfig[health];
+interface ProjectCardProps {
+  project: ProjectData;
+}
+
+export function ProjectCard({ project }: ProjectCardProps) {
+  const {
+    company,
+    founder,
+    stage,
+    health,
+    assignee,
+    daysSinceContact,
+    lastActivityDate,
+    latestInsight,
+    nextAction,
+    tags,
+  } = project;
+
+  const { label: healthLabel, variant: healthVariant, dot } = healthConfig[health];
+  const stageBadgeVariant = stageVariant[stage];
+
+  const healthClassName =
+    healthVariant === "success"
+      ? "bg-emerald-500/10 text-emerald-400"
+      : healthVariant === "warning"
+      ? "bg-amber-500/10 text-amber-400"
+      : "bg-red-500/10 text-red-400";
 
   return (
-    <Card className="p-4" hover>
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">{company}</p>
-          <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{founder}</p>
+    <Card
+      className="p-5 transition-all duration-200 hover:border-[var(--ssg-green)]/30 hover:bg-[var(--card-hover)]"
+      hover={false}
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
+        {/* Left: Company identity */}
+        <div className="flex min-w-[180px] flex-col gap-1">
+          <p className="text-base font-bold tracking-tight">{company}</p>
+          <p className="text-sm text-[var(--muted-foreground)]">{founder}</p>
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            <Badge variant={stageBadgeVariant}>{stage}</Badge>
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${healthClassName}`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+              {healthLabel}
+            </span>
+          </div>
         </div>
-        <Badge variant={variant}>{label}</Badge>
+
+        {/* Center: Insights */}
+        <div className="flex flex-1 flex-col gap-2">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]">
+              Latest Insight
+            </p>
+            <p className="mt-0.5 text-sm text-[var(--foreground)]">{latestInsight}</p>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]">
+              Next Action
+            </p>
+            <p className="mt-0.5 text-sm font-medium text-[var(--ssg-green)]">
+              {nextAction}
+            </p>
+          </div>
+        </div>
+
+        {/* Right: Meta */}
+        <div className="flex flex-row gap-6 sm:flex-col sm:items-end sm:gap-2">
+          <div className="text-right">
+            <p className="text-xs text-[var(--muted-foreground)]">Assigned to</p>
+            <p className="text-sm font-semibold">{assignee}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-[var(--muted-foreground)]">First contact</p>
+            <p className="text-sm font-medium">{daysSinceContact}d ago</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-[var(--muted-foreground)]">Last activity</p>
+            <p className="text-sm font-medium">{lastActivityDate}</p>
+          </div>
+        </div>
       </div>
 
-      {tags && tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
+      {/* Tags */}
+      {tags.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1.5 border-t border-[var(--border)] pt-3">
           {tags.map((tag) => (
-            <Badge key={tag} variant="info">{tag}</Badge>
+            <Badge key={tag} variant="info">
+              {tag}
+            </Badge>
           ))}
         </div>
       )}
-
-      <div className="mt-3 flex items-center justify-between text-xs text-[var(--muted)]">
-        <span>{assignee}</span>
-        <span>{daysInStage}d in stage</span>
-      </div>
     </Card>
   );
 }
