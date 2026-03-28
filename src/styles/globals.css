@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --ssg-green: #62feca;
+  --ssg-yellow: #c8ff75;
+  --ssg-blackout: #131818;
+  --ssg-stone: #313847;
+  --ssg-light: #e2e7ea;
+
+  --background: #0a0f0f;
+  --foreground: #f8fafc;
+  --card: #111818;
+  --card-hover: #1a2222;
+  --border: #1e2e2e;
+  --muted: #94a3b8;
+  --danger: #ef4444;
+
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Outfit", system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
+}
