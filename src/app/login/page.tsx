@@ -5,15 +5,19 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-sm space-y-8 text-center">
         <div>
-          <h1 className="bg-gradient-to-r from-[var(--ssg-green)] to-[var(--ssg-yellow)] bg-clip-text text-4xl font-bold text-transparent">
+          <h1 className="text-glow bg-gradient-to-r from-[var(--ssg-green)] to-[var(--ssg-yellow)] bg-clip-text text-4xl font-bold text-transparent">
             SSG Accelerator
           </h1>
           <p className="mt-2 text-[var(--muted-foreground)]">Agent Dashboard</p>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
-          <p className="mb-6 text-sm text-[var(--muted-foreground)]">Sign in to access your dashboard</p>
+        <div className="animate-fade-in rounded-xl border border-[var(--border)] bg-[var(--card)] p-8">
+          <p className="mb-6 text-sm text-[var(--muted-foreground)]">
+            Sign in to access your dashboard
+          </p>
           <Button className="w-full">Sign in with Feishu</Button>
-          <p className="mt-4 text-xs text-[var(--muted-foreground)]">Requires SSG Accelerator Feishu account</p>
+          <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+            Requires SSG Accelerator Feishu account
+          </p>
         </div>
       </div>
     </div>

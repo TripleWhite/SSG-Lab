@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Kanban, Bot, Search, Link2, BarChart3, Network, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Kanban,
+  Bot,
+  Search,
+  Link2,
+  BarChart3,
+  Network,
+  Settings,
+} from "lucide-react";
 import { type ReactNode } from "react";
 
 interface NavItem {
@@ -28,24 +37,27 @@ export function Sidebar() {
   return (
     <aside className="flex h-screen w-56 flex-col border-r border-[var(--border)] bg-[var(--card)] px-3 py-6">
       <div className="mb-8 px-3">
-        <h1 className="bg-gradient-to-r from-[var(--ssg-green)] to-[var(--ssg-yellow)] bg-clip-text text-xl font-bold text-transparent">
+        <h1 className="text-glow bg-gradient-to-r from-[var(--ssg-green)] to-[var(--ssg-yellow)] bg-clip-text text-xl font-bold text-transparent">
           SSG Accelerator
         </h1>
-        <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">Agent Dashboard</p>
+        <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+          Agent Dashboard
+        </p>
       </div>
 
       <nav className="flex-1 space-y-1">
-        {navItems.map((item) => {
+        {navItems.map((item, idx) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+              className={`animate-fade-in flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
                 isActive
                   ? "bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]"
                   : "text-[var(--muted-foreground)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
               }`}
+              style={{ animationDelay: `${idx * 0.05}s` }}
             >
               {item.icon}
               {item.label}

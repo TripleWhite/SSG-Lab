@@ -9,9 +9,27 @@ import { Header } from "@/components/nav/header";
 // ---------------------------------------------------------------------------
 
 const RECENT_MATCHES = [
-  { sideA: "DesignAI", sideB: "Acme Ventures", employees: 24, type: "Strategic", confidence: 94 },
-  { sideA: "LogiFlow", sideB: "Peak Capital", employees: 11, type: "Acqui-hire", confidence: 81 },
-  { sideA: "NovaMed", sideB: "HealthBridge", employees: 38, type: "Partnership", confidence: 87 },
+  {
+    sideA: "DesignAI",
+    sideB: "Acme Ventures",
+    employees: 24,
+    type: "Strategic",
+    confidence: 94,
+  },
+  {
+    sideA: "LogiFlow",
+    sideB: "Peak Capital",
+    employees: 11,
+    type: "Acqui-hire",
+    confidence: 81,
+  },
+  {
+    sideA: "NovaMed",
+    sideB: "HealthBridge",
+    employees: 38,
+    type: "Partnership",
+    confidence: 87,
+  },
 ] as const;
 
 const PIPELINE_STAGES = [
@@ -25,11 +43,31 @@ const PIPELINE_STAGES = [
 const PIPELINE_MAX = Math.max(...PIPELINE_STAGES.map((s) => s.count));
 
 const AGENT_ACTIVITY = [
-  { time: "2m ago", agent: "Sourcing", action: "Identified 3 new targets in SaaS vertical" },
-  { time: "8m ago", agent: "Matching", action: "Scored DesignAI ↔ Acme Ventures at 94%" },
-  { time: "14m ago", agent: "Insights", action: "Generated weekly pipeline summary report" },
-  { time: "31m ago", agent: "Sourcing", action: "Scraped 120 LinkedIn profiles via enrichment" },
-  { time: "1h ago", agent: "Matching", action: "Re-ranked 18 portfolio matches post-signal" },
+  {
+    time: "2m ago",
+    agent: "Sourcing",
+    action: "Identified 3 new targets in SaaS vertical",
+  },
+  {
+    time: "8m ago",
+    agent: "Matching",
+    action: "Scored DesignAI ↔ Acme Ventures at 94%",
+  },
+  {
+    time: "14m ago",
+    agent: "Insights",
+    action: "Generated weekly pipeline summary report",
+  },
+  {
+    time: "31m ago",
+    agent: "Sourcing",
+    action: "Scraped 120 LinkedIn profiles via enrichment",
+  },
+  {
+    time: "1h ago",
+    agent: "Matching",
+    action: "Re-ranked 18 portfolio matches post-signal",
+  },
 ] as const;
 
 const TEAM_ACTIVITY = [
@@ -52,7 +90,7 @@ export default function OverviewPage() {
       <Header title="Overview" description="SSG Accelerator Agent Dashboard" />
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="animate-fade-in grid grid-cols-4 gap-4">
         <StatCard
           label="Total Projects"
           value={42}
@@ -64,11 +102,7 @@ export default function OverviewPage() {
           value={12}
           icon={<Lightbulb size={20} />}
         />
-        <StatCard
-          label="Agents Online"
-          value="3/3"
-          icon={<Bot size={20} />}
-        />
+        <StatCard label="Agents Online" value="3/3" icon={<Bot size={20} />} />
         <StatCard
           label="Match Accuracy"
           value="87%"
@@ -79,7 +113,10 @@ export default function OverviewPage() {
       {/* Two-column layout */}
       <div className="grid grid-cols-2 gap-6">
         {/* Left column */}
-        <div className="space-y-6">
+        <div
+          className="animate-fade-in space-y-6"
+          style={{ animationDelay: "0.1s" }}
+        >
           {/* Recent Matches */}
           <Card>
             <CardTitle className="mb-4">Recent Matches</CardTitle>
@@ -120,7 +157,9 @@ export default function OverviewPage() {
               {PIPELINE_STAGES.map((stage) => (
                 <li key={stage.label} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">{stage.label}</span>
+                    <span className="text-[var(--muted-foreground)]">
+                      {stage.label}
+                    </span>
                     <span className="font-medium">{stage.count}</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--border)]">
@@ -139,7 +178,10 @@ export default function OverviewPage() {
         </div>
 
         {/* Right column */}
-        <div className="space-y-6">
+        <div
+          className="animate-fade-in space-y-6"
+          style={{ animationDelay: "0.2s" }}
+        >
           {/* Agent Activity */}
           <Card>
             <CardTitle className="mb-4">Agent Activity</CardTitle>

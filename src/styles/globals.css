@@ -1,32 +1,39 @@
 @import "tailwindcss";
 
 :root {
+  /* SSG Brand Tokens */
   --ssg-green: #64feba;
   --ssg-yellow: #d6ff73;
   --ssg-blackout: #131818;
   --ssg-stone: #313847;
   --ssg-lightgrey: #e2e7ea;
 
-  --background: #020817;
+  /* Semantic Theme (Dark Mode — SSG default) */
+  --background: #0a0a0f;
   --foreground: #f8fafc;
-  --card: #020817;
+  --card: #131818;
+  --card-hover: #1a1f2e;
   --card-foreground: #f8fafc;
-  --card-hover: #0f1729;
-  --primary: #62feca;
+  --primary: #64feba;
   --primary-foreground: #0f172a;
-  --secondary: #c8ff75;
-  --secondary-foreground: #f8fafc;
+  --secondary: #d6ff73;
+  --secondary-foreground: #0f172a;
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
   --accent: #1e293b;
   --accent-foreground: #f8fafc;
   --border: #1e293b;
-  --destructive: #7f1d1d;
+  --destructive: #ef4444;
   --ring: #cbd5e1;
-  --danger: #ef4444;
+  --radius: 0.5rem;
 
   --font-heading: "Space Grotesk", system-ui, sans-serif;
   --font-body: "Outfit", system-ui, sans-serif;
+
+  /* Glow Effects */
+  --shadow-glow: 0 0 15px rgba(100, 254, 186, 0.5), 0 0 30px rgba(214, 255, 115, 0.3);
+  --text-glow: 0 0 10px rgba(100, 254, 186, 0.5);
+  --border-glow: 0 0 8px rgba(100, 254, 186, 0.3);
 }
 
 body {
@@ -38,4 +45,48 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   letter-spacing: -0.03em;
+}
+
+/* SSG Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.text-glow {
+  text-shadow: var(--text-glow);
+}
+
+.border-glow {
+  box-shadow: var(--border-glow);
+}
+
+.shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+.hover-glow:hover {
+  box-shadow: var(--shadow-glow);
 }
