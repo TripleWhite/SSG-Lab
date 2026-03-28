@@ -92,10 +92,10 @@ export default function OverviewPage() {
                   <div className="space-y-1">
                     <p className="text-sm font-medium">
                       {m.sideA}{" "}
-                      <span className="text-[var(--muted)]">↔</span>{" "}
+                      <span className="text-[var(--muted-foreground)]">↔</span>{" "}
                       {m.sideB}
                     </p>
-                    <p className="text-xs text-[var(--muted)]">
+                    <p className="text-xs text-[var(--muted-foreground)]">
                       {m.employees} employees
                     </p>
                   </div>
@@ -120,7 +120,7 @@ export default function OverviewPage() {
               {PIPELINE_STAGES.map((stage) => (
                 <li key={stage.label} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-[var(--muted)]">{stage.label}</span>
+                    <span className="text-[var(--muted-foreground)]">{stage.label}</span>
                     <span className="font-medium">{stage.count}</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--border)]">
@@ -146,12 +146,12 @@ export default function OverviewPage() {
             <ul className="space-y-4">
               {AGENT_ACTIVITY.map((entry, idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <span className="mt-0.5 shrink-0 text-xs text-[var(--muted)] w-12">
+                  <span className="mt-0.5 shrink-0 text-xs text-[var(--muted-foreground)] w-12">
                     {entry.time}
                   </span>
                   <div className="flex items-start gap-2">
                     <Badge variant="info">{entry.agent}</Badge>
-                    <span className="text-sm text-[var(--muted)]">
+                    <span className="text-sm text-[var(--muted-foreground)]">
                       {entry.action}
                     </span>
                   </div>
@@ -168,7 +168,7 @@ export default function OverviewPage() {
                 <li key={member.name} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium">{member.name}</span>
-                    <span className="text-[var(--muted)]">
+                    <span className="text-[var(--muted-foreground)]">
                       {member.inputs} inputs
                     </span>
                   </div>

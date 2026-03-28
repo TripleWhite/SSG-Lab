@@ -13,7 +13,7 @@ export function StatCard({ label, value, icon, trend }: StatCardProps) {
     <Card>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-[var(--muted)]">{label}</p>
+          <p className="text-sm text-[var(--muted-foreground)]">{label}</p>
           <p className="mt-1 text-3xl font-bold tracking-tight">{value}</p>
           {trend && <p className="mt-1 text-xs text-[var(--ssg-green)]">{trend}</p>}
         </div>

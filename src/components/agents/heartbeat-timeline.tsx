@@ -41,14 +41,14 @@ export function HeartbeatTimeline({ entries }: HeartbeatTimelineProps) {
               <span className="absolute -left-[19px] top-1.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-[var(--card)] ring-offset-0" />
 
               <div className="flex flex-wrap items-center gap-2 mb-0.5">
-                <span className="font-mono text-xs text-[var(--muted)]">{entry.time}</span>
+                <span className="font-mono text-xs text-[var(--muted-foreground)]">{entry.time}</span>
                 <span className="text-sm font-semibold">{entry.agentName}</span>
                 <Badge variant={statusVariant[entry.status]}>{statusLabel[entry.status]}</Badge>
-                <span className="text-xs text-[var(--muted)]">
+                <span className="text-xs text-[var(--muted-foreground)]">
                   {entry.tokens.toLocaleString()} tokens
                 </span>
               </div>
-              <p className="text-xs text-[var(--muted)]">{entry.summary}</p>
+              <p className="text-xs text-[var(--muted-foreground)]">{entry.summary}</p>
             </li>
           ))}
         </ul>

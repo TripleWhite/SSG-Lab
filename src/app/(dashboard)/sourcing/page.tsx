@@ -74,7 +74,7 @@ export default function SourcingPage() {
             className={
               pill === "All"
                 ? "rounded-full px-4 py-1.5 text-sm font-medium transition-all bg-[var(--ssg-green)]/10 text-[var(--ssg-green)] ring-1 ring-[var(--ssg-green)]/40"
-                : "rounded-full px-4 py-1.5 text-sm font-medium transition-all text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)] ring-1 ring-[var(--border)]"
+                : "rounded-full px-4 py-1.5 text-sm font-medium transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)] ring-1 ring-[var(--border)]"
             }
           >
             {pill}

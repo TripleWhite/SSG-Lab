@@ -103,7 +103,7 @@ export default function AgentsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Agents</h1>
-        <p className="mt-1 text-sm text-[var(--muted)]">
+        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
           Monitor agent status and heartbeat history
         </p>
       </div>

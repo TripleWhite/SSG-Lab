@@ -12,7 +12,7 @@ export default function SettingsPage() {
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
         <Card>
           <CardTitle className="mb-3">Agent Configuration</CardTitle>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-[var(--muted-foreground)]">
             Manage individual agent schedules, model selection, token budgets,
             and prompt templates. Changes take effect on the next heartbeat
             cycle.
@@ -21,7 +21,7 @@ export default function SettingsPage() {
 
         <Card>
           <CardTitle className="mb-3">Heartbeat Schedule</CardTitle>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-[var(--muted-foreground)]">
             Configure the cron schedule for each agent&apos;s heartbeat
             interval. Adjust frequency, maintenance windows, and quiet-hours
             for off-peak cost savings.
@@ -30,7 +30,7 @@ export default function SettingsPage() {
 
         <Card>
           <CardTitle className="mb-3">Budget &amp; Limits</CardTitle>
-          <p className="text-sm text-[var(--muted)]">
+          <p className="text-sm text-[var(--muted-foreground)]">
             Set daily and monthly token spend caps per agent and for the entire
             system. Alerts trigger when usage reaches 80% of any configured
             threshold.

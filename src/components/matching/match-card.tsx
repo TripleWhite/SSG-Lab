@@ -42,7 +42,7 @@ function SideBox({ side }: { side: MatchSide }) {
   return (
     <div className="flex-1 rounded-md border border-[var(--border)] p-3 space-y-1">
       <p className="text-sm font-semibold">{side.entityName}</p>
-      <p className="text-xs text-[var(--muted)]">{side.description}</p>
+      <p className="text-xs text-[var(--muted-foreground)]">{side.description}</p>
       {side.viaEmployee && (
         <p className="text-xs text-[var(--ssg-green)]">via {side.viaEmployee}</p>
       )}
@@ -73,7 +73,7 @@ export function MatchCard({
         </div>
         <div className="flex items-center gap-3">
           <Badge variant={statusVariant}>{statusLabel}</Badge>
-          <span className="text-xs text-[var(--muted)]">{timestamp}</span>
+          <span className="text-xs text-[var(--muted-foreground)]">{timestamp}</span>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export function MatchCard({
         <SideBox side={sideB} />
       </div>
 
-      <p className="text-sm text-[var(--muted)] mb-4">{suggestion}</p>
+      <p className="text-sm text-[var(--muted-foreground)] mb-4">{suggestion}</p>
 
       {status === "pending" && (
         <div className="flex gap-2">

@@ -52,7 +52,7 @@ function BarChart({ title, data, maxValue = 100 }: BarChartProps) {
                   }}
                 />
               </div>
-              <span className="text-xs text-[var(--muted)]">{week}</span>
+              <span className="text-xs text-[var(--muted-foreground)]">{week}</span>
             </div>
           );
         })}
@@ -110,7 +110,7 @@ export default function AnalyticsPage() {
             >
               <span className="font-medium">{agent}</span>
               <div className="flex items-center gap-4">
-                <span className="text-sm text-[var(--muted)]">{tokens}</span>
+                <span className="text-sm text-[var(--muted-foreground)]">{tokens}</span>
                 <span className="text-sm font-semibold text-[var(--ssg-green)]">
                   {cost}
                 </span>
