@@ -111,13 +111,16 @@ sync_agent_assets() {
 }
 
 install_openclaw_source() {
-  if [[ -d "${OPENCLAW_SRC_DIR}/.git" ]]; then
-    git -C "$OPENCLAW_SRC_DIR" fetch --depth 1 origin "$OPENCLAW_REPO_REF"
-    git -C "$OPENCLAW_SRC_DIR" checkout --force FETCH_HEAD
-  else
+  if [[ ! -d "${OPENCLAW_SRC_DIR}/.git" ]]; then
     rm -rf "$OPENCLAW_SRC_DIR"
-    git clone --depth 1 --branch "$OPENCLAW_REPO_REF" "$OPENCLAW_REPO_URL" "$OPENCLAW_SRC_DIR"
+    # Keep initial clone shallow, then fetch the requested ref explicitly so
+    # branch names, tags, and pinned commit SHAs all work on first deploy.
+    git clone --depth 1 --no-checkout "$OPENCLAW_REPO_URL" "$OPENCLAW_SRC_DIR"
   fi
+
+  git -C "$OPENCLAW_SRC_DIR" remote set-url origin "$OPENCLAW_REPO_URL"
+  git -C "$OPENCLAW_SRC_DIR" fetch --depth 1 origin "$OPENCLAW_REPO_REF"
+  git -C "$OPENCLAW_SRC_DIR" checkout --force FETCH_HEAD
 
   ensure_pnpm
 
