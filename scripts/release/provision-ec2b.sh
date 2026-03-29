@@ -114,6 +114,20 @@ if [[ -n "$existing_instance_id" ]]; then
   if [[ "$state" == "stopped" ]]; then
     aws ec2 start-instances --region "$REGION" --instance-ids "$existing_instance_id" >/dev/null
   fi
+
+  # Enforce: reused instance must have ONLY our managed SG attached.
+  # Other SGs may carry stale ingress rules (e.g. 3000/18789 from earlier configs).
+  attached_sgs="$(jq -r '[.SecurityGroups[].GroupId] | sort | join(" ")' <<<"$existing_instance_json")"
+  if [[ "$attached_sgs" != "$security_group_id" ]]; then
+    echo "Reused instance $existing_instance_id has SGs: $attached_sgs" >&2
+    echo "Replacing with managed SG $security_group_id only..." >&2
+    aws ec2 modify-instance-attribute \
+      --region "$REGION" \
+      --instance-id "$existing_instance_id" \
+      --groups "$security_group_id"
+    echo "SG replacement done — instance now attached only to $security_group_id" >&2
+  fi
+
   instance_id="$existing_instance_id"
 else
   ami_id="${AMI_ID:-$(aws ssm get-parameter \
