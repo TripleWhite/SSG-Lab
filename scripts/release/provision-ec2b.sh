@@ -57,9 +57,28 @@ if [[ -z "$security_group_id" || "$security_group_id" == "None" ]]; then
     --output text)"
 fi
 
-# Only expose SSH and HTTPS publicly.
+# Enforce exactly SSH (22) and HTTPS (443) as the only public ingress.
 # Paperclip (3000) and OpenClaw (18789) bind to loopback and are
 # reverse-proxied through Caddy on 443 — no direct public access needed.
+#
+# On a reused SG, stale rules (e.g. 3000, 18789) may exist from earlier
+# configurations.  Revoke all existing ingress first, then add only the
+# desired ports.  This makes the script idempotent and secure on reruns.
+
+existing_permissions="$(aws ec2 describe-security-groups \
+  --region "$REGION" \
+  --group-ids "$security_group_id" \
+  --query 'SecurityGroups[0].IpPermissions' \
+  --output json 2>/dev/null || echo '[]')"
+
+if [[ "$existing_permissions" != "[]" && "$existing_permissions" != "null" ]]; then
+  aws ec2 revoke-security-group-ingress \
+    --region "$REGION" \
+    --group-id "$security_group_id" \
+    --ip-permissions "$existing_permissions" \
+    >/dev/null 2>&1 || true
+fi
+
 for port in 22 443; do
   aws ec2 authorize-security-group-ingress \
     --region "$REGION" \
@@ -67,6 +86,20 @@ for port in 22 443; do
     --ip-permissions "[{\"IpProtocol\":\"tcp\",\"FromPort\":${port},\"ToPort\":${port},\"IpRanges\":[{\"CidrIp\":\"0.0.0.0/0\",\"Description\":\"SSG Lab ${port}\"}]}]" \
     >/dev/null 2>&1 || true
 done
+
+# Verify: confirm only 22 and 443 are open after enforcement.
+final_ports="$(aws ec2 describe-security-groups \
+  --region "$REGION" \
+  --group-ids "$security_group_id" \
+  --query 'SecurityGroups[0].IpPermissions[].FromPort' \
+  --output text 2>/dev/null | tr '\t' '\n' | sort -n)"
+
+expected_ports=$'22\n443'
+if [[ "$final_ports" != "$expected_ports" ]]; then
+  echo "FATAL: SG $security_group_id has unexpected ingress ports after enforcement: $final_ports" >&2
+  echo "Expected only: 22 443" >&2
+  exit 1
+fi
 
 existing_instance_json="$(aws ec2 describe-instances \
   --region "$REGION" \

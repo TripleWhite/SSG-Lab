@@ -127,9 +127,9 @@ install_caddy() {
   fi
 
   if ! install_caddy_from_binary; then
-    echo "warning: failed to install Caddy via package or binary fallback; continuing without Caddy" >&2
-    INSTALL_CADDY="false"
-    return 0
+    echo "FATAL: failed to install Caddy via package or binary fallback" >&2
+    echo "Caddy is required for public HTTPS ingress — aborting to avoid a deploy with no reverse proxy." >&2
+    exit 1
   fi
 }
 
@@ -383,7 +383,20 @@ ${CADDY_DOMAIN} {
     reverse_proxy 127.0.0.1:${PAPERCLIP_PORT}
 }
 EOF
-  sudo systemctl restart caddy || true
+  sudo systemctl restart caddy
+  # Verify Caddy is actually serving the public domain.
+  for _ in $(seq 1 15); do
+    if curl -fsS --max-time 5 "https://${CADDY_DOMAIN}/api/health" >/dev/null 2>&1; then
+      echo "Caddy public ingress verified: https://${CADDY_DOMAIN}/api/health"
+      break
+    fi
+    sleep 4
+  done
+  if ! curl -fsS --max-time 5 "https://${CADDY_DOMAIN}/api/health" >/dev/null 2>&1; then
+    echo "FATAL: Caddy is running but public ingress at https://${CADDY_DOMAIN}/api/health is not reachable" >&2
+    echo "The board hostname will be dead — aborting." >&2
+    exit 1
+  fi
 fi
 
 wait_for_paperclip

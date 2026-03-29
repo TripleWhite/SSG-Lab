@@ -5,6 +5,11 @@ REMOTE_USER="${REMOTE_USER:-ec2-user}"
 REMOTE_HOME="${REMOTE_HOME:-/home/${REMOTE_USER}}"
 OPENCLAW_REPO_URL="${OPENCLAW_REPO_URL:-https://github.com/openclaw/openclaw.git}"
 OPENCLAW_REPO_REF="${OPENCLAW_REPO_REF:-main}"
+
+if [[ "$OPENCLAW_REPO_REF" == "main" || "$OPENCLAW_REPO_REF" == "master" ]]; then
+  echo "WARNING: deploying OpenClaw from moving ref '${OPENCLAW_REPO_REF}' — reruns are non-reproducible." >&2
+  echo "For audited rollouts, set OPENCLAW_REPO_REF to a tag or commit SHA." >&2
+fi
 OPENCLAW_SRC_DIR="${OPENCLAW_SRC_DIR:-${REMOTE_HOME}/openclaw-src}"
 OPENCLAW_STATE_DIR="${OPENCLAW_STATE_DIR:-${REMOTE_HOME}/.openclaw}"
 OPENCLAW_ENV_FILE="${OPENCLAW_ENV_FILE:-${OPENCLAW_STATE_DIR}/.env}"
