@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-03-31
+
+### Added
+
+- You can now open `https://dash.ssgaccelerator.com/login` and start the Feishu OAuth flow from the deployed dashboard shell.
+- You can now use the Phase 5 dashboard routes with live Paperclip and Mimir integrations, board-only Analytics and Settings pages, and honest empty states where live sourcing or matching feeds are not wired yet.
+
+### Changed
+
+- The production Feishu sign-in CTA now navigates directly to `/api/auth/feishu`, which fixes the broken login handoff from the earlier deploy.
+
+## 2026-03-30
+
+### Added
+
+- You can now pin OpenClaw bootstraps to a tag or commit SHA through `OPENCLAW_REPO_REF` for reproducible EC2-B rollouts.
+
+### Changed
+
+- Feishu sign-in now completes the OIDC code exchange through the required `app_access_token` flow before fetching user info.
+- You can now verify the Phase 3 matching-agent deploy against the real `/home/ubuntu/.openclaw/agents/matching-agent/` runtime path and restore snapshot, and the docs note that `board.ssgaccelerator.com` currently resolves to `ssg-agent-system`.
+
 ## 2026-03-29
 
 ### Added

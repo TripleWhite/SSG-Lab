@@ -20,6 +20,12 @@ Required auth inputs:
 - `NEXTAUTH_SECRET`
 - `NEXTAUTH_URL`
 - Optional role mapping: `BOARD_FEISHU_OPEN_IDS` as a comma-separated list of Feishu open IDs or emails that should receive board access.
+- Feishu app security settings must allow the callback URL `https://dash.ssgaccelerator.com/api/auth/feishu`.
+
+Production verification on `2026-03-31`:
+
+- `GET https://dash.ssgaccelerator.com/api/auth/feishu` returned `307` to Feishu authorize.
+- The response set `ssg_oauth_state` with `HttpOnly`, `Secure`, and `SameSite=Lax`.
 
 ### `POST /api/auth/logout`
 
@@ -28,6 +34,21 @@ Required auth inputs:
 - Redirects back to `/login` with `303 See Other`.
 
 ## External Services This App Calls
+
+### Feishu Open Platform
+
+Browser redirect and server-side auth flow:
+
+- Browser redirect target: `GET https://open.feishu.cn/open-apis/authen/v1/authorize?...`
+- Server token bootstrap: `POST https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal/`
+- Server OIDC exchange: `POST https://open.feishu.cn/open-apis/authen/v1/oidc/access_token`
+- Server profile fetch: `GET https://open.feishu.cn/open-apis/authen/v1/user_info`
+
+Runtime behavior:
+
+- `GET /api/auth/feishu` now mints an `app_access_token` first, then uses `Authorization: Bearer <app_access_token>` for the OIDC code exchange.
+- The dashboard still requires `FEISHU_APP_ID`, `FEISHU_APP_SECRET`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL`; the extra Feishu hop is internal to the route handler.
+- The deployed login page links directly to `/api/auth/feishu`, so the browser follows the server redirect to Feishu without a client-side navigation hop.
 
 ### Paperclip Control Plane
 
@@ -76,10 +97,17 @@ Confirmed read paths used by the current dashboard code:
 - `GET /api/v1/search?user_id=...&query=...&method=full&limit=20`
 - `GET /api/v1/search?user_id=...&query=resource%20connection%20mentor%20LP%20partner&types=entity&method=full&limit=100`
 
+Operational Mimir paths used by the deployed OpenClaw + `memory-mimir` runtime:
+
+- `POST /api/v1/ingest/note`
+- `POST /api/v1/search`
+- `POST /api/v1/graph/traverse`
+- `POST /api/v1/files/upload`
+
 Runtime behavior:
 
 - If `MIMIR_API_KEY` is missing or search returns no entities, the dashboard falls back to the checked-in seed graph from [`data/resource-graph-seed.json`](../data/resource-graph-seed.json).
-- Current Phase 1 docs do **not** require server-side `confidence` or `source` fields on the live Mimir deployment. Importance-based ranking remains the active behavior.
+- The deployed `memory-mimir` runtime can send `confidence` and `source` as client-side ingest hints, but the live EC2-A deployment does **not** require new Mimir server columns or a schema migration. Importance-based ranking remains the active behavior.
 
 ### OpenClaw Gateway
 

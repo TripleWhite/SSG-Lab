@@ -10,12 +10,29 @@
 - Mimir stays on EC2-A at `https://api.allinmimir.com`.
 - Feishu is wired in websocket mode through `feishu-bot`.
 
+## Dashboard Alias And OAuth
+
+- `https://dash.ssgaccelerator.com` is the Vercel-hosted dashboard alias.
+- Anonymous `GET /` requests redirect to `/login`.
+- `NEXTAUTH_URL` on Vercel must stay `https://dash.ssgaccelerator.com`.
+- The Feishu app config must set homepage URL `https://dash.ssgaccelerator.com` and redirect URL `https://dash.ssgaccelerator.com/api/auth/feishu`.
+- `BOARD_FEISHU_OPEN_IDS` is optional. When it is unset, authenticated users still sign in, but `/analytics` and `/settings` stay hidden behind the `employee` role.
+
 ## Bootstrap Order
 
 1. Provision EC2-B with [`scripts/release/provision-ec2b.sh`](../scripts/release/provision-ec2b.sh).
 2. Install Paperclip, embedded Postgres, Caddy, and the runtime env with [`scripts/release/bootstrap-paperclip-host.sh`](../scripts/release/bootstrap-paperclip-host.sh).
 3. Build OpenClaw from source and install the gateway service with [`scripts/release/bootstrap-openclaw-host.sh`](../scripts/release/bootstrap-openclaw-host.sh).
 4. Seed the company and OpenClaw-backed agent records with [`scripts/release/seed-ssg-company.sh`](../scripts/release/seed-ssg-company.sh).
+
+If you need a reproducible rollout, export `OPENCLAW_REPO_REF` as a tag or commit SHA before step 3. The script still accepts `main`, but it warns because a moving branch is not audit-friendly.
+
+## Phase 3 Matching-Agent Deploy Note
+
+- The verified matching-agent runtime tree on `2026-03-30` was `/home/ubuntu/.openclaw/agents/matching-agent/`.
+- A restore snapshot was captured at `/home/ubuntu/.openclaw/agents/matching-agent.release.20260330202111.tgz`.
+- That live deploy used an `ubuntu` home layout, not the older `/home/ec2-user/openclaw-agents/...` example path.
+- `board.ssgaccelerator.com` currently resolves to `ssg-agent-system`; do not use that DNS name as proof that the matching-agent runtime lives on the same instance.
 
 ## Services And Paths
 
@@ -28,7 +45,8 @@
 - OpenClaw env: `/home/ec2-user/.openclaw/.env`
 - OpenClaw service: `openclaw-gateway.service`
 - Shared gateway token file: `/home/ec2-user/openclaw-gateway.env`
-- Agent workspaces: `/home/ec2-user/openclaw-agents/{feishu-bot,sourcing-agent,portfolio-agent,matching-agent}`
+- Bootstrap script default workspaces: `/home/ec2-user/openclaw-agents/{feishu-bot,sourcing-agent,portfolio-agent,matching-agent}`
+- Current verified matching-agent runtime path: `/home/ubuntu/.openclaw/agents/matching-agent/`
 
 ## Required Runtime Details
 
@@ -37,6 +55,7 @@
 - Caddy is the only intended public ingress layer for the board host.
 - `caddy.service` must report `User=caddy` and `Group=caddy`.
 - Public ingress on the EC2-B security group should be limited to `22` and `443`.
+- `bootstrap-openclaw-host.sh` accepts branch names, tags, and commit SHAs through `OPENCLAW_REPO_REF`.
 - Each OpenClaw-backed Paperclip agent needs an explicit session key:
   - `feishu-bot` -> `agent:feishu-bot:main`
   - `sourcing-agent` -> `agent:sourcing-agent:main`
@@ -55,6 +74,9 @@ curl -fsS http://127.0.0.1:3100/api/health | jq
 curl -fsS https://board.ssgaccelerator.com/api/health | jq
 curl -I https://board.ssgaccelerator.com
 curl -fsS http://127.0.0.1:18789/openclaw/
+curl -I https://dash.ssgaccelerator.com
+curl -fsS https://dash.ssgaccelerator.com/login | grep -o 'href="/api/auth/feishu"'
+curl -sS -D - -o /dev/null https://dash.ssgaccelerator.com/api/auth/feishu
 systemctl status paperclip --no-pager
 systemctl status openclaw-gateway --no-pager
 systemctl status caddy --no-pager
@@ -67,6 +89,9 @@ Expected results:
 - Paperclip health returns `200` both locally and through `https://board.ssgaccelerator.com/api/health`.
 - The board host serves valid TLS through Caddy.
 - The OpenClaw control UI returns `200`.
+- `https://dash.ssgaccelerator.com` returns `307` from `/` to `/login`.
+- `/login` includes a sign-in link to `/api/auth/feishu`.
+- `GET https://dash.ssgaccelerator.com/api/auth/feishu` returns `307` to Feishu authorize and sets the `ssg_oauth_state` cookie.
 - `systemctl show caddy` reports `User=caddy` and `Group=caddy`.
 - AWS security group ingress shows only `22` and `443` as public rules.
 - All three services are `active (running)`.
@@ -77,5 +102,6 @@ Expected results:
 - Completed 2026-03-29: the binary-fallback `caddy.service` now runs as `User=caddy` / `Group=caddy`.
 - Rotate any credential that was ever pasted into issue comments or other long-lived logs.
 - Close the review-reported anonymous write exposure on the board management API before calling the deployment production-ready.
+- Phase 3 matching-agent artifacts are deployed, but review and E2E sign-off still remain around MEDIUM-match queueing and `send_feishu_card` contract alignment.
 - Re-run the real Feishu -> Mimir E2E checklist after the OpenClaw session-key fix and after deciding whether to seed real SSG data or narrow the resource-graph acceptance criteria.
 - Replace the placeholder entries in [`data/resource-graph-seed.json`](../data/resource-graph-seed.json) before using resource-graph search in production.

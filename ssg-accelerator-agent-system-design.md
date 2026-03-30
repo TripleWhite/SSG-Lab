@@ -730,10 +730,10 @@ EC2-B (New, t3.xlarge, 4 vCPU / 16GB / 50GB gp3):
     Feishu WebSocket channel
     Headless Chromium (sourcing)
     memory-mimir plugin -> api.allinmimir.com
-  Paperclip Server (:3000)
+  Paperclip Server (:3100)
     Embedded Postgres
     openclaw_gateway adapter -> localhost:18789
-  Caddy: board.ssgaccelerator.com -> 127.0.0.1:3000
+  Caddy: board.ssgaccelerator.com -> 127.0.0.1:3100
   Services: systemd (`paperclip.service`, `openclaw-gateway.service`)
 
 Vercel:
