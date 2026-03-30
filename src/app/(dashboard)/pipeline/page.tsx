@@ -498,13 +498,14 @@ function buildTags(meta: PhaseMeta, descendants: WorkItem[]): string[] {
 }
 
 function buildWorkstreams(items: WorkItem[]): ProjectDetailData[] {
-  const root = items.find((item) => item.parentId === null);
-  if (!root) {
+  const roots = items.filter((item) => item.parentId === null);
+  if (roots.length === 0) {
     return [];
   }
 
   const childrenByParent = getChildrenByParent(items);
-  const workstreams = (childrenByParent.get(root.id) ?? [])
+  const workstreams = roots
+    .flatMap((root) => childrenByParent.get(root.id) ?? [])
     .slice()
     .sort((left, right) => {
       const leftMeta = getPhaseMeta(left.title);
