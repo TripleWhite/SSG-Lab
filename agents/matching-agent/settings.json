@@ -20,5 +20,199 @@
     "apiUrl": "<minimax-api-url>",
     "apiKey": "<minimax-api-key>"
   },
-  "browser": false
+  "browser": false,
+  "tools": [
+    {
+      "name": "graph_traverse",
+      "description": "Filtered graph traversal via Mimir /api/v1/graph/traverse. Starts from an entity and follows relations of specified types, filtering by entity type. Used for all 6 match type analyses.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "start_entity": {
+            "type": "string",
+            "description": "Entity name to start traversal from"
+          },
+          "relation_types": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Relation types to follow (e.g. NEEDS_CUSTOMER, HAS_CONNECTION, EXPERT_IN, INVESTED_IN, WORKS_AT)"
+          },
+          "entity_types": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Filter target entities by type (e.g. company, person, program, project)"
+          },
+          "max_depth": {
+            "type": "integer",
+            "default": 2,
+            "minimum": 1,
+            "maximum": 4,
+            "description": "Maximum traversal depth (default 2)"
+          },
+          "max_results": {
+            "type": "integer",
+            "default": 50,
+            "description": "Maximum entities to return"
+          }
+        },
+        "required": ["start_entity"]
+      }
+    },
+    {
+      "name": "store_match",
+      "description": "Persist a MATCH_FOUND relation in Mimir and optionally create a Paperclip follow-up issue. Payload must conform to contracts/mimir-match.schema.json.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "match_id": {
+            "type": "string",
+            "description": "Unique ID for dedup tracking (format: {entity_a_id}:{entity_b_id}:{match_type})"
+          },
+          "match_type": {
+            "type": "string",
+            "enum": ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"]
+          },
+          "entity_a": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "source_employee": { "type": "string" },
+              "source_event_log_id": { "type": "string" }
+            },
+            "required": ["id", "name"]
+          },
+          "entity_b": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "source_employee": { "type": "string" },
+              "source_event_log_id": { "type": "string" }
+            },
+            "required": ["id", "name"]
+          },
+          "confidence": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 100
+          },
+          "confidence_level": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM"]
+          },
+          "scoring": {
+            "type": "object",
+            "properties": {
+              "specificity": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "complementarity": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "recency": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "actionability": { "type": "integer", "minimum": 0, "maximum": 25 }
+            }
+          },
+          "summary": { "type": "string" },
+          "suggested_action": { "type": "string" },
+          "create_task": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, create a Paperclip follow-up issue (status: in_review). Always true for HIGH matches."
+          }
+        },
+        "required": ["match_id", "match_type", "entity_a", "entity_b", "confidence", "confidence_level", "summary", "suggested_action"]
+      }
+    },
+    {
+      "name": "send_feishu_card",
+      "description": "Send an interactive card to the SSG Feishu group chat. Payload must conform to contracts/feishu-notify.schema.json. Used for HIGH-confidence immediate notifications only.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "card_type": {
+            "type": "string",
+            "enum": ["immediate", "digest"],
+            "description": "immediate = single HIGH match card; digest = batched MEDIUM matches"
+          },
+          "chat_id": {
+            "type": "string",
+            "description": "Feishu chat ID for the SSG group chat"
+          },
+          "header": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Card header (e.g. 'Match Found — supply-demand')"
+              },
+              "template": {
+                "type": "string",
+                "enum": ["blue", "green", "orange", "purple"],
+                "description": "Header color: green for immediate, blue for digest"
+              }
+            },
+            "required": ["title"]
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "match_type": {
+                  "type": "string",
+                  "enum": ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"]
+                },
+                "entity_a": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "source_employee": { "type": "string" }
+                  },
+                  "required": ["name", "description", "source_employee"]
+                },
+                "entity_b": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "source_employee": { "type": "string" }
+                  },
+                  "required": ["name", "description", "source_employee"]
+                },
+                "confidence": { "type": "integer", "minimum": 60, "maximum": 100 },
+                "scoring_breakdown": {
+                  "type": "object",
+                  "properties": {
+                    "specificity": { "type": "integer", "minimum": 0, "maximum": 25 },
+                    "complementarity": { "type": "integer", "minimum": 0, "maximum": 25 },
+                    "recency": { "type": "integer", "minimum": 0, "maximum": 25 },
+                    "actionability": { "type": "integer", "minimum": 0, "maximum": 25 }
+                  }
+                },
+                "suggested_action": { "type": "string" }
+              },
+              "required": ["match_type", "entity_a", "entity_b", "confidence", "suggested_action"]
+            },
+            "minItems": 1
+          },
+          "buttons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": { "type": "string" },
+                "action": {
+                  "type": "string",
+                  "enum": ["create_task", "dismiss", "view_details", "review_on_dashboard"]
+                }
+              },
+              "required": ["text", "action"]
+            }
+          }
+        },
+        "required": ["card_type", "chat_id", "header", "matches"]
+      }
+    }
+  ]
 }

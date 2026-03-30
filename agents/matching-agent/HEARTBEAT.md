@@ -4,14 +4,27 @@ Run every 30 minutes. Each heartbeat scans for new content in Mimir,
 extracts needs/offers, traverses the entity graph, scores potential
 matches, deduplicates, and notifies.
 
-## Contracts and Configuration
+## Tools Available
 
-- `settings.json` — memory-mimir plugin (memory_store, memory_search, memory_graph, memory_update, memory_delete)
+**memory-mimir plugin** (standard operations):
+- `memory_search` — search entities and event_logs by query
+- `memory_graph` — basic entity graph exploration (entities, hops, max_results)
+- `memory_store` — store new entities and notes
+- `memory_update` — update existing entity attributes
+- `memory_delete` — delete or tombstone entities
+
+**Custom tools** (matching-specific):
+- `graph_traverse` — filtered graph traversal with relation_types and entity_types filters (calls Mimir /api/v1/graph/traverse)
+- `store_match` — persist MATCH_FOUND relation in Mimir + optionally create Paperclip follow-up issue
+- `send_feishu_card` — send interactive card to SSG Feishu group chat
+
+## Contracts
+
+- `contracts/feishu-notify.schema.json` — required shape for `send_feishu_card` payloads
+- `contracts/mimir-match.schema.json` — required shape for `store_match` payloads and heartbeat result records
 - `contracts/match-result.json` — match result output schema with 4-dimension confidence scoring
-- `contracts/mimir-match.schema.json` — match storage shape with metrics, dedup status, and notification tracking
-- `contracts/feishu-notify.schema.json` — Feishu card payload shape for immediate and digest notifications
 - `contracts/heartbeat-metrics.json` — per-heartbeat reporting schema
-- `skills/matching/SKILL.md` — taxonomy, scoring rubric, dedup rules
+- `skills/matching/SKILL.md` — 6 match type taxonomy, scoring rubric, dedup rules
 - `skills/feishu-format/SKILL.md` — card template for group chat and digest
 
 ## Execution Plan
@@ -42,70 +55,109 @@ For each new event_log:
 
 ### 4. Match Analysis (all 6 types)
 
-For each extracted need, search for complementary offers across the graph:
+For each extracted need, search for complementary offers across the graph.
+Use `graph_traverse` for relation-filtered traversal and `memory_search`
+for keyword-based entity lookup.
 
 #### 4a. Supply-Demand
-- `memory_graph` from need entity, follow NEEDS_CUSTOMER, EVALUATING
+- `graph_traverse` from need entity with `relation_types: ["NEEDS_CUSTOMER", "EVALUATING"]`
 - `memory_search` for entities offering matching products/services
-- Score: specificity of need × specificity of offer × recency
+- Score: specificity of need x specificity of offer x recency
 
 #### 4b. Resource
-- `memory_graph` from founder need, traverse accelerator resource graph
+- `graph_traverse` from founder need with `entity_types: ["program", "partner", "resource"]`
 - Check: employee connections, partner programs, cloud credits
-- Score: need specificity × resource availability × employee willingness
+- Score: need specificity x resource availability x employee willingness
 
 #### 4c. Talent
-- For hiring needs, `memory_search` talent pool entities
-- Score: skill match × experience level × availability signals
+- `memory_search` talent pool entities by skill keywords
+- `graph_traverse` with `relation_types: ["WORKS_AT", "EXPERT_IN"]` to find network connections
+- Score: skill match x experience level x availability signals
 
 #### 4d. Investor
-- For fundraising signals, `memory_search` LP entities by vertical + stage
-- Score: vertical match × stage match × LP activity level
+- `graph_traverse` with `relation_types: ["INVESTED_IN", "INTERESTED_IN"]` and `entity_types: ["company", "fund"]`
+- `memory_search` LP entities by vertical and stage keywords
+- Score: vertical match x stage match x LP activity level
 
 #### 4e. Cross-Project
+- `graph_traverse` from project entity with `relation_types: ["PROVIDES", "NEEDS"]`
 - For each project capability, search other projects for matching needs
-- Score: capability relevance × project health × actionability
+- Score: capability relevance x project health x actionability
 
 #### 4f. Mentor
-- For bottleneck/struggle signals, search mentor expertise entities
-- Score: expertise match × mentor availability × bottleneck severity
+- `memory_search` mentor expertise entities by bottleneck keywords
+- `graph_traverse` with `relation_types: ["EXPERT_IN", "MENTORS"]` and `entity_types: ["person"]`
+- Score: expertise match x mentor availability x bottleneck severity
 
 ### 5. Dedup and Filter
 
 For each potential match:
 
 1. `memory_search` for existing MATCH_FOUND relations between the two entities
-2. If match already reported with same type → skip
-3. If match already reported with different type → report as additional connection
+2. If match already reported with same type -> skip
+3. If match already reported with different type -> report as additional connection
 4. Filter out matches below 60% confidence
 5. Sort remaining by confidence descending
 
-### 6. Notify
+### 6. Store
 
-**HIGH confidence (>80%):** Store the match in Mimir (step 7) and log
-a structured comment in this heartbeat's output. The feishu-bot agent
-picks up HIGH matches from Mimir and sends an interactive card to the
-SSG Feishu group chat per `contracts/feishu-notify.schema.json` and
-`skills/feishu-format/SKILL.md`.
+For each match above 60% confidence, call `store_match` with payload
+conforming to `contracts/mimir-match.schema.json`:
 
-**MEDIUM confidence (60-80%):** Queue for daily batch digest.
+```json
+{
+  "match_id": "{entity_a_id}:{entity_b_id}:{match_type}",
+  "match_type": "supply-demand",
+  "entity_a": { "id": "...", "name": "...", "source_employee": "..." },
+  "entity_b": { "id": "...", "name": "...", "source_employee": "..." },
+  "confidence": 85,
+  "confidence_level": "HIGH",
+  "scoring": { "specificity": 22, "complementarity": 20, "recency": 23, "actionability": 20 },
+  "summary": "...",
+  "suggested_action": "...",
+  "create_task": true
+}
+```
 
-Store as a Mimir relation (step 7). Do not send individual
-notifications for MEDIUM matches — the portfolio-agent includes them
-in its daily digest to the Board.
+- **HIGH matches (>80%):** Set `create_task: true`. This creates a Paperclip
+  follow-up issue with status `in_review` for Board action.
+- **MEDIUM matches (60-80%):** Set `create_task: false`. The portfolio-agent
+  includes MEDIUM matches from Mimir in its daily Board digest.
 
-### 7. Store and Track
+### 7. Notify
 
-For each reported match, use `memory_store` to persist a MATCH_FOUND
-relation in Mimir per `contracts/mimir-match.schema.json`:
+**HIGH confidence (>80%) only:** Call `send_feishu_card` to send an
+immediate notification to the SSG Feishu group chat.
 
-- Content: structured match summary including both sides, type,
-  confidence breakdown, suggested action, and source evidence
-- Type: `note` with `importance: high`
-- The Mimir server extracts the MATCH_FOUND relation from the content
+Payload must conform to `contracts/feishu-notify.schema.json`:
 
-Track results per `contracts/heartbeat-metrics.json`:
-- Log metrics: matches found (by type), confidence distribution, dedup skips
+```json
+{
+  "card_type": "immediate",
+  "chat_id": "<ssg-group-chat-id>",
+  "header": {
+    "title": "Match Found — supply-demand",
+    "template": "green"
+  },
+  "matches": [{
+    "match_type": "supply-demand",
+    "entity_a": { "name": "...", "description": "...", "source_employee": "..." },
+    "entity_b": { "name": "...", "description": "...", "source_employee": "..." },
+    "confidence": 85,
+    "scoring_breakdown": { "specificity": 22, "complementarity": 20, "recency": 23, "actionability": 20 },
+    "suggested_action": "Introduce Entity A founder to Entity B via Employee X"
+  }],
+  "buttons": [
+    { "text": "Create Task", "action": "create_task" },
+    { "text": "Dismiss", "action": "dismiss" },
+    { "text": "Details", "action": "view_details" }
+  ]
+}
+```
+
+**MEDIUM confidence (60-80%):** No individual Feishu notification. MEDIUM
+matches are stored in Mimir (step 6) and surfaced by portfolio-agent in
+its daily digest. Do not call `send_feishu_card` for MEDIUM matches.
 
 ### 8. Exit
 
@@ -116,3 +168,5 @@ Report in Paperclip heartbeat comment:
   cross-project [n], mentor [n]
 - Skipped (dedup): [count]
 - Skipped (low confidence): [count]
+- Notifications sent: [count] (HIGH matches only)
+- Tasks created: [count] (HIGH matches only)
