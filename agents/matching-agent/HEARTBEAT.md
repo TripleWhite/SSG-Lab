@@ -6,9 +6,11 @@ matches, deduplicates, and notifies.
 
 ## Contracts and Configuration
 
-- `settings.json` — tool configuration (graph_traverse, compare_entities, store_match, send_feishu_card) + memory-mimir plugin
+- `settings.json` — memory-mimir plugin (memory_store, memory_search, memory_graph, memory_update, memory_delete)
+- `contracts/match-result.json` — match result output schema with 4-dimension confidence scoring
+- `contracts/mimir-match.schema.json` — match storage shape with metrics, dedup status, and notification tracking
 - `contracts/feishu-notify.schema.json` — Feishu card payload shape for immediate and digest notifications
-- `contracts/mimir-match.schema.json` — match result storage shape with metrics, dedup status, and notification tracking
+- `contracts/heartbeat-metrics.json` — per-heartbeat reporting schema
 - `skills/matching/SKILL.md` — taxonomy, scoring rubric, dedup rules
 - `skills/feishu-format/SKILL.md` — card template for group chat and digest
 
@@ -80,50 +82,29 @@ For each potential match:
 
 ### 6. Notify
 
-Use `send_feishu_card` tool with payload matching `contracts/feishu-notify.schema.json`.
-
-**HIGH confidence (>80%):** Send to Feishu group chat immediately.
-
-- Use `card_type: "immediate"` with `header.template: "green"`
-- Include scoring breakdown and suggested action
-- Buttons: `[Create Task]`, `[Dismiss]`, `[Details]`
-
-Format as interactive card per `skills/feishu-format/SKILL.md`:
-```
-Match Found — [match type]
-
-[Entity A] (via [Source Employee A])
-[Description A]
-
-↔
-
-[Entity B] (via [Source Employee B])
-[Description B]
-
-Confidence: [score]%
-Suggestion: [specific actionable suggestion]
-
-[Create Task] [Dismiss] [Details]
-```
+**HIGH confidence (>80%):** Store the match in Mimir (step 7) and log
+a structured comment in this heartbeat's output. The feishu-bot agent
+picks up HIGH matches from Mimir and sends an interactive card to the
+SSG Feishu group chat per `contracts/feishu-notify.schema.json` and
+`skills/feishu-format/SKILL.md`.
 
 **MEDIUM confidence (60-80%):** Queue for daily batch digest.
 
-- Use `card_type: "digest"` with `header.template: "blue"`
-- Batch all MEDIUM matches into a single card
-- Button: `[Review on Dashboard]`
-
-Store as Paperclip issue (status: in_review) for the daily portfolio
-agent digest. Do not send individual notifications for MEDIUM matches.
+Store as a Mimir relation (step 7). Do not send individual
+notifications for MEDIUM matches — the portfolio-agent includes them
+in its daily digest to the Board.
 
 ### 7. Store and Track
 
-Use `store_match` tool for each match. Track results per `contracts/mimir-match.schema.json`.
+For each reported match, use `memory_store` to persist a MATCH_FOUND
+relation in Mimir per `contracts/mimir-match.schema.json`:
 
-For each reported match:
+- Content: structured match summary including both sides, type,
+  confidence breakdown, suggested action, and source evidence
+- Type: `note` with `importance: high`
+- The Mimir server extracts the MATCH_FOUND relation from the content
 
-- Store Mimir relation via `store_match`: `MATCH_FOUND(EntityA, EntityB, type, confidence)`
-- Set `create_task: true` for HIGH matches to auto-create Paperclip follow-up issue
-- Record `mimir_status`, `notification_status`, and `task_status` in the match record
+Track results per `contracts/heartbeat-metrics.json`:
 - Log metrics: matches found (by type), confidence distribution, dedup skips
 
 ### 8. Exit
