@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MatchResult",
+  "description": "Output schema for a detected match between two entities.",
+  "type": "object",
+  "properties": {
+    "match_type": {
+      "type": "string",
+      "enum": ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"]
+    },
+    "side_a": {
+      "type": "object",
+      "properties": {
+        "entity": { "type": "string" },
+        "description": { "type": "string" },
+        "source_employee": { "type": "string" },
+        "event_log_id": { "type": "string" }
+      },
+      "required": ["entity", "description", "source_employee"]
+    },
+    "side_b": {
+      "type": "object",
+      "properties": {
+        "entity": { "type": "string" },
+        "description": { "type": "string" },
+        "source_employee": { "type": "string" },
+        "event_log_id": { "type": "string" }
+      },
+      "required": ["entity", "description", "source_employee"]
+    },
+    "confidence": {
+      "type": "object",
+      "properties": {
+        "total": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "specificity": { "type": "integer", "minimum": 0, "maximum": 25 },
+        "complementarity": { "type": "integer", "minimum": 0, "maximum": 25 },
+        "recency": { "type": "integer", "minimum": 0, "maximum": 25 },
+        "actionability": { "type": "integer", "minimum": 0, "maximum": 25 }
+      },
+      "required": ["total"]
+    },
+    "level": {
+      "type": "string",
+      "enum": ["HIGH", "MEDIUM"]
+    },
+    "suggestion": { "type": "string" },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Source event_log references or entity IDs"
+    }
+  },
+  "required": ["match_type", "side_a", "side_b", "confidence", "level", "suggestion"]
+}

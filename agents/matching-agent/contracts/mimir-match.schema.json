@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Matching Agent Mimir Match Storage",
+  "description": "Schema for match results stored as MATCH_FOUND relations in Mimir and optionally as Paperclip follow-up tasks.",
+  "type": "object",
+  "properties": {
+    "heartbeat_id": {
+      "type": "string",
+      "description": "Paperclip run ID that produced these matches"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the matching run"
+    },
+    "content_scanned": {
+      "type": "integer",
+      "description": "Number of new event_logs processed in this heartbeat"
+    },
+    "matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "match_id": {
+            "type": "string",
+            "description": "Unique ID for this match (for dedup tracking)"
+          },
+          "match_type": {
+            "type": "string",
+            "enum": ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"]
+          },
+          "entity_a": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "source_employee": { "type": "string" },
+              "source_event_log_id": { "type": "string" }
+            },
+            "required": ["id", "name"]
+          },
+          "entity_b": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "source_employee": { "type": "string" },
+              "source_event_log_id": { "type": "string" }
+            },
+            "required": ["id", "name"]
+          },
+          "confidence": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 100
+          },
+          "confidence_level": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM"]
+          },
+          "scoring": {
+            "type": "object",
+            "properties": {
+              "specificity": { "type": "integer" },
+              "complementarity": { "type": "integer" },
+              "recency": { "type": "integer" },
+              "actionability": { "type": "integer" }
+            }
+          },
+          "summary": { "type": "string" },
+          "suggested_action": { "type": "string" },
+          "mimir_status": {
+            "type": "string",
+            "enum": ["stored", "failed", "skipped_dedup"],
+            "description": "Result of the MATCH_FOUND relation store attempt"
+          },
+          "mimir_relation_id": {
+            "type": "string",
+            "description": "ID of the stored MATCH_FOUND relation (if stored)"
+          },
+          "notification_status": {
+            "type": "string",
+            "enum": ["sent", "queued", "failed", "skipped"],
+            "description": "Feishu notification delivery status"
+          },
+          "task_status": {
+            "type": "string",
+            "enum": ["created", "skipped", "failed"],
+            "description": "Paperclip follow-up task creation status"
+          },
+          "task_id": {
+            "type": "string",
+            "description": "Paperclip issue ID if a follow-up task was created"
+          }
+        },
+        "required": ["match_id", "match_type", "entity_a", "entity_b", "confidence", "confidence_level", "summary", "suggested_action", "mimir_status"]
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "total_found": { "type": "integer" },
+        "high_confidence": { "type": "integer" },
+        "medium_confidence": { "type": "integer" },
+        "skipped_dedup": { "type": "integer" },
+        "skipped_low_confidence": { "type": "integer" },
+        "by_type": {
+          "type": "object",
+          "properties": {
+            "supply-demand": { "type": "integer" },
+            "resource": { "type": "integer" },
+            "talent": { "type": "integer" },
+            "investor": { "type": "integer" },
+            "cross-project": { "type": "integer" },
+            "mentor": { "type": "integer" }
+          }
+        }
+      }
+    }
+  },
+  "required": ["heartbeat_id", "timestamp", "content_scanned", "matches", "metrics"]
+}

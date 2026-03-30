@@ -1,0 +1,142 @@
+{
+  "plugins": ["memory-mimir"],
+  "memory-mimir": {
+    "apiUrl": "https://api.allinmimir.com",
+    "apiKey": "<mimir-api-key>",
+    "maxRecallItems": 50,
+    "maxRecallTokens": 4000,
+    "autoCapture": false,
+    "tools": [
+      "memory_store",
+      "memory_search",
+      "memory_graph",
+      "memory_update",
+      "memory_delete"
+    ]
+  },
+  "model": {
+    "provider": "openai-compatible",
+    "name": "minimax-m2.7",
+    "apiUrl": "<minimax-api-url>",
+    "apiKey": "<minimax-api-key>"
+  },
+  "browser": false,
+  "tools": [
+    {
+      "name": "graph_traverse",
+      "description": "Traverse the Mimir entity-relation graph to find connected entities. Start from an entity and follow relations of specified types to find matches.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "start_entity": {
+            "type": "string",
+            "description": "Entity name to start traversal from"
+          },
+          "relation_types": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Relation types to follow (e.g., NEEDS_CUSTOMER, HAS_CONNECTION, EXPERT_IN)"
+          },
+          "max_depth": {
+            "type": "integer",
+            "description": "Maximum traversal depth (default 2, max 4)"
+          },
+          "entity_types": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Filter target entities by type (e.g., company, person, program)"
+          }
+        },
+        "required": ["start_entity"]
+      }
+    },
+    {
+      "name": "compare_entities",
+      "description": "Compare two entities to score potential match quality. Analyzes complementary needs/offers, domain overlap, and actionability using the 4-dimension rubric (specificity, complementarity, recency, actionability).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "entity_a": {
+            "type": "string",
+            "description": "First entity name or ID"
+          },
+          "entity_b": {
+            "type": "string",
+            "description": "Second entity name or ID"
+          },
+          "match_type": {
+            "type": "string",
+            "enum": ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"],
+            "description": "Type of match to evaluate"
+          }
+        },
+        "required": ["entity_a", "entity_b", "match_type"]
+      }
+    },
+    {
+      "name": "resource_match",
+      "description": "Search the accelerator resource graph for resources matching a founder's need. Searches employee connections, partner programs, LP interests, and mentor expertise.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "need": {
+            "type": "string",
+            "description": "What the founder/project needs"
+          },
+          "resource_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["connection", "credits", "investor", "mentor", "talent", "legal", "office"]
+            },
+            "description": "Types of resources to search for"
+          }
+        },
+        "required": ["need"]
+      }
+    },
+    {
+      "name": "send_feishu_card",
+      "description": "Send an interactive card message to the SSG Feishu group chat. Used for HIGH confidence match notifications.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "card_type": {
+            "type": "string",
+            "enum": ["match_found", "daily_digest"],
+            "description": "Card template type"
+          },
+          "match_type": {
+            "type": "string",
+            "description": "Match category (supply-demand, resource, etc.)"
+          },
+          "side_a": {
+            "type": "object",
+            "properties": {
+              "entity": { "type": "string" },
+              "description": { "type": "string" },
+              "source_employee": { "type": "string" }
+            }
+          },
+          "side_b": {
+            "type": "object",
+            "properties": {
+              "entity": { "type": "string" },
+              "description": { "type": "string" },
+              "source_employee": { "type": "string" }
+            }
+          },
+          "confidence": {
+            "type": "integer",
+            "description": "Match confidence score (0-100)"
+          },
+          "suggestion": {
+            "type": "string",
+            "description": "Actionable suggestion for this match"
+          }
+        },
+        "required": ["card_type", "match_type", "confidence"]
+      }
+    }
+  ]
+}

@@ -4,6 +4,14 @@ Run every 30 minutes. Each heartbeat scans for new content in Mimir,
 extracts needs/offers, traverses the entity graph, scores potential
 matches, deduplicates, and notifies.
 
+## Contracts and Configuration
+
+- `settings.json` — tool configuration (graph_traverse, compare_entities, store_match, send_feishu_card) + memory-mimir plugin
+- `contracts/feishu-notify.schema.json` — Feishu card payload shape for immediate and digest notifications
+- `contracts/mimir-match.schema.json` — match result storage shape with metrics, dedup status, and notification tracking
+- `skills/matching/SKILL.md` — taxonomy, scoring rubric, dedup rules
+- `skills/feishu-format/SKILL.md` — card template for group chat and digest
+
 ## Execution Plan
 
 ### 1. Identity and Context
@@ -72,9 +80,15 @@ For each potential match:
 
 ### 6. Notify
 
+Use `send_feishu_card` tool with payload matching `contracts/feishu-notify.schema.json`.
+
 **HIGH confidence (>80%):** Send to Feishu group chat immediately.
 
-Format as interactive card:
+- Use `card_type: "immediate"` with `header.template: "green"`
+- Include scoring breakdown and suggested action
+- Buttons: `[Create Task]`, `[Dismiss]`, `[Details]`
+
+Format as interactive card per `skills/feishu-format/SKILL.md`:
 ```
 Match Found — [match type]
 
@@ -94,15 +108,22 @@ Suggestion: [specific actionable suggestion]
 
 **MEDIUM confidence (60-80%):** Queue for daily batch digest.
 
+- Use `card_type: "digest"` with `header.template: "blue"`
+- Batch all MEDIUM matches into a single card
+- Button: `[Review on Dashboard]`
+
 Store as Paperclip issue (status: pending_review) for the daily portfolio
 agent digest. Do not send individual notifications for MEDIUM matches.
 
 ### 7. Store and Track
 
+Use `store_match` tool for each match. Track results per `contracts/mimir-match.schema.json`.
+
 For each reported match:
 
-- Store Mimir relation: `MATCH_FOUND(EntityA, EntityB, type, confidence)`
-- For HIGH matches: create Paperclip issue assigned to relevant employee
+- Store Mimir relation via `store_match`: `MATCH_FOUND(EntityA, EntityB, type, confidence)`
+- Set `create_task: true` for HIGH matches to auto-create Paperclip follow-up issue
+- Record `mimir_status`, `notification_status`, and `task_status` in the match record
 - Log metrics: matches found (by type), confidence distribution, dedup skips
 
 ### 8. Exit

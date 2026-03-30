@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Matching Agent Feishu Notification",
+  "description": "Schema for Feishu match notification cards sent by the matching agent.",
+  "type": "object",
+  "properties": {
+    "card_type": {
+      "type": "string",
+      "enum": ["immediate", "digest"],
+      "description": "immediate = single HIGH match card; digest = batched MEDIUM matches"
+    },
+    "chat_id": {
+      "type": "string",
+      "description": "Feishu chat ID (group or individual)"
+    },
+    "header": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Card header text (e.g. 'Match Found — supply-demand' or 'Daily Match Digest — 3 potential matches')"
+        },
+        "template": {
+          "type": "string",
+          "enum": ["blue", "green", "orange", "purple"],
+          "description": "Header color template"
+        }
+      },
+      "required": ["title"]
+    },
+    "matches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "match_type": {
+            "type": "string",
+            "enum": ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"]
+          },
+          "entity_a": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "source_employee": { "type": "string" },
+              "entity_id": { "type": "string" }
+            },
+            "required": ["name", "description", "source_employee"]
+          },
+          "entity_b": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "source_employee": { "type": "string" },
+              "entity_id": { "type": "string" }
+            },
+            "required": ["name", "description", "source_employee"]
+          },
+          "confidence": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 100
+          },
+          "scoring_breakdown": {
+            "type": "object",
+            "properties": {
+              "specificity": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "complementarity": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "recency": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "actionability": { "type": "integer", "minimum": 0, "maximum": 25 }
+            }
+          },
+          "suggested_action": { "type": "string" },
+          "source_evidence": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "References to event_logs or entities that led to this match"
+          }
+        },
+        "required": ["match_type", "entity_a", "entity_b", "confidence", "suggested_action"]
+      },
+      "minItems": 1
+    },
+    "buttons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string" },
+          "action": {
+            "type": "string",
+            "enum": ["create_task", "dismiss", "view_details", "review_on_dashboard"]
+          },
+          "payload": {
+            "type": "object",
+            "description": "Action-specific data (match_id, entity_ids, etc.)"
+          }
+        },
+        "required": ["text", "action"]
+      }
+    }
+  },
+  "required": ["card_type", "chat_id", "header", "matches"]
+}
