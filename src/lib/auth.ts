@@ -37,8 +37,16 @@ interface OAuthState {
   expiresAt: number;
 }
 
+interface FeishuAppTokenResponse {
+  code?: number;
+  msg?: string;
+  app_access_token?: string;
+  expire?: number;
+}
+
 interface FeishuTokenResponse {
-  access_token?: string;
+  code?: number;
+  msg?: string;
   data?: {
     access_token?: string;
   };
@@ -238,19 +246,49 @@ export async function requireBoard(): Promise<AuthSession> {
   return session;
 }
 
+async function getAppAccessToken(): Promise<string> {
+  const response = await fetch(
+    "https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal/",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        app_id: process.env.FEISHU_APP_ID,
+        app_secret: process.env.FEISHU_APP_SECRET,
+      }),
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Feishu app_access_token request failed: ${response.status}`,
+    );
+  }
+
+  const payload = (await response.json()) as FeishuAppTokenResponse;
+  if (payload.code !== 0 || !payload.app_access_token) {
+    throw new Error(
+      `Feishu app_access_token error: ${payload.msg ?? "no token returned"}`,
+    );
+  }
+
+  return payload.app_access_token;
+}
+
 export async function exchangeCodeForToken(code: string): Promise<string> {
+  const appToken = await getAppAccessToken();
   const response = await fetch(
     "https://open.feishu.cn/open-apis/authen/v1/oidc/access_token",
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${appToken}`,
       },
       body: JSON.stringify({
         grant_type: "authorization_code",
         code,
-        app_id: process.env.FEISHU_APP_ID,
-        app_secret: process.env.FEISHU_APP_SECRET,
       }),
       cache: "no-store",
     },
@@ -261,7 +299,7 @@ export async function exchangeCodeForToken(code: string): Promise<string> {
   }
 
   const payload = (await response.json()) as FeishuTokenResponse;
-  const token = payload.data?.access_token ?? payload.access_token;
+  const token = payload.data?.access_token;
   if (!token) {
     throw new Error("Feishu token exchange returned no access token.");
   }
