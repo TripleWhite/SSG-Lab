@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Matching Agent Mimir Match Storage",
-  "description": "Schema for match results stored as MATCH_FOUND relations in Mimir and optionally as Paperclip follow-up tasks.",
+  "description": "Heartbeat result record schema. Logged after each heartbeat completes — aggregates all matches found, their storage/notification outcomes, and per-run metrics. This is NOT the store_match tool input (see settings.json input_schema for that).",
   "type": "object",
   "properties": {
     "heartbeat_id": {

@@ -21,7 +21,7 @@ matches, deduplicates, and notifies.
 ## Contracts
 
 - `contracts/feishu-notify.schema.json` — required shape for `send_feishu_card` payloads
-- `contracts/mimir-match.schema.json` — required shape for `store_match` payloads and heartbeat result records
+- `contracts/mimir-match.schema.json` — heartbeat result record schema (aggregate output, NOT the `store_match` per-match input)
 - `contracts/match-result.json` — match result output schema with 4-dimension confidence scoring
 - `contracts/heartbeat-metrics.json` — per-heartbeat reporting schema
 - `skills/matching/SKILL.md` — 6 match type taxonomy, scoring rubric, dedup rules
@@ -80,7 +80,7 @@ for keyword-based entity lookup.
 - Score: vertical match x stage match x LP activity level
 
 #### 4e. Cross-Project
-- `graph_traverse` from project entity with `relation_types: ["PROVIDES", "NEEDS"]`
+- `graph_traverse` from project entity with `relation_types: ["CAN_PROVIDE", "NEEDS"]`
 - For each project capability, search other projects for matching needs
 - Score: capability relevance x project health x actionability
 
@@ -101,8 +101,8 @@ For each potential match:
 
 ### 6. Store
 
-For each match above 60% confidence, call `store_match` with payload
-conforming to `contracts/mimir-match.schema.json`:
+For each match above 60% confidence, call `store_match` with the single-match
+payload defined by the tool's `input_schema` in settings.json:
 
 ```json
 {
@@ -123,6 +123,11 @@ conforming to `contracts/mimir-match.schema.json`:
   follow-up issue with status `in_review` for Board action.
 - **MEDIUM matches (60-80%):** Set `create_task: false`. The portfolio-agent
   includes MEDIUM matches from Mimir in its daily Board digest.
+
+**Note:** `contracts/mimir-match.schema.json` defines the **heartbeat result
+record** — the aggregate batch output logged after all matches are processed.
+It is NOT the per-match `store_match` input. The `store_match` tool accepts
+one match at a time per its `input_schema`.
 
 ### 7. Notify
 
@@ -148,9 +153,8 @@ Payload must conform to `contracts/feishu-notify.schema.json`:
     "suggested_action": "Introduce Entity A founder to Entity B via Employee X"
   }],
   "buttons": [
-    { "text": "Create Task", "action": "create_task" },
-    { "text": "Dismiss", "action": "dismiss" },
-    { "text": "Details", "action": "view_details" }
+    { "text": "View Task", "action": "view_details" },
+    { "text": "Dismiss", "action": "dismiss" }
   ]
 }
 ```

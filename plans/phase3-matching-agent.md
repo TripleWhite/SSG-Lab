@@ -8,14 +8,16 @@
 
 **Depends on:** Phase 1 (data pipeline, memory-mimir with tools), Phase 2 (sourcing data in Mimir)
 
+> **2026-03-30 shipped note:** The current verified runtime tree is `/home/ubuntu/.openclaw/agents/matching-agent/`, with a restore snapshot at `/home/ubuntu/.openclaw/agents/matching-agent.release.20260330202111.tgz`. The board alias `board.ssgaccelerator.com` currently resolves to `ssg-agent-system`, so do not use that DNS name to infer the matching-agent host. The checklist below is still the original implementation plan, but the concrete paths and local Paperclip port have been updated to match the deployed environment.
+
 ---
 
 ## Project References
 
 - **Design Spec**: `/Users/arthur/Desktop/SSGLAB/ssg-accelerator-agent-system-design.md` (sections 5, 8 matching-agent, 9)
-- **Agent Dir**: `/home/ec2-user/openclaw-agents/matching-agent/`
+- **Agent Dir**: `/home/ubuntu/.openclaw/agents/matching-agent/`
 - **LLM Model**: MiniMax M2.7 (fast, good at Chinese/English, lower cost — matching is frequent)
-- **Mimir Graph API**: `GET /api/v1/graph/traverse`
+- **Mimir Graph API**: `POST /api/v1/graph/traverse`
 - **6 Match Types**: supply-demand, resource, talent, investor, cross-project, mentor
 
 ---
@@ -26,7 +28,7 @@
 
 - [ ] **Step 1: Create SOUL.md**
 
-Write to `/home/ec2-user/openclaw-agents/matching-agent/SOUL.md`:
+Write to `/home/ubuntu/.openclaw/agents/matching-agent/SOUL.md`:
 
 ```markdown
 # matching-agent — Cross-Employee, Cross-Project Connection Discovery
@@ -93,7 +95,7 @@ Search these entity types when looking for resource/talent/investor/mentor match
 
 - [ ] **Step 2: Create HEARTBEAT.md**
 
-Write to `/home/ec2-user/openclaw-agents/matching-agent/HEARTBEAT.md`:
+Write to `/home/ubuntu/.openclaw/agents/matching-agent/HEARTBEAT.md`:
 
 ```markdown
 # Matching Agent Heartbeat
@@ -150,7 +152,7 @@ For each new event_log:
 
 ### 6. Notify
 - HIGH confidence (>80%): Send to Feishu group chat immediately
-  - Interactive card with [Create Task] [Dismiss] [Details]
+  - Interactive card with [View Task] [Dismiss] (task auto-created by `store_match`)
 - MEDIUM confidence (60-80%): Queue for daily batch digest to Board
   - Sent as consolidated card at end of day
 
@@ -168,7 +170,7 @@ For each new event_log:
 - [ ] **Step 3: Verify SOUL.md and HEARTBEAT.md load**
 
 ```bash
-docker logs openclaw-gateway | grep "matching-agent.*SOUL"
+journalctl -u openclaw-gateway -n 50 --no-pager | grep "matching-agent.*SOUL"
 ```
 
 ---
@@ -330,7 +332,7 @@ Seed Mimir with the DesignAI/BigCorp scenario from the design spec:
 
 Configured in Phase 1 Task 2. Verify:
 ```bash
-curl "http://localhost:3000/api/companies/$COMPANY_ID/agents/matching-agent/heartbeats" \
+curl "http://127.0.0.1:3100/api/companies/$COMPANY_ID/agents/matching-agent/heartbeats" \
   -H "Authorization: Bearer $API_KEY"
 ```
 
@@ -354,7 +356,7 @@ Start with Option A. If users need faster matching, implement Option B later.
 
 ```bash
 # Watch heartbeat runs
-curl "http://localhost:3000/api/companies/$COMPANY_ID/agents/matching-agent/heartbeat_runs?limit=5" \
+curl "http://127.0.0.1:3100/api/companies/$COMPANY_ID/agents/matching-agent/heartbeat_runs?limit=5" \
   -H "Authorization: Bearer $API_KEY"
 ```
 
@@ -368,7 +370,7 @@ curl "http://localhost:3000/api/companies/$COMPANY_ID/agents/matching-agent/hear
 
 - [ ] **Step 1: Create match notification card template**
 
-Write to `/home/ec2-user/openclaw-agents/matching-agent/skills/feishu-format/SKILL.md`:
+Write to `/home/ubuntu/.openclaw/agents/matching-agent/skills/feishu-format/SKILL.md`:
 
 ```markdown
 # Match Notification Card Template
@@ -391,9 +393,8 @@ Match Found — [match type]
 **Suggestion:** [specific actionable suggestion]
 
 ### Buttons
-[Create Task] — creates Paperclip task for follow-up
+[View Task] — opens the auto-created Paperclip follow-up task
 [Dismiss] — marks match as dismissed (logged for analytics)
-[Details] — opens match detail on Dashboard
 ```
 
 - [ ] **Step 2: Implement immediate notification for HIGH matches**
@@ -406,16 +407,15 @@ When a match scores > 80%:
 
 - [ ] **Step 3: Implement button callbacks**
 
-- **[Create Task]**: feishu-bot creates a Paperclip task assigned to the relevant employee
+- **[View Task]**: Opens the Paperclip follow-up task auto-created by `store_match` (`create_task: true` for HIGH matches)
 - **[Dismiss]**: Updates match status to "dismissed" in Paperclip, logs reason for analytics
-- **[Details]**: Opens `dash.ssgaccelerator.com/matching#match-<id>` in browser
 
 ### 5b: MEDIUM Confidence Batch
 
 - [ ] **Step 4: Implement daily batch for MEDIUM matches**
 
 Matches scoring 60-80% are queued and sent once daily to Board:
-1. Store MEDIUM matches in Paperclip as issues (type: match, status: pending_review)
+1. Store MEDIUM matches in Paperclip as issues (type: match, status: in_review)
 2. At end of day (or during portfolio agent daily run), send consolidated card to Board:
 
 ```
@@ -461,7 +461,7 @@ For each reported match:
 
 For HIGH confidence matches:
 ```bash
-curl -X POST "http://localhost:3000/api/companies/$COMPANY_ID/issues" \
+curl -X POST "http://127.0.0.1:3100/api/companies/$COMPANY_ID/issues" \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -505,7 +505,7 @@ After each heartbeat, comment on the Paperclip heartbeat_run with:
 - [ ] **Step 2: Implement weekly precision tracking**
 
 Track accepted vs dismissed matches:
-- Accepted (user clicked [Create Task]) = true positive
+- Accepted (task actioned — not dismissed) = true positive
 - Dismissed (user clicked [Dismiss]) = false positive
 - Precision = accepted / (accepted + dismissed)
 - Target: > 50% precision
@@ -530,7 +530,7 @@ This data feeds into the Dashboard `/analytics` page.
 
 - [ ] **Step 1: Create matching skill**
 
-Write to `/home/ec2-user/openclaw-agents/matching-agent/skills/matching/SKILL.md`:
+Write to `/home/ubuntu/.openclaw/agents/matching-agent/skills/matching/SKILL.md`:
 
 ```markdown
 # Matching Skill
@@ -598,7 +598,7 @@ tools and actively evaluating AI design solutions.
 
 Either wait for next 30-minute heartbeat or trigger manually:
 ```bash
-curl -X POST "http://localhost:3000/api/companies/$COMPANY_ID/agents/matching-agent/heartbeats/trigger" \
+curl -X POST "http://127.0.0.1:3100/api/companies/$COMPANY_ID/agents/matching-agent/heartbeats/trigger" \
   -H "Authorization: Bearer $API_KEY"
 ```
 
@@ -606,7 +606,7 @@ curl -X POST "http://localhost:3000/api/companies/$COMPANY_ID/agents/matching-ag
 
 Check OpenClaw logs for matching agent activity:
 ```bash
-docker logs openclaw-gateway | grep "matching-agent.*match"
+journalctl -u openclaw-gateway -n 50 --no-pager | grep "matching-agent.*match"
 ```
 
 Expected: Agent detects supply-demand match between DesignAI and MegaCorp.
@@ -628,7 +628,7 @@ Evaluating AI design solutions for design team
 Confidence: 92%
 Suggestion: Introduce DesignAI founder Zhang Wei to MegaCorp design lead.
 
-[Create Task] [Dismiss] [Details]
+[View Task] [Dismiss]
 ```
 
 - [ ] **Step 5: Verify Mimir relation stored**
@@ -641,13 +641,13 @@ curl "$MIMIR_URL/api/v1/search?user_id=system&query=DesignAI+MegaCorp+MATCH_FOUN
 - [ ] **Step 6: Verify Paperclip issue created**
 
 ```bash
-curl "http://localhost:3000/api/companies/$COMPANY_ID/issues?type=match" \
+curl "http://127.0.0.1:3100/api/companies/$COMPANY_ID/issues?type=match" \
   -H "Authorization: Bearer $API_KEY"
 ```
 
 - [ ] **Step 7: Test button callbacks**
 
-Tap [Create Task] on the Feishu card → verify Paperclip task created.
+Verify [View Task] on the Feishu card opens the auto-created Paperclip task.
 Tap [Dismiss] on another card → verify match status updated.
 
 - [ ] **Step 8: Measure latency**
@@ -664,7 +664,7 @@ After all 9 tasks:
 
 - [ ] matching-agent SOUL.md defines 6 match types with scoring framework
 - [ ] matching-agent HEARTBEAT.md defines full scan-match-notify execution plan
-- [ ] 3 tool handlers registered (graph_traverse, compare_entities, resource_match)
+- [ ] 3 tool handlers registered (graph_traverse, store_match, send_feishu_card)
 - [ ] Need/offer extraction works for new event_logs
 - [ ] Graph traversal finds complementary entities across the Mimir graph
 - [ ] Confidence scoring uses 4-dimension rubric (specificity, complementarity, recency, actionability)
@@ -672,7 +672,7 @@ After all 9 tasks:
 - [ ] Early exit when no new content (saves tokens on quiet periods)
 - [ ] HIGH matches → Feishu group chat immediately with interactive card
 - [ ] MEDIUM matches → daily batch digest to Board
-- [ ] Button callbacks work: [Create Task], [Dismiss], [Details]
+- [ ] Button callbacks work: [View Task], [Dismiss]
 - [ ] Matches stored as Mimir relations (MATCH_FOUND)
 - [ ] Actionable matches create Paperclip issues
 - [ ] Analytics logging tracks precision, type distribution, confidence distribution

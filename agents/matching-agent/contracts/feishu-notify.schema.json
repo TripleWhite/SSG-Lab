@@ -90,7 +90,7 @@
           "text": { "type": "string" },
           "action": {
             "type": "string",
-            "enum": ["create_task", "dismiss", "view_details", "review_on_dashboard"]
+            "enum": ["view_details", "dismiss", "review_on_dashboard"]
           },
           "payload": {
             "type": "object",
