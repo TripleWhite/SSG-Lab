@@ -96,6 +96,62 @@
       }
     },
     {
+      "name": "store_match",
+      "description": "Store a match result as a MATCH_FOUND relation in Mimir and optionally create a Paperclip follow-up task. Used after scoring to persist matches and trigger downstream workflows.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "entity_a_id": {
+            "type": "string",
+            "description": "Mimir entity ID of the first matched entity"
+          },
+          "entity_b_id": {
+            "type": "string",
+            "description": "Mimir entity ID of the second matched entity"
+          },
+          "match_type": {
+            "type": "string",
+            "enum": ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"],
+            "description": "Category of match"
+          },
+          "confidence": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 100,
+            "description": "Match confidence score"
+          },
+          "confidence_level": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM"],
+            "description": "HIGH (>80) or MEDIUM (60-80)"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Brief summary of why these entities match"
+          },
+          "suggested_action": {
+            "type": "string",
+            "description": "Recommended next step for this match"
+          },
+          "scoring": {
+            "type": "object",
+            "properties": {
+              "specificity": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "complementarity": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "recency": { "type": "integer", "minimum": 0, "maximum": 25 },
+              "actionability": { "type": "integer", "minimum": 0, "maximum": 25 }
+            },
+            "description": "4-dimension scoring breakdown"
+          },
+          "create_task": {
+            "type": "boolean",
+            "description": "If true, create a Paperclip follow-up issue for this match (typically true for HIGH matches)"
+          }
+        },
+        "required": ["entity_a_id", "entity_b_id", "match_type", "confidence", "confidence_level", "summary", "suggested_action"]
+      }
+    },
+    {
       "name": "send_feishu_card",
       "description": "Send an interactive card message to the SSG Feishu group chat. Used for HIGH confidence match notifications.",
       "input_schema": {
@@ -103,8 +159,8 @@
         "properties": {
           "card_type": {
             "type": "string",
-            "enum": ["match_found", "daily_digest"],
-            "description": "Card template type"
+            "enum": ["immediate", "digest"],
+            "description": "Card template type: immediate = single HIGH match, digest = batched MEDIUM matches"
           },
           "match_type": {
             "type": "string",

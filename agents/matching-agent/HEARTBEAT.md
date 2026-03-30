@@ -112,7 +112,7 @@ Suggestion: [specific actionable suggestion]
 - Batch all MEDIUM matches into a single card
 - Button: `[Review on Dashboard]`
 
-Store as Paperclip issue (status: pending_review) for the daily portfolio
+Store as Paperclip issue (status: in_review) for the daily portfolio
 agent digest. Do not send individual notifications for MEDIUM matches.
 
 ### 7. Store and Track
