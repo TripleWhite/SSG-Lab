@@ -9,14 +9,16 @@ import {
   isFeishuAuthConfigured,
   setSessionCookie,
 } from "@/lib/auth";
+import { buildLoginRedirectUrl } from "@/lib/auth-logic";
 
-function redirectToLogin(request: Request, error: string, nextPath?: string | null) {
-  const loginUrl = new URL("/login", request.url);
-  loginUrl.searchParams.set("error", error);
-  if (nextPath) {
-    loginUrl.searchParams.set("next", nextPath);
-  }
-  return NextResponse.redirect(loginUrl);
+function redirectToLogin(
+  request: Request,
+  error: string,
+  nextPath?: string | null,
+) {
+  return NextResponse.redirect(
+    buildLoginRedirectUrl(request.url, error, nextPath),
+  );
 }
 
 export async function GET(request: Request) {
@@ -24,7 +26,11 @@ export async function GET(request: Request) {
   const providerError = url.searchParams.get("error");
 
   if (!isFeishuAuthConfigured()) {
-    return redirectToLogin(request, "feishu_not_configured", url.searchParams.get("next"));
+    return redirectToLogin(
+      request,
+      "feishu_not_configured",
+      url.searchParams.get("next"),
+    );
   }
 
   const code = url.searchParams.get("code");
@@ -35,7 +41,7 @@ export async function GET(request: Request) {
     return redirectToLogin(
       request,
       providerError === "access_denied" ? "oauth_denied" : "oauth_failed",
-      statePayload?.nextPath ?? null
+      statePayload?.nextPath ?? null,
     );
   }
 

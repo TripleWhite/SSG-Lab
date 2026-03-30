@@ -1,8 +1,16 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  getAuthRedirectPath,
+  isFeishuAuthConfiguredFromEnv,
+  normalizeNextPath,
+  parseBoardIdentifiers,
+  resolveUserRole,
+} from "./auth-logic";
 
-export type UserRole = "board" | "employee";
+export type { UserRole } from "./auth-logic";
+import type { UserRole } from "./auth-logic";
 
 export interface AuthSession {
   userId: string;
@@ -68,7 +76,9 @@ function base64UrlDecode(value: string): string {
 }
 
 function signPayload(payload: string): string {
-  return createHmac("sha256", getAuthSecret()).update(payload).digest("base64url");
+  return createHmac("sha256", getAuthSecret())
+    .update(payload)
+    .digest("base64url");
 }
 
 function encodeSigned<T>(data: T): string {
@@ -105,51 +115,19 @@ function decodeSigned<T>(value: string): T | null {
   }
 }
 
-function normalizeNextPath(value: string | null): string {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
-    return "/";
-  }
-
-  return value;
-}
-
-function normalizeBoardIdentifier(value: string): string {
-  return value.includes("@") ? value.toLowerCase() : value;
-}
-
 function getBoardIdentifiers(): Set<string> {
-  return new Set(
-    (process.env.BOARD_FEISHU_OPEN_IDS ?? "")
-      .split(",")
-      .map((value) => normalizeBoardIdentifier(value.trim()))
-      .filter(Boolean)
-  );
-}
-
-function resolveRole(openId: string, email?: string): UserRole {
-  const boardIdentifiers = getBoardIdentifiers();
-  const normalizedEmail = email ? normalizeBoardIdentifier(email) : null;
-
-  if (boardIdentifiers.size === 0) {
-    return "employee";
-  }
-
-  return boardIdentifiers.has(openId) || (normalizedEmail ? boardIdentifiers.has(normalizedEmail) : false)
-    ? "board"
-    : "employee";
+  return parseBoardIdentifiers(process.env.BOARD_FEISHU_OPEN_IDS);
 }
 
 export function isFeishuAuthConfigured(): boolean {
-  return Boolean(
-    process.env.FEISHU_APP_ID &&
-      process.env.FEISHU_APP_SECRET &&
-      process.env.NEXTAUTH_SECRET &&
-      process.env.NEXTAUTH_URL
-  );
+  return isFeishuAuthConfiguredFromEnv(process.env);
 }
 
 export function buildFeishuAuthorizeUrl(state: string): string {
-  const redirectUri = new URL("/api/auth/feishu", process.env.NEXTAUTH_URL).toString();
+  const redirectUri = new URL(
+    "/api/auth/feishu",
+    process.env.NEXTAUTH_URL,
+  ).toString();
   const params = new URLSearchParams({
     app_id: process.env.FEISHU_APP_ID ?? "",
     redirect_uri: redirectUri,
@@ -180,7 +158,9 @@ export async function createOAuthState(nextPath: string): Promise<string> {
   return state;
 }
 
-export async function consumeOAuthState(state: string | null): Promise<OAuthState | null> {
+export async function consumeOAuthState(
+  state: string | null,
+): Promise<OAuthState | null> {
   const cookieStore = await cookies();
   const stored = cookieStore.get(OAUTH_STATE_COOKIE_NAME)?.value ?? null;
   cookieStore.delete(OAUTH_STATE_COOKIE_NAME);
@@ -197,7 +177,9 @@ export async function consumeOAuthState(state: string | null): Promise<OAuthStat
   return payload;
 }
 
-export async function setSessionCookie(session: Omit<AuthSession, "expiresAt">): Promise<void> {
+export async function setSessionCookie(
+  session: Omit<AuthSession, "expiresAt">,
+): Promise<void> {
   const fullSession: AuthSession = {
     ...session,
     expiresAt: Date.now() + SESSION_TTL_MS,
@@ -239,34 +221,40 @@ export async function getSession(): Promise<AuthSession | null> {
 
 export async function requireSession(): Promise<AuthSession> {
   const session = await getSession();
-  if (!session) {
-    redirect("/login");
+  const redirectPath = getAuthRedirectPath(session);
+  if (redirectPath) {
+    redirect(redirectPath);
   }
-  return session;
+  // getAuthRedirectPath returns a redirect for null sessions, so session is guaranteed non-null here
+  return session as AuthSession;
 }
 
 export async function requireBoard(): Promise<AuthSession> {
   const session = await requireSession();
-  if (session.role !== "board") {
-    redirect("/?notice=board_access_required");
+  const redirectPath = getAuthRedirectPath(session, "board");
+  if (redirectPath) {
+    redirect(redirectPath);
   }
   return session;
 }
 
 export async function exchangeCodeForToken(code: string): Promise<string> {
-  const response = await fetch("https://open.feishu.cn/open-apis/authen/v1/oidc/access_token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    "https://open.feishu.cn/open-apis/authen/v1/oidc/access_token",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        grant_type: "authorization_code",
+        code,
+        app_id: process.env.FEISHU_APP_ID,
+        app_secret: process.env.FEISHU_APP_SECRET,
+      }),
+      cache: "no-store",
     },
-    body: JSON.stringify({
-      grant_type: "authorization_code",
-      code,
-      app_id: process.env.FEISHU_APP_ID,
-      app_secret: process.env.FEISHU_APP_SECRET,
-    }),
-    cache: "no-store",
-  });
+  );
 
   if (!response.ok) {
     throw new Error(`Feishu token exchange failed: ${response.status}`);
@@ -281,13 +269,18 @@ export async function exchangeCodeForToken(code: string): Promise<string> {
   return token;
 }
 
-export async function fetchFeishuUser(accessToken: string): Promise<Omit<AuthSession, "role" | "expiresAt">> {
-  const response = await fetch("https://open.feishu.cn/open-apis/authen/v1/user_info", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
+export async function fetchFeishuUser(
+  accessToken: string,
+): Promise<Omit<AuthSession, "role" | "expiresAt">> {
+  const response = await fetch(
+    "https://open.feishu.cn/open-apis/authen/v1/user_info",
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: "no-store",
     },
-    cache: "no-store",
-  });
+  );
 
   if (!response.ok) {
     throw new Error(`Feishu user info failed: ${response.status}`);
@@ -312,11 +305,11 @@ export async function fetchFeishuUser(accessToken: string): Promise<Omit<AuthSes
 }
 
 export function createRoleAwareSession(
-  user: Omit<AuthSession, "role" | "expiresAt">
+  user: Omit<AuthSession, "role" | "expiresAt">,
 ): Omit<AuthSession, "expiresAt"> {
   return {
     ...user,
-    role: resolveRole(user.openId, user.email),
+    role: resolveUserRole(user.openId, user.email, getBoardIdentifiers()),
   };
 }
 

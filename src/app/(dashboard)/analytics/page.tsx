@@ -4,7 +4,11 @@ import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { requireBoard } from "@/lib/auth";
 import { formatCompactNumber, formatWeekLabel, getWeekKey } from "@/lib/format";
-import { getAgentCosts, getDashboardStats, getHeartbeatRuns } from "@/lib/paperclip";
+import {
+  getAgentCosts,
+  getDashboardStats,
+  getHeartbeatRuns,
+} from "@/lib/paperclip";
 
 const FALLBACK_STATS = {
   runSuccessRate: 92,
@@ -40,7 +44,12 @@ interface BarChartProps {
   valueSuffix?: string;
 }
 
-function BarChart({ title, data, maxValue = 100, valueSuffix = "%" }: BarChartProps) {
+function BarChart({
+  title,
+  data,
+  maxValue = 100,
+  valueSuffix = "%",
+}: BarChartProps) {
   return (
     <Card>
       <CardTitle className="mb-4">{title}</CardTitle>
@@ -63,7 +72,9 @@ function BarChart({ title, data, maxValue = 100, valueSuffix = "%" }: BarChartPr
                   }}
                 />
               </div>
-              <span className="text-xs text-[var(--muted-foreground)]">{week}</span>
+              <span className="text-xs text-[var(--muted-foreground)]">
+                {week}
+              </span>
             </div>
           );
         })}
@@ -72,10 +83,12 @@ function BarChart({ title, data, maxValue = 100, valueSuffix = "%" }: BarChartPr
   );
 }
 
-function buildWeeklyRunVolume(runs: Awaited<ReturnType<typeof getHeartbeatRuns>>) {
+function buildWeeklyRunVolume(
+  runs: Awaited<ReturnType<typeof getHeartbeatRuns>>,
+) {
   const counts = new Map<string, number>();
   for (const run of runs) {
-    const key = getWeekKey(run.startedAt);
+    const key = getWeekKey(run.activityAt);
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
@@ -85,10 +98,12 @@ function buildWeeklyRunVolume(runs: Awaited<ReturnType<typeof getHeartbeatRuns>>
     .map(([week, value]) => ({ week: formatWeekLabel(week), value }));
 }
 
-function buildWeeklySuccessRate(runs: Awaited<ReturnType<typeof getHeartbeatRuns>>) {
+function buildWeeklySuccessRate(
+  runs: Awaited<ReturnType<typeof getHeartbeatRuns>>,
+) {
   const counts = new Map<string, { total: number; successful: number }>();
   for (const run of runs) {
-    const key = getWeekKey(run.startedAt);
+    const key = getWeekKey(run.activityAt);
     const current = counts.get(key) ?? { total: 0, successful: 0 };
     if (run.status !== "running") {
       current.total += 1;
@@ -104,7 +119,10 @@ function buildWeeklySuccessRate(runs: Awaited<ReturnType<typeof getHeartbeatRuns
     .slice(-4)
     .map(([week, value]) => ({
       week: formatWeekLabel(week),
-      value: value.total === 0 ? 100 : Math.round((value.successful / value.total) * 100),
+      value:
+        value.total === 0
+          ? 100
+          : Math.round((value.successful / value.total) * 100),
     }));
 }
 
@@ -122,14 +140,19 @@ export default async function AnalyticsPage() {
     runsResult.status === "rejected" ||
     costsResult.status === "rejected";
 
-  const stats = statsResult.status === "fulfilled" ? statsResult.value : FALLBACK_STATS;
+  const stats =
+    statsResult.status === "fulfilled" ? statsResult.value : FALLBACK_STATS;
   const runs = runsResult.status === "fulfilled" ? runsResult.value : [];
   const costs = costsResult.status === "fulfilled" ? costsResult.value : [];
 
   const weeklyRunVolume =
-    runs.length > 0 ? buildWeeklyRunVolume(runs) : [...FALLBACK_WEEKLY_DATA.runVolume];
+    runs.length > 0
+      ? buildWeeklyRunVolume(runs)
+      : [...FALLBACK_WEEKLY_DATA.runVolume];
   const weeklySuccessRate =
-    runs.length > 0 ? buildWeeklySuccessRate(runs) : [...FALLBACK_WEEKLY_DATA.successRate];
+    runs.length > 0
+      ? buildWeeklySuccessRate(runs)
+      : [...FALLBACK_WEEKLY_DATA.successRate];
   const costBreakdown =
     costs.length > 0
       ? costs
@@ -152,7 +175,8 @@ export default async function AnalyticsPage() {
       <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-[var(--muted-foreground)]">
-            Analytics now reflects Paperclip heartbeat success, task throughput, and agent cost data.
+            Analytics now reflects Paperclip heartbeat success, task throughput,
+            and agent cost data.
           </p>
           {isFallback && <Badge variant="warning">Fallback Active</Badge>}
         </div>
@@ -200,7 +224,9 @@ export default async function AnalyticsPage() {
             >
               <span className="font-medium">{agent}</span>
               <div className="flex items-center gap-4">
-                <span className="text-sm text-[var(--muted-foreground)]">{tokens}</span>
+                <span className="text-sm text-[var(--muted-foreground)]">
+                  {tokens}
+                </span>
                 <span className="text-sm font-semibold text-[var(--ssg-green)]">
                   {cost}
                 </span>

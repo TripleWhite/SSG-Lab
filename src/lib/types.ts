@@ -59,8 +59,9 @@ export interface HeartbeatRun {
   id: string;
   agentId: string;
   agentName: string;
-  status: "succeeded" | "failed" | "running";
-  startedAt: string;
+  status: "queued" | "succeeded" | "failed" | "running";
+  startedAt?: string;
+  activityAt: string;
   completedAt?: string;
   summary?: string;
   tokenUsage: number;

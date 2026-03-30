@@ -11,7 +11,11 @@ import {
   getProjectWorkItems,
   getProjects,
 } from "@/lib/paperclip";
-import { formatClockTime, formatRelativeTime, truncateText } from "@/lib/format";
+import {
+  formatClockTime,
+  formatRelativeTime,
+  truncateText,
+} from "@/lib/format";
 
 export const revalidate = 30;
 
@@ -84,9 +88,27 @@ const FALLBACK_AGENT_ACTIVITY = [
 ] as const;
 
 const FALLBACK_TEAM_ACTIVITY = [
-  { id: "fallback-frontend", name: "Frontend Engineer", role: "engineer", inputsThisWeek: 6, projectsOwned: 1 },
-  { id: "fallback-qa", name: "QA Engineer", role: "engineer", inputsThisWeek: 4, projectsOwned: 1 },
-  { id: "fallback-cto", name: "CTO", role: "cto", inputsThisWeek: 3, projectsOwned: 1 },
+  {
+    id: "fallback-frontend",
+    name: "Frontend Engineer",
+    role: "engineer",
+    inputsThisWeek: 6,
+    projectsOwned: 1,
+  },
+  {
+    id: "fallback-qa",
+    name: "QA Engineer",
+    role: "engineer",
+    inputsThisWeek: 4,
+    projectsOwned: 1,
+  },
+  {
+    id: "fallback-cto",
+    name: "CTO",
+    role: "cto",
+    inputsThisWeek: 3,
+    projectsOwned: 1,
+  },
 ] as const;
 
 const STATUS_VARIANTS = {
@@ -118,7 +140,7 @@ const PHASE_PROGRESS_COLORS = [
 ] as const;
 
 function buildPhaseProgress(
-  workItems: ReadonlyArray<{ status: string }>
+  workItems: ReadonlyArray<{ status: string }>,
 ): Array<{ label: string; count: number; color: string }> {
   if (workItems.length === 0) {
     return [...FALLBACK_PHASE_PROGRESS];
@@ -153,25 +175,35 @@ function readSearchParam(value: SearchParamValue): string | null {
   return value ?? null;
 }
 
-export default async function OverviewPage({ searchParams }: OverviewPageProps) {
+export default async function OverviewPage({
+  searchParams,
+}: OverviewPageProps) {
   const params = (await searchParams) ?? {};
   const notice = readSearchParam(params.notice);
-  const [statsResult, projectsResult, runsResult, employeesResult] = await Promise.allSettled([
-    getDashboardStats(),
-    getProjects(),
-    getHeartbeatRuns(24),
-    getEmployees(),
-  ]);
+  const [statsResult, projectsResult, runsResult, employeesResult] =
+    await Promise.allSettled([
+      getDashboardStats(),
+      getProjects(),
+      getHeartbeatRuns(24),
+      getEmployees(),
+    ]);
 
-  const stats = statsResult.status === "fulfilled" ? statsResult.value : FALLBACK_STATS;
-  const projects = projectsResult.status === "fulfilled" ? projectsResult.value : [];
+  const stats =
+    statsResult.status === "fulfilled" ? statsResult.value : FALLBACK_STATS;
+  const projects =
+    projectsResult.status === "fulfilled" ? projectsResult.value : [];
   const runs = runsResult.status === "fulfilled" ? runsResult.value : [];
   const employees =
-    employeesResult.status === "fulfilled" ? employeesResult.value : FALLBACK_TEAM_ACTIVITY;
+    employeesResult.status === "fulfilled"
+      ? employeesResult.value
+      : FALLBACK_TEAM_ACTIVITY;
 
-  const ssgProject = projects.find((project) => project.title === "SSG Lab") ?? null;
+  const ssgProject =
+    projects.find((project) => project.title === "SSG Lab") ?? null;
   const workItemsResult =
-    ssgProject !== null ? await Promise.allSettled([getProjectWorkItems(ssgProject.id)]) : null;
+    ssgProject !== null
+      ? await Promise.allSettled([getProjectWorkItems(ssgProject.id)])
+      : null;
   const workItems =
     workItemsResult && workItemsResult[0].status === "fulfilled"
       ? workItemsResult[0].value
@@ -195,12 +227,15 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
       : FALLBACK_RECENT_WORK;
 
   const phaseProgress = buildPhaseProgress(workItems);
-  const phaseProgressMax = Math.max(...phaseProgress.map((stage) => stage.count), 1);
+  const phaseProgressMax = Math.max(
+    ...phaseProgress.map((stage) => stage.count),
+    1,
+  );
 
   const agentActivity =
     runs.length > 0
       ? runs.slice(0, 5).map((run) => ({
-          time: formatRelativeTime(run.startedAt),
+          time: formatRelativeTime(run.activityAt),
           agent: run.agentName,
           action: truncateText(run.summary ?? run.status, 96),
         }))
@@ -229,12 +264,12 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
         <Card className="border-amber-500/20 bg-amber-500/5 p-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-semibold text-amber-200">Board access required</p>
+              <p className="text-sm font-semibold text-amber-200">
+                Board access required
+              </p>
               <p className="text-sm text-[var(--muted-foreground)]">
-                Analytics and Settings are limited to mapped board users. Add
-                {" "}
-                <span className="font-mono text-xs">BOARD_FEISHU_OPEN_IDS</span>
-                {" "}
+                Analytics and Settings are limited to mapped board users. Add{" "}
+                <span className="font-mono text-xs">BOARD_FEISHU_OPEN_IDS</span>{" "}
                 if this account should retain board-level access.
               </p>
             </div>
@@ -248,7 +283,8 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
           <div>
             <p className="text-sm font-semibold">Live Paperclip status</p>
             <p className="text-sm text-[var(--muted-foreground)]">
-              Overview now reads current Paperclip projects, heartbeat runs, and team activity.
+              Overview now reads current Paperclip projects, heartbeat runs, and
+              team activity.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -306,9 +342,7 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
                   className="flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--background)] px-4 py-3"
                 >
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">
-                      {item.identifier}
-                    </p>
+                    <p className="text-sm font-medium">{item.identifier}</p>
                     <p className="text-xs text-[var(--muted-foreground)]">
                       {truncateText(item.title, 86)}
                     </p>
@@ -318,9 +352,15 @@ export default async function OverviewPage({ searchParams }: OverviewPageProps) 
                       {item.assignee}
                     </span>
                     <Badge
-                      variant={STATUS_VARIANTS[item.status as keyof typeof STATUS_VARIANTS] ?? "info"}
+                      variant={
+                        STATUS_VARIANTS[
+                          item.status as keyof typeof STATUS_VARIANTS
+                        ] ?? "info"
+                      }
                     >
-                      {STATUS_LABELS[item.status as keyof typeof STATUS_LABELS] ?? item.status}
+                      {STATUS_LABELS[
+                        item.status as keyof typeof STATUS_LABELS
+                      ] ?? item.status}
                     </Badge>
                   </div>
                 </li>

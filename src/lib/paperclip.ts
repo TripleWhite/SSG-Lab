@@ -9,6 +9,14 @@ import type {
   SourcingResult,
   WorkItem,
 } from "./types";
+import {
+  compareHeartbeatRunsDesc,
+  getHeartbeatRunActivityAt,
+  hasStartedHeartbeatRun,
+  isCompletedHeartbeatRunStatus,
+  mapHeartbeatRunStatus,
+  type RawHeartbeatRunStatus,
+} from "./heartbeat-runs";
 
 const API_URL = process.env.PAPERCLIP_API_URL || "http://localhost:3000";
 const API_KEY = process.env.PAPERCLIP_API_KEY || "";
@@ -88,8 +96,10 @@ interface PaperclipIssue {
 interface PaperclipHeartbeatRun {
   id: string;
   agentId: string;
-  status: "running" | "succeeded" | "failed" | "timed_out" | "cancelled";
-  startedAt: string;
+  status: RawHeartbeatRunStatus;
+  startedAt?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
   finishedAt?: string | null;
   error?: string | null;
   usageJson?: {
@@ -318,21 +328,19 @@ export async function getHeartbeatRuns(
   ]);
   const agentNames = new Map(agents.map((agent) => [agent.id, agent.name]));
 
-  return runs.map((run) => ({
-    id: run.id,
-    agentId: run.agentId,
-    agentName: agentNames.get(run.agentId) ?? "Unknown Agent",
-    status:
-      run.status === "succeeded"
-        ? "succeeded"
-        : run.status === "running"
-          ? "running"
-          : "failed",
-    startedAt: run.startedAt,
-    completedAt: run.finishedAt ?? undefined,
-    summary: formatRunSummary(run),
-    tokenUsage: getRunTokenUsage(run),
-  }));
+  return runs
+    .map((run) => ({
+      id: run.id,
+      agentId: run.agentId,
+      agentName: agentNames.get(run.agentId) ?? "Unknown Agent",
+      status: mapHeartbeatRunStatus(run.status),
+      startedAt: run.startedAt ?? undefined,
+      activityAt: getHeartbeatRunActivityAt(run),
+      completedAt: run.finishedAt ?? undefined,
+      summary: formatRunSummary(run),
+      tokenUsage: getRunTokenUsage(run),
+    }))
+    .sort(compareHeartbeatRunsDesc);
 }
 
 export async function getAgentCosts(
@@ -367,8 +375,12 @@ export async function getAgents(
   return agents
     .map((agent) => {
       const agentRuns = runs.filter((run) => run.agentId === agent.id);
-      const latestRun = agentRuns[0];
+      const latestStartedRun = agentRuns.find(hasStartedHeartbeatRun);
       const todayRuns = agentRuns.filter((run) => {
+        if (!hasStartedHeartbeatRun(run)) {
+          return false;
+        }
+
         const startedAt = new Date(run.startedAt);
         return (
           startedAt.getFullYear() === now.getFullYear() &&
@@ -378,8 +390,8 @@ export async function getAgents(
       });
       const intervalSec = agent.runtimeConfig?.heartbeat?.intervalSec ?? null;
       const nextHeartbeat =
-        latestRun && intervalSec
-          ? new Date(new Date(latestRun.startedAt).getTime() + intervalSec * 1000).toISOString()
+        latestStartedRun?.startedAt && intervalSec
+          ? new Date(new Date(latestStartedRun.startedAt).getTime() + intervalSec * 1000).toISOString()
           : undefined;
 
       return {
@@ -388,7 +400,7 @@ export async function getAgents(
         role: agent.role,
         status: agent.status,
         adapterType: agent.title ?? agent.role,
-        lastHeartbeat: latestRun?.startedAt ?? agent.lastHeartbeatAt ?? undefined,
+        lastHeartbeat: latestStartedRun?.startedAt ?? agent.lastHeartbeatAt ?? undefined,
         nextHeartbeat,
         todayRuns: todayRuns.length,
         tokenUsageToday: todayRuns.reduce((sum, run) => sum + run.tokenUsage, 0),
@@ -461,7 +473,10 @@ export async function getEmployees(): Promise<Employee[]> {
       name: agent.name,
       role: agent.title ?? agent.role,
       inputsThisWeek: runs.filter(
-        (run) => run.agentId === agent.id && new Date(run.startedAt).getTime() >= weekAgo
+        (run) =>
+          run.agentId === agent.id &&
+          hasStartedHeartbeatRun(run) &&
+          new Date(run.startedAt).getTime() >= weekAgo
       ).length,
       projectsOwned:
         projects.filter((project) => project.leadAgentId === agent.id).length +
@@ -483,7 +498,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     getRawAgents(DEFAULT_REVALIDATE_SECONDS),
   ]);
 
-  const completedRuns = runs.filter((run) => run.status !== "running");
+  const completedRuns = runs.filter((run) => isCompletedHeartbeatRunStatus(run.status));
   const successfulRuns = completedRuns.filter((run) => run.status === "succeeded");
   const runSuccessRate =
     completedRuns.length === 0 ? 100 : Math.round((successfulRuns.length / completedRuns.length) * 100);
