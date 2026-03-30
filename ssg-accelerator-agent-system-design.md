@@ -2,7 +2,7 @@
 
 **Date**: 2026-03-29
 **Author**: Arthur (CEO) + Claude (Architect)
-**Status**: Draft — pending review
+**Status**: Working spec — Phase 1 deployed, follow-up review still open
 
 ---
 
@@ -348,6 +348,7 @@ Search/retrieval:
 
 - **memory_store**: Agent actively stores important information (HIGH confidence)
 - **memory_search**: Structured query (keyword + vector + graph-traverse)
+- **memory_graph**: Traverse relationships in the accelerator graph
 - **memory_update**: Update existing entities when new info arrives
 - **memory_delete**: Soft delete with audit trail
 
@@ -357,12 +358,13 @@ Search/retrieval:
 - **agent_end**: LLM final review — "anything important I should remember?"
 - **before_reset**: Before compression, extract uncaptured important info
 
-### Mimir Server Changes Required
+### Mimir Server — No Changes Required
 
-1. Confidence/weight field on stored items
-2. Source tracking: `agent_curated` vs `auto_extracted`
-3. Search ranking prioritizes high-confidence items
-4. Dedup: merge when autoCapture extracts something already curated
+Mimir's existing architecture fully supports the hybrid model:
+- Agent-curated content (via memory_store) is higher quality input → pipeline naturally assigns higher importance
+- autoCapture content is raw text → pipeline extracts with lower importance
+- Search already ranks by importance — no new fields needed
+- EC2-A deployment stays untouched
 
 ---
 
@@ -729,18 +731,21 @@ EC2-B (New, t3.xlarge, 4 vCPU / 16GB / 50GB gp3):
     Headless Chromium (sourcing)
     memory-mimir plugin -> api.allinmimir.com
   Paperclip Server (:3000)
-    PGlite (embedded Postgres)
+    Embedded Postgres
     openclaw_gateway adapter -> localhost:18789
-  Caddy: board.ssgaccelerator.com -> :3000
+  Caddy: board.ssgaccelerator.com -> 127.0.0.1:3000
+  Services: systemd (`paperclip.service`, `openclaw-gateway.service`)
 
 Vercel:
   www.ssgaccelerator.com (existing, unchanged)
   dash.ssgaccelerator.com (new Dashboard)
 ```
 
+Host hardening note: EC2-B public ingress is limited to `22` and `443`. Paperclip stays on `127.0.0.1:3100`, OpenClaw stays on `127.0.0.1:18789`, and the binary-fallback `caddy.service` runs as `User=caddy` / `Group=caddy`. If Caddy home or storage ownership is migrated to `caddy` on a live host, the next restart can trigger a one-time TLS reprovision, so re-check `https://board.ssgaccelerator.com/api/health` after the restart.
+
 ### OpenClaw Multi-Agent Config
 
-Single gateway, 4 agents, Feishu bound to feishu-bot only. Sourcing/portfolio/matching triggered by Paperclip heartbeat via openclaw_gateway adapter.
+Single gateway, 4 agents, Feishu bound to feishu-bot only. Sourcing/portfolio/matching triggered by Paperclip heartbeat via openclaw_gateway adapter. Each agent needs an explicit session key (`agent:<name>:main`) to avoid session-routing collisions inside the shared gateway.
 
 ### Heartbeat Schedule
 
@@ -795,7 +800,7 @@ Deploy Paperclip, seed mock data, build Dashboard on Vercel with SSG brand. Inte
 
 ### Phase 1: Data Pipeline
 
-OpenClaw + Feishu + memory-mimir redesign. Employee says something -> Mimir stores it.
+OpenClaw + Feishu + memory-mimir redesign. Employee says something -> Mimir stores it. Phase 1 infrastructure is deployed; the remaining work is operational verification and production data seeding, not a new architecture branch.
 
 ### Phase 2: Sourcing Agent
 
@@ -820,7 +825,7 @@ Replace mock data with live APIs. Real-time agent monitoring.
 ### Resolved Questions
 
 1. **Feishu app**: Existing enterprise version. No new app needed.
-2. **Mimir confidence field**: Add `confidence` (HIGH/MEDIUM/LOW) and `source` (agent_curated/auto_extracted/user_explicit) fields to event_log/entity/relation tables. Small schema change, not a refactor.
+2. **Mimir confidence field**: Dropped from Phase 1. The live deployment keeps the existing importance-based ranking on EC2-A and does not require a schema migration.
 3. **Dashboard auth**: Feishu OAuth.
 4. **LLM models**: MiniMax M2.7 and Kimi K2.5 via coding plans. OpenClaw natively supports custom model providers. Per-agent model selection via OpenClaw agent config.
 5. **Sourcing legal compliance**: Confirmed compliant.
@@ -905,6 +910,8 @@ Matching Agent traverses this graph to find resource matches:
 ```
 
 This resource graph is seeded during Phase 1 (data pipeline) and continuously updated by employees through natural conversation ("I just got connected with the Google for Startups team").
+
+Current repo note: the checked-in seed file is still placeholder data and should not be treated as production-ready until real SSG relationships are filled in.
 
 ### Future Work (Post-MVP)
 

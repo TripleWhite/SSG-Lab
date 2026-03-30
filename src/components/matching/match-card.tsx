@@ -84,14 +84,18 @@ export function MatchCard({
 
       <p className="text-sm text-[var(--muted-foreground)] mb-4">{suggestion}</p>
 
-      {status === "pending" && (
+      {status === "pending" && (onCreateTask || onDismiss) && (
         <div className="flex gap-2">
-          <Button variant="outline" onClick={onCreateTask}>
-            Create Task
-          </Button>
-          <Button variant="ghost" onClick={onDismiss}>
-            Dismiss
-          </Button>
+          {onCreateTask && (
+            <Button variant="outline" onClick={onCreateTask}>
+              Create Task
+            </Button>
+          )}
+          {onDismiss && (
+            <Button variant="ghost" onClick={onDismiss}>
+              Dismiss
+            </Button>
+          )}
         </div>
       )}
     </Card>

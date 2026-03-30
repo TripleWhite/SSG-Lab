@@ -1,0 +1,94 @@
+{
+  "_comment": "SSG Accelerator Resource Graph — Seed Data. Replace placeholders before seeding production. All entities should be treated as explicit, user-provided resource data.",
+  "_deploy_target": "https://api.allinmimir.com",
+  "_instructions": "Run the seed step only after replacing the placeholder people and relationships. No Mimir schema migration is required. Requires MIMIR_API_KEY and MIMIR_USER_ID env vars.",
+
+  "employees": [
+    {
+      "name": "Placeholder — Replace with actual SSG team",
+      "role": "Investment Associate",
+      "focus": "AI/ML, Developer Tools",
+      "connections": ["AWS Activate", "Sequoia Scout Network", "Google Cloud Startup Program"],
+      "notes": "Replace with actual employee data before seeding"
+    }
+  ],
+
+  "lp_investors": [
+    {
+      "name": "Placeholder LP 1",
+      "type": "Venture Fund",
+      "focus_sectors": ["AI Infrastructure", "Developer Tools", "Enterprise SaaS"],
+      "stage_range": "Seed to Series A",
+      "ticket_size": "$500K - $2M",
+      "notes": "Replace with actual LP data"
+    },
+    {
+      "name": "Placeholder LP 2",
+      "type": "Angel Investor",
+      "focus_sectors": ["Healthcare AI", "Biotech"],
+      "stage_range": "Pre-seed",
+      "ticket_size": "$50K - $200K",
+      "notes": "Replace with actual LP data"
+    }
+  ],
+
+  "mentors": [
+    {
+      "name": "Placeholder Mentor 1",
+      "expertise": ["B2B Sales", "SaaS GTM", "Enterprise Pricing"],
+      "availability": "2 hours/month",
+      "notes": "Replace with actual mentor data"
+    },
+    {
+      "name": "Placeholder Mentor 2",
+      "expertise": ["AI/ML", "Robotics", "Computer Vision"],
+      "availability": "1 hour/month",
+      "notes": "Replace with actual mentor data"
+    },
+    {
+      "name": "Placeholder Mentor 3",
+      "expertise": ["Product Strategy", "UX Research", "Growth"],
+      "availability": "2 hours/month",
+      "notes": "Replace with actual mentor data"
+    }
+  ],
+
+  "partner_programs": [
+    {
+      "name": "AWS Activate",
+      "type": "Cloud Credits",
+      "benefit": "Up to $100K cloud credits for startups",
+      "eligibility": "Early-stage, VC-backed or accelerator-affiliated",
+      "contact_method": "Apply via AWS Activate portal"
+    },
+    {
+      "name": "Google for Startups Cloud Program",
+      "type": "Cloud Credits",
+      "benefit": "Up to $200K Google Cloud credits over 2 years",
+      "eligibility": "Seed to Series A, under $15M raised",
+      "contact_method": "Apply via Google for Startups portal"
+    },
+    {
+      "name": "Microsoft for Startups Founders Hub",
+      "type": "Cloud Credits + Tools",
+      "benefit": "Up to $150K Azure credits + GitHub Enterprise + LinkedIn talent",
+      "eligibility": "Any stage, no funding requirement",
+      "contact_method": "Apply via Microsoft Founders Hub"
+    }
+  ],
+
+  "relation_types": [
+    "WORKS_AT",
+    "FOUNDED",
+    "INVESTED_IN",
+    "MENTORS",
+    "KNOWS_CONTACT",
+    "PARTNER_OF",
+    "MET_WITH",
+    "INTRODUCED_TO",
+    "NEEDS",
+    "OFFERS",
+    "APPLIED_TO",
+    "REFERRED_BY"
+  ]
+}

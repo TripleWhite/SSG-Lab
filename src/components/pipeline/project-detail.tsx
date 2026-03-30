@@ -3,8 +3,17 @@
 import { useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
+import type { ProjectData } from "./project-card";
 
 type HealthStatus = "on-track" | "needs-attention" | "at-risk" | "overdue";
+type TaskStatus =
+  | "backlog"
+  | "todo"
+  | "in_progress"
+  | "in_review"
+  | "done"
+  | "blocked"
+  | "cancelled";
 
 const healthConfig: Record<
   HealthStatus,
@@ -38,27 +47,38 @@ interface TimelineEntry {
   actor: string;
 }
 
-interface RelatedMatch {
-  name: string;
-  confidence: number;
+export interface ProjectTaskSummary {
+  id: string;
+  identifier: string;
+  title: string;
+  status: TaskStatus;
+  assignee: string;
+  updatedAtLabel: string;
 }
 
-interface ProjectDetailData {
-  company: string;
-  founder: string;
-  stage: string;
-  health: HealthStatus;
-  assignee: string;
-  latestInsight: string;
+export interface ProjectDetailData extends ProjectData {
   timeline: TimelineEntry[];
   actions: string[];
-  relatedMatches?: RelatedMatch[];
+  tasks: ProjectTaskSummary[];
 }
 
 interface ProjectDetailProps {
   project: ProjectDetailData;
   onClose: () => void;
 }
+
+const taskStatusConfig: Record<
+  TaskStatus,
+  { label: string; variant: "default" | "info" | "warning" | "success" | "danger" }
+> = {
+  backlog: { label: "Backlog", variant: "info" },
+  todo: { label: "Todo", variant: "info" },
+  in_progress: { label: "In Progress", variant: "success" },
+  in_review: { label: "In Review", variant: "warning" },
+  done: { label: "Done", variant: "default" },
+  blocked: { label: "Blocked", variant: "danger" },
+  cancelled: { label: "Cancelled", variant: "danger" },
+};
 
 export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -97,10 +117,10 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
         <div className="p-6 space-y-6">
           {/* Header */}
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">{project.company}</h2>
-            <p className="mt-1 text-sm text-[var(--muted-foreground)]">{project.founder}</p>
+            <h2 className="text-2xl font-bold tracking-tight">{project.title}</h2>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">{project.subtitle}</p>
             <div className="mt-3 flex items-center gap-2">
-              <Badge variant="info">{project.stage}</Badge>
+              <Badge variant={project.stageVariant}>{project.stage}</Badge>
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${healthClassName}`}
               >
@@ -114,34 +134,13 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
             </p>
           </div>
 
-          {/* Timeline */}
+          {/* Latest Signal */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-3">
-              Timeline
-            </h3>
-            <div className="relative">
-              <div className="absolute left-[5px] top-2 bottom-2 w-px bg-[var(--border)]" />
-              <ul className="space-y-4 pl-6">
-                {project.timeline.map((entry, i) => (
-                  <li key={i} className="relative">
-                    <span className="absolute -left-[19px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--ssg-green)] ring-2 ring-[var(--card)]" />
-                    <p className="text-sm text-[var(--foreground)]">{entry.event}</p>
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                      {entry.date} &middot; {entry.actor}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Latest Insight */}
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
-              Latest Insight
+              Latest Signal
             </h3>
             <p className="text-sm text-[var(--foreground)] leading-relaxed">
-              {project.latestInsight}
+              {project.latestSignal}
             </p>
           </div>
 
@@ -162,27 +161,66 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
             </ol>
           </div>
 
-          {/* Related Matches */}
-          {project.relatedMatches && project.relatedMatches.length > 0 && (
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
-                Related Matches
-              </h3>
+          {/* Child Tasks */}
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
+              Child Tasks
+            </h3>
+            {project.tasks.length === 0 ? (
+              <p className="text-sm text-[var(--muted-foreground)]">
+                No child tasks are attached to this workstream yet.
+              </p>
+            ) : (
               <ul className="space-y-2">
-                {project.relatedMatches.map((match, i) => (
-                  <li
-                    key={i}
-                    className="flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--background)] px-3 py-2"
-                  >
-                    <span className="text-sm">{match.name}</span>
-                    <span className="text-sm font-bold text-[var(--ssg-green)]">
-                      {match.confidence}%
-                    </span>
+                {project.tasks.map((task) => {
+                  const config = taskStatusConfig[task.status];
+
+                  return (
+                    <li
+                      key={task.id}
+                      className="rounded-md border border-[var(--border)] bg-[var(--background)] px-3 py-3"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-[var(--foreground)]">
+                            {task.identifier}
+                          </p>
+                          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                            {task.title}
+                          </p>
+                        </div>
+                        <Badge variant={config.variant}>{config.label}</Badge>
+                      </div>
+                      <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+                        {task.assignee} &middot; {task.updatedAtLabel}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {/* Timeline */}
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-3">
+              Timeline
+            </h3>
+            <div className="relative">
+              <div className="absolute left-[5px] top-2 bottom-2 w-px bg-[var(--border)]" />
+              <ul className="space-y-4 pl-6">
+                {project.timeline.map((entry) => (
+                  <li key={`${entry.date}-${entry.event}`} className="relative">
+                    <span className="absolute -left-[19px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--ssg-green)] ring-2 ring-[var(--card)]" />
+                    <p className="text-sm text-[var(--foreground)]">{entry.event}</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">
+                      {entry.date} &middot; {entry.actor}
+                    </p>
                   </li>
                 ))}
               </ul>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

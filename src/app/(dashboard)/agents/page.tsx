@@ -1,120 +1,183 @@
 import { AgentCard } from "@/components/agents/agent-card";
 import { HeartbeatTimeline } from "@/components/agents/heartbeat-timeline";
+import { Header } from "@/components/nav/header";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { AutoRefresh } from "@/components/dashboard/auto-refresh";
+import { formatClockTime, formatCompactNumber, formatRelativeTime, isSameDay, truncateText } from "@/lib/format";
+import { getAgents, getHeartbeatRuns } from "@/lib/paperclip";
 
-const AGENTS = [
+export const revalidate = 15;
+
+const FALLBACK_AGENTS = [
   {
-    name: "Sourcing Agent",
+    name: "Frontend Engineer",
     status: "running" as const,
     lastHeartbeat: "2 min ago",
     nextHeartbeat: "In 8 min",
-    todayRuns: 14,
-    tokenUsage: "38.4k tokens",
+    todayRuns: 6,
+    tokenUsage: "18.4k tokens",
     recentActions: [
-      { time: "09:47", description: "Scraped 12 new startups from Y Combinator W25 batch" },
-      { time: "09:35", description: "Enriched 8 company profiles via Clearbit API" },
-      { time: "09:20", description: "Deduplication pass — removed 3 duplicate entries" },
-      { time: "09:10", description: "Ingested LinkedIn data for founders in SaaS sector" },
+      { time: "09:47", description: "Mapped heartbeat runs into the Overview page" },
+      { time: "09:35", description: "Replaced dashboard stats with live Paperclip totals" },
+      { time: "09:20", description: "Added fallback handling for unreachable APIs" },
+      { time: "09:10", description: "Prepared analytics cost breakdown wiring" },
     ],
   },
   {
-    name: "Portfolio Agent",
+    name: "QA Engineer",
     status: "idle" as const,
     lastHeartbeat: "18 min ago",
     nextHeartbeat: "In 2 min",
     todayRuns: 6,
     tokenUsage: "12.1k tokens",
     recentActions: [
-      { time: "09:31", description: "Updated KPI summaries for 4 portfolio companies" },
-      { time: "09:15", description: "Flagged HealthTrack for follow-up — ARR dip detected" },
-      { time: "08:50", description: "Generated weekly digest for 11 active investments" },
-      { time: "08:30", description: "Synced Notion workspace with latest funding round data" },
+      { time: "09:31", description: "Prepared live-data regression checklist" },
+      { time: "09:15", description: "Queued dashboard verification after review" },
+      { time: "08:50", description: "Synced issue coverage with the Phase 5 plan" },
+      { time: "08:30", description: "Reviewed empty-state handling for dashboard routes" },
     ],
   },
   {
-    name: "Matching Agent",
-    status: "running" as const,
-    lastHeartbeat: "5 min ago",
-    nextHeartbeat: "In 5 min",
+    name: "CTO",
+    status: "error" as const,
+    lastHeartbeat: "35 min ago",
+    nextHeartbeat: "Queued",
     todayRuns: 9,
     tokenUsage: "22.7k tokens",
     recentActions: [
-      { time: "09:44", description: "Matched DesignAI to 3 strategic LP introductions" },
-      { time: "09:32", description: "Scored 24 inbound leads — avg fit score 0.71" },
-      { time: "09:18", description: "Re-ranked FinPilot against updated thesis criteria" },
-      { time: "09:05", description: "Cluster analysis complete — 2 new sector themes surfaced" },
+      { time: "09:44", description: "Coordinated the Phase 5 review chain" },
+      { time: "09:32", description: "Escalated upstream blockers on credentials" },
+      { time: "09:18", description: "Assigned QA and documentation follow-up tasks" },
+      { time: "09:05", description: "Reviewed the implementation wave plan" },
     ],
   },
 ];
 
-const HEARTBEAT_ENTRIES = [
+const FALLBACK_HEARTBEAT_ENTRIES = [
   {
     time: "09:47",
-    agentName: "Sourcing Agent",
+    agentName: "Frontend Engineer",
     status: "ok" as const,
     tokens: 3210,
-    summary: "Completed Y Combinator batch scrape; 12 companies added to pipeline",
+    summary: "Completed Paperclip dashboard sync for the Overview route",
   },
   {
     time: "09:44",
-    agentName: "Matching Agent",
+    agentName: "CTO",
     status: "ok" as const,
     tokens: 2870,
-    summary: "LP intro matching run finished; 3 high-confidence pairings flagged for review",
+    summary: "Reviewed the Phase 5 implementation sequence and review handoff",
   },
   {
     time: "09:35",
-    agentName: "Sourcing Agent",
+    agentName: "QA Engineer",
     status: "ok" as const,
     tokens: 4100,
-    summary: "Clearbit enrichment batch processed; 8 profiles updated with firmographic data",
+    summary: "Prepared dashboard verification cases for live and fallback states",
   },
   {
     time: "09:32",
-    agentName: "Matching Agent",
+    agentName: "Frontend Engineer",
     status: "slow" as const,
     tokens: 5640,
-    summary: "Lead scoring run delayed — OpenAI rate limit hit; completed after 45 s backoff",
-  },
-  {
-    time: "09:31",
-    agentName: "Portfolio Agent",
-    status: "ok" as const,
-    tokens: 1980,
-    summary: "KPI summaries refreshed for Q1 cohort; HealthTrack anomaly logged",
-  },
-  {
-    time: "09:18",
-    agentName: "Matching Agent",
-    status: "ok" as const,
-    tokens: 2340,
-    summary: "FinPilot thesis re-rank complete; fit score updated from 0.62 → 0.79",
-  },
-  {
-    time: "09:10",
-    agentName: "Sourcing Agent",
-    status: "ok" as const,
-    tokens: 3760,
-    summary: "LinkedIn ingestion run finished; 31 founder profiles indexed across 9 companies",
+    summary: "Client polling work deferred while live server-rendered data is landed first",
   },
 ];
 
-export default function AgentsPage() {
+function mapAgentStatus(status: string): "running" | "idle" | "error" {
+  if (status === "running") {
+    return "running";
+  }
+  if (status === "error") {
+    return "error";
+  }
+  return "idle";
+}
+
+function mapTimelineStatus(status: string): "ok" | "slow" | "missed" {
+  if (status === "succeeded") {
+    return "ok";
+  }
+  if (status === "running") {
+    return "slow";
+  }
+  return "missed";
+}
+
+export default async function AgentsPage() {
+  const [agentsResult, runsResult] = await Promise.allSettled([
+    getAgents(15),
+    getHeartbeatRuns(40, 15),
+  ]);
+  const isFallback = agentsResult.status === "rejected" || runsResult.status === "rejected";
+
+  const liveAgents =
+    agentsResult.status === "fulfilled"
+      ? agentsResult.value.map((agent) => ({
+          name: agent.name,
+          status: mapAgentStatus(agent.status),
+          lastHeartbeat: agent.lastHeartbeat ? formatRelativeTime(agent.lastHeartbeat) : "Never",
+          nextHeartbeat: agent.nextHeartbeat ? formatRelativeTime(agent.nextHeartbeat) : "Queued",
+          todayRuns: agent.todayRuns,
+          tokenUsage: `${formatCompactNumber(agent.tokenUsageToday)} tokens`,
+          recentActions: [] as Array<{ time: string; description: string }>,
+        }))
+      : [];
+  const liveRuns = runsResult.status === "fulfilled" ? runsResult.value : [];
+
+  const agentCards =
+    liveAgents.length > 0
+      ? liveAgents.map((agent) => {
+          const runsForAgent = liveRuns.filter((run) => run.agentName === agent.name).slice(0, 4);
+          return {
+            ...agent,
+            recentActions: runsForAgent.map((run) => ({
+              time: formatClockTime(run.startedAt),
+              description: truncateText(run.summary ?? run.status, 96),
+            })),
+          };
+        })
+      : FALLBACK_AGENTS;
+
+  const heartbeatEntries =
+    liveRuns.length > 0
+      ? liveRuns
+          .filter((run) => isSameDay(run.startedAt))
+          .slice(0, 12)
+          .map((run) => ({
+            time: formatClockTime(run.startedAt),
+            agentName: run.agentName,
+            status: mapTimelineStatus(run.status),
+            tokens: run.tokenUsage,
+            summary: truncateText(run.summary ?? run.status, 120),
+          }))
+      : FALLBACK_HEARTBEAT_ENTRIES;
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Agents</h1>
-        <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-          Monitor agent status and heartbeat history
-        </p>
-      </div>
+      <AutoRefresh intervalMs={15_000} />
+      <Header title="Agents" description="Monitor agent status and heartbeat history" />
+
+      <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--muted-foreground)]">
+            This page now reads live agent state, schedule timing, and heartbeat runs from Paperclip.
+          </p>
+          <div className="flex items-center gap-2">
+            <Badge variant="info">15s Refresh</Badge>
+            {isFallback && <Badge variant="warning">Fallback Active</Badge>}
+          </div>
+        </div>
+      </Card>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        {AGENTS.map((agent) => (
+        {agentCards.map((agent) => (
           <AgentCard key={agent.name} {...agent} />
         ))}
       </div>
 
-      <HeartbeatTimeline entries={HEARTBEAT_ENTRIES} />
+      <HeartbeatTimeline entries={heartbeatEntries} />
     </div>
   );
 }

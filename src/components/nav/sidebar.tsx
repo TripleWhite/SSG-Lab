@@ -18,6 +18,7 @@ interface NavItem {
   href: string;
   label: string;
   icon: ReactNode;
+  boardOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -26,13 +27,19 @@ const navItems: NavItem[] = [
   { href: "/agents", label: "Agents", icon: <Bot size={18} /> },
   { href: "/sourcing", label: "Sourcing", icon: <Search size={18} /> },
   { href: "/matching", label: "Matching", icon: <Link2 size={18} /> },
-  { href: "/analytics", label: "Analytics", icon: <BarChart3 size={18} /> },
+  { href: "/analytics", label: "Analytics", icon: <BarChart3 size={18} />, boardOnly: true },
   { href: "/resources", label: "Resources", icon: <Network size={18} /> },
-  { href: "/settings", label: "Settings", icon: <Settings size={18} /> },
+  { href: "/settings", label: "Settings", icon: <Settings size={18} />, boardOnly: true },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  userName: string;
+  role: "board" | "employee";
+}
+
+export function Sidebar({ userName, role }: SidebarProps) {
   const pathname = usePathname();
+  const visibleItems = navItems.filter((item) => !item.boardOnly || role === "board");
 
   return (
     <aside className="flex h-screen w-56 flex-col border-r border-[var(--border)] bg-[var(--card)] px-3 py-6">
@@ -46,7 +53,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1">
-        {navItems.map((item, idx) => {
+        {visibleItems.map((item, idx) => {
           const isActive = pathname === item.href;
           return (
             <Link
@@ -68,7 +75,18 @@ export function Sidebar() {
 
       <div className="border-t border-[var(--border)] pt-4 px-3">
         <p className="text-xs text-[var(--muted-foreground)]">Logged in as</p>
-        <p className="text-sm font-medium">Arthur</p>
+        <p className="text-sm font-medium">{userName}</p>
+        <p className="mt-0.5 text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+          {role}
+        </p>
+        <form action="/api/auth/logout" method="post" className="mt-3">
+          <button
+            type="submit"
+            className="inline-flex text-xs text-[var(--ssg-green)] transition-colors hover:text-[var(--ssg-yellow)]"
+          >
+            Sign out
+          </button>
+        </form>
       </div>
     </aside>
   );

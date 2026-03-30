@@ -1,165 +1,80 @@
-"use client";
-
-import { useState, useMemo } from "react";
+import { AutoRefresh } from "@/components/dashboard/auto-refresh";
 import { Header } from "@/components/nav/header";
-import { CandidateCard } from "@/components/sourcing/candidate-card";
-import { ToastContainer, showToast } from "@/components/ui/toast";
+import { SourcingBoard } from "@/components/sourcing/sourcing-board";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardTitle } from "@/components/ui/card";
+import { getSourcingResults } from "@/lib/paperclip";
+import type { SourcingResult } from "@/lib/types";
 
-const FILTER_PILLS = ["All", "AI Infra", "Fintech", "Design", "Health"] as const;
-type FilterPill = (typeof FILTER_PILLS)[number];
+export const revalidate = 30;
 
-const CANDIDATES = [
-  {
-    id: "src-1",
-    founderName: "\u5f20\u6668\u66e6 (Alex Zhang)",
-    company: "NeuralOps",
-    domain: "AI Infra",
-    stage: "Pre-Seed",
-    relevanceScore: 85,
-    status: "new" as const,
-    matchReason:
-      "Strong alignment with SSG thesis: GPU orchestration layer targeting LLM inference cost reduction. Founder previously led infra at Bytedance. 2 warm intros available via LP network.",
-    sources: ["YC Alumni Network", "LinkedIn", "GitHub"],
-    contact: {
-      email: "alex@neuralops.ai",
-      twitter: "@alexzhang_ai",
-      linkedin: "linkedin.com/in/alexzhang-ai",
-    },
-    requestedBy: "Sourcing Agent \u00b7 3 hours ago",
-  },
-  {
-    id: "src-2",
-    founderName: "\u6797\u4f73\u6b23 (Jasmine Lin)",
-    company: "InfraAI",
-    domain: "AI Infra",
-    stage: "Seed",
-    relevanceScore: 78,
-    status: "new" as const,
-    matchReason:
-      "Developer tooling for multi-cloud AI pipelines. Team of 4 ex-Alibaba Cloud engineers. Found via Xiaohongshu posts discussing GPU scheduling benchmarks \u2014 strong technical credibility signal.",
-    sources: ["Xiaohongshu", "Twitter/X", "ProductHunt"],
-    contact: {
-      email: "jasmine@infraai.dev",
-      twitter: "@jasminelindev",
-    },
-    requestedBy: "Sourcing Agent \u00b7 6 hours ago",
-  },
-  {
-    id: "src-3",
-    founderName: "\u9648\u601d\u8fdc (Simon Chen)",
-    company: "DesignAI",
-    domain: "Design",
-    stage: "Pre-Seed",
-    relevanceScore: 92,
-    status: "converted" as const,
-    matchReason:
-      "AI-native design collaboration tool with deep integration into Figma and Notion. 1,200 waitlist signups in 2 weeks. Founder has prior exit in SaaS design tools \u2014 exceptional product intuition and go-to-market clarity.",
-    sources: ["AngelList", "Figma Community", "Twitter/X"],
-    contact: {
-      email: "simon@designai.so",
-      twitter: "@simonchen_design",
-      linkedin: "linkedin.com/in/simonchen-design",
-    },
-    requestedBy: "Matching Agent \u00b7 1 day ago",
-  },
-  {
-    id: "src-4",
-    founderName: "\u8d75\u5a77 (Tina Zhao)",
-    company: "PayNext",
-    domain: "Fintech",
-    stage: "Pre-Seed",
-    relevanceScore: 74,
-    status: "new" as const,
-    matchReason:
-      "Cross-border payment rails for Southeast Asia micro-merchants. Ex-Stripe engineer with deep payment infrastructure knowledge. Growing 15% WoW in GMV.",
-    sources: ["Twitter/X", "TechCrunch", "AngelList"],
-    contact: {
-      email: "tina@paynext.io",
-      twitter: "@tinazhao_pay",
-    },
-    requestedBy: "Sourcing Agent \u00b7 8 hours ago",
-  },
-  {
-    id: "src-5",
-    founderName: "\u5468\u660e (Mark Zhou)",
-    company: "VitaLens",
-    domain: "Health",
-    stage: "Seed",
-    relevanceScore: 81,
-    status: "new" as const,
-    matchReason:
-      "AI-powered medical imaging analysis for early cancer detection. Published 3 papers in Nature Medicine. Partnership with 2 tier-1 hospitals for clinical validation.",
-    sources: ["PubMed", "LinkedIn", "Conference"],
-    contact: {
-      email: "mark@vitalens.health",
-      linkedin: "linkedin.com/in/markzhou-med",
-    },
-    requestedBy: "Sourcing Agent \u00b7 1 day ago",
-  },
-];
+function getEmptyStateMessage(
+  hasMimirCredentials: boolean,
+  loadFailed: boolean
+): { title: string; body: string } {
+  if (loadFailed) {
+    return {
+      title: "Live feed unavailable",
+      body: "The sourcing feed could not be loaded right now, so the page is intentionally showing no fabricated candidates.",
+    };
+  }
 
-export default function SourcingPage() {
-  const [activePill, setActivePill] = useState<FilterPill>("All");
+  if (!hasMimirCredentials) {
+    return {
+      title: "Mimir credentials missing",
+      body: "No live sourcing candidates are configured for this environment yet, so the dashboard now shows an honest empty state instead of demo founders.",
+    };
+  }
 
-  const filtered = useMemo(() => {
-    if (activePill === "All") return CANDIDATES;
-    return CANDIDATES.filter((c) => c.domain === activePill);
-  }, [activePill]);
+  return {
+    title: "No live candidates yet",
+    body: "The live sourcing feed is connected, but no candidate records have been stored for this workspace yet.",
+  };
+}
+
+export default async function SourcingPage() {
+  const hasMimirCredentials = Boolean(process.env.MIMIR_API_KEY);
+  let candidates: SourcingResult[] = [];
+  let loadFailed = false;
+
+  try {
+    candidates = await getSourcingResults();
+  } catch {
+    loadFailed = true;
+  }
+
+  const emptyState = getEmptyStateMessage(hasMimirCredentials, loadFailed);
 
   return (
-    <div>
+    <div className="space-y-6">
+      <AutoRefresh intervalMs={30_000} />
       <Header
         title="Sourcing Results"
-        description="AI-surfaced candidates matched to SSG investment thesis"
+        description="Live candidate discoveries only; demo prospects have been removed"
       />
 
-      <div className="mb-6 flex flex-wrap gap-2">
-        {FILTER_PILLS.map((pill) => (
-          <button
-            key={pill}
-            onClick={() => setActivePill(pill)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-              activePill === pill
-                ? "bg-[var(--ssg-green)]/10 text-[var(--ssg-green)] ring-1 ring-[var(--ssg-green)]/40"
-                : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)] ring-1 ring-[var(--border)]"
-            }`}
-          >
-            {pill}
-          </button>
-        ))}
-      </div>
-
-      {filtered.length === 0 ? (
-        <div className="flex items-center justify-center py-20 text-sm text-[var(--muted-foreground)]">
-          No candidates match this filter.
+      <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--muted-foreground)]">
+            This route now prefers truthful live sourcing records and will show an explicit empty state when no candidate feed is available.
+          </p>
+          <div className="flex items-center gap-2">
+            <Badge variant="info">30s Refresh</Badge>
+            {candidates.length === 0 && <Badge variant="warning">Awaiting Live Feed</Badge>}
+          </div>
         </div>
+      </Card>
+
+      {candidates.length > 0 ? (
+        <SourcingBoard candidates={candidates} />
       ) : (
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((candidate) => (
-            <CandidateCard
-              key={candidate.id}
-              founderName={candidate.founderName}
-              company={candidate.company}
-              domain={candidate.domain}
-              stage={candidate.stage}
-              relevanceScore={candidate.relevanceScore}
-              status={candidate.status}
-              matchReason={candidate.matchReason}
-              sources={candidate.sources}
-              contact={candidate.contact}
-              requestedBy={candidate.requestedBy}
-              onCreateProject={() =>
-                showToast(`Project created for ${candidate.company}`)
-              }
-              onDismiss={() =>
-                showToast("Candidate dismissed")
-              }
-            />
-          ))}
-        </div>
+        <Card className="border-dashed border-[var(--border)]/80 py-12 text-center">
+          <CardTitle className="mb-2">{emptyState.title}</CardTitle>
+          <p className="mx-auto max-w-2xl text-sm text-[var(--muted-foreground)]">
+            {emptyState.body}
+          </p>
+        </Card>
       )}
-
-      <ToastContainer />
     </div>
   );
 }

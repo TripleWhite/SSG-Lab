@@ -2,12 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 type HealthStatus = "on-track" | "needs-attention" | "at-risk" | "overdue";
-type PipelineStage =
-  | "Initial Contact"
-  | "Due Diligence"
-  | "Investment Decision"
-  | "Acceleration"
-  | "Exit";
+type StageVariant = "default" | "info" | "warning" | "success" | "danger";
 
 const healthConfig: Record<
   HealthStatus,
@@ -27,29 +22,24 @@ const healthConfig: Record<
   overdue: { label: "Overdue", variant: "danger", dot: "bg-red-600" },
 };
 
-const stageVariant: Record<
-  PipelineStage,
-  "default" | "info" | "warning" | "success" | "danger"
-> = {
-  "Initial Contact": "info",
-  "Due Diligence": "warning",
-  "Investment Decision": "default",
-  Acceleration: "success",
-  Exit: "success",
-};
-
 export interface ProjectData {
   id: string;
-  company: string;
-  founder: string;
-  stage: PipelineStage;
+  title: string;
+  subtitle: string;
+  stage: string;
+  stageVariant: StageVariant;
   health: HealthStatus;
+  status: string;
   assignee: string;
-  daysSinceContact: number;
+  daysActive: number;
   lastActivityDate: string;
-  latestInsight: string;
+  latestSignal: string;
   nextAction: string;
   tags: string[];
+  totalTasks: number;
+  activeTasks: number;
+  blockedTasks: number;
+  doneTasks: number;
 }
 
 interface ProjectCardProps {
@@ -58,20 +48,20 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const {
-    company,
-    founder,
+    title,
+    subtitle,
     stage,
+    stageVariant,
     health,
     assignee,
-    daysSinceContact,
+    daysActive,
     lastActivityDate,
-    latestInsight,
+    latestSignal,
     nextAction,
     tags,
   } = project;
 
   const { label: healthLabel, variant: healthVariant, dot } = healthConfig[health];
-  const stageBadgeVariant = stageVariant[stage];
 
   const healthClassName =
     healthVariant === "success"
@@ -86,12 +76,12 @@ export function ProjectCard({ project }: ProjectCardProps) {
       hover={false}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
-        {/* Left: Company identity */}
+        {/* Left: Workstream identity */}
         <div className="flex min-w-[180px] flex-col gap-1">
-          <p className="text-base font-bold tracking-tight">{company}</p>
-          <p className="text-sm text-[var(--muted-foreground)]">{founder}</p>
+          <p className="text-base font-bold tracking-tight">{title}</p>
+          <p className="text-sm text-[var(--muted-foreground)]">{subtitle}</p>
           <div className="mt-1 flex flex-wrap gap-1.5">
-            <Badge variant={stageBadgeVariant}>{stage}</Badge>
+            <Badge variant={stageVariant}>{stage}</Badge>
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${healthClassName}`}
             >
@@ -105,9 +95,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
         <div className="flex flex-1 flex-col gap-2">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]">
-              Latest Insight
+              Latest Signal
             </p>
-            <p className="mt-0.5 text-sm text-[var(--foreground)]">{latestInsight}</p>
+            <p className="mt-0.5 text-sm text-[var(--foreground)]">{latestSignal}</p>
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-[var(--muted-foreground)]">
@@ -126,8 +116,8 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <p className="text-sm font-semibold">{assignee}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-[var(--muted-foreground)]">First contact</p>
-            <p className="text-sm font-medium">{daysSinceContact}d ago</p>
+            <p className="text-xs text-[var(--muted-foreground)]">Active for</p>
+            <p className="text-sm font-medium">{daysActive}d</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-[var(--muted-foreground)]">Last activity</p>

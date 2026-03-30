@@ -1,40 +1,8 @@
 import { Header } from "@/components/nav/header";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
-interface ResourceItem {
-  name: string;
-  tags: readonly string[];
-}
-
-interface ResourceSectionProps {
-  title: string;
-  items: readonly ResourceItem[];
-}
-
-const EMPLOYEE_CONNECTIONS: readonly ResourceItem[] = [
-  { name: "Alice", tags: ["AWS", "Sequoia", "Google Cloud"] },
-  { name: "Bob", tags: ["YC Alumni", "Hiring Pool"] },
-  { name: "Carol", tags: ["Tencent", "Alibaba Cloud", "Matrix"] },
-];
-
-const LP_INVESTOR_NETWORK: readonly ResourceItem[] = [
-  { name: "Sequoia Scout", tags: ["AI", "Fintech"] },
-  { name: "Matrix Partners", tags: ["Enterprise SaaS"] },
-  { name: "Angel Dr. Chen", tags: ["Healthcare AI"] },
-];
-
-const PARTNER_PROGRAMS: readonly ResourceItem[] = [
-  { name: "AWS Activate", tags: ["credits $100k"] },
-  { name: "Google for Startups", tags: ["credits", "GDG"] },
-  { name: "ZhangLaw", tags: ["incorporation", "IP"] },
-];
-
-const MENTORS: readonly ResourceItem[] = [
-  { name: "James Wang", tags: ["B2B Sales", "SaaS GTM"] },
-  { name: "Dr. Li Ming", tags: ["AI/ML", "Robotics"] },
-  { name: "Sarah Zhou", tags: ["Product Strategy", "UX"] },
-];
+import type { ResourceItem } from "@/lib/types";
+import { getResourceGraph } from "@/lib/mimir";
 
 function ResourceSection({ title, items }: ResourceSectionProps) {
   return (
@@ -58,7 +26,14 @@ function ResourceSection({ title, items }: ResourceSectionProps) {
   );
 }
 
-export default function ResourcesPage() {
+interface ResourceSectionProps {
+  title: string;
+  items: readonly ResourceItem[];
+}
+
+export default async function ResourcesPage() {
+  const resourceGraph = await getResourceGraph();
+
   return (
     <div className="space-y-8">
       <Header
@@ -66,17 +41,26 @@ export default function ResourcesPage() {
         description="Accelerator resource graph — connections, LPs, mentors, partners"
       />
 
+      <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--muted-foreground)]">
+            Resource data loads from Mimir when credentials are available, otherwise the seeded graph is shown.
+          </p>
+          {resourceGraph.source === "seed" && <Badge variant="warning">Seed Fallback</Badge>}
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <ResourceSection
           title="Employee Connections"
-          items={EMPLOYEE_CONNECTIONS}
+          items={resourceGraph.connections}
         />
         <ResourceSection
           title="LP / Investor Network"
-          items={LP_INVESTOR_NETWORK}
+          items={resourceGraph.investors}
         />
-        <ResourceSection title="Partner Programs" items={PARTNER_PROGRAMS} />
-        <ResourceSection title="Mentors" items={MENTORS} />
+        <ResourceSection title="Partner Programs" items={resourceGraph.programs} />
+        <ResourceSection title="Mentors" items={resourceGraph.mentors} />
       </div>
     </div>
   );

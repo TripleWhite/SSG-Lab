@@ -76,10 +76,53 @@ export interface Employee {
 
 export interface DashboardStats {
   totalProjects: number;
-  insightsThisWeek: number;
+  openTasks: number;
+  inProgressTasks: number;
   agentsOnline: number;
   agentsTotal: number;
-  matchAccuracy: number;
-  sourcingTasksCompleted: number;
-  candidatesFound: number;
+  runSuccessRate: number;
+  completedTasks: number;
+}
+
+export interface WorkItem {
+  id: string;
+  identifier: string;
+  title: string;
+  description: string;
+  status:
+    | "backlog"
+    | "todo"
+    | "in_progress"
+    | "in_review"
+    | "done"
+    | "blocked"
+    | "cancelled";
+  priority: "critical" | "high" | "medium" | "low";
+  assigneeName: string;
+  createdAt: string;
+  updatedAt: string;
+  startedAt?: string;
+  parentId?: string | null;
+}
+
+export interface AgentCostBreakdown {
+  agentId: string;
+  agentName: string;
+  agentStatus: Agent["status"];
+  costCents: number;
+  totalTokens: number;
+  runCount: number;
+}
+
+export interface ResourceItem {
+  name: string;
+  tags: string[];
+}
+
+export interface ResourceGraph {
+  source: "live" | "seed";
+  connections: ResourceItem[];
+  investors: ResourceItem[];
+  mentors: ResourceItem[];
+  programs: ResourceItem[];
 }

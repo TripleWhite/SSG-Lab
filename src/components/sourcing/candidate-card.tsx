@@ -103,14 +103,20 @@ export function CandidateCard({
         </p>
       </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <Button variant="outline" onClick={onCreateProject}>
-          Create Project
-        </Button>
-        <Button variant="ghost" onClick={onDismiss}>
-          Dismiss
-        </Button>
-      </div>
+      {(onCreateProject || onDismiss) && (
+        <div className="mt-4 flex items-center gap-2">
+          {onCreateProject && (
+            <Button variant="outline" onClick={onCreateProject}>
+              Create Project
+            </Button>
+          )}
+          {onDismiss && (
+            <Button variant="ghost" onClick={onDismiss}>
+              Dismiss
+            </Button>
+          )}
+        </div>
+      )}
     </Card>
   );
 }
