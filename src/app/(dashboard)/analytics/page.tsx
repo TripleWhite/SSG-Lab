@@ -57,7 +57,10 @@ function BarChart({
         {data.map(({ week, value }) => {
           const heightPct = Math.round((value / maxValue) * 100);
           return (
-            <div key={week} className="flex flex-1 flex-col items-center gap-1">
+            <div
+              key={week}
+              className="flex flex-1 flex-col items-center gap-1 h-full"
+            >
               <span className="text-xs font-medium text-[var(--foreground)]">
                 {value}
                 {valueSuffix}
