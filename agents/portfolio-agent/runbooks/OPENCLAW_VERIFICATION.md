@@ -42,6 +42,9 @@ Expected files include:
 - `settings.json`
 - `contracts/feishu-notify.schema.json`
 - `contracts/mimir-store.schema.json`
+- `examples/daily-digest.sample.json`
+- `examples/urgent-alert.sample.json`
+- `examples/board-summary.sample.json`
 - `prompts/FEISHU_NOTIFY_PLAYBOOK.md`
 - `skills/deal-flow/SKILL.md`
 - `skills/resource-map/SKILL.md`
@@ -117,6 +120,9 @@ Look for:
 For notify payload spot-checks, validate against:
 
 - `contracts/feishu-notify.schema.json`
+- `examples/daily-digest.sample.json`
+- `examples/urgent-alert.sample.json`
+- `examples/board-summary.sample.json`
 - `skills/feishu-format/SKILL.md`
 - `prompts/FEISHU_NOTIFY_PLAYBOOK.md`
 
@@ -125,6 +131,18 @@ Check all three output modes when available:
 - `daily_digest`
 - `urgent_alert`
 - `board_summary`
+
+Before checking live payloads, confirm the bundled samples still parse cleanly:
+
+```bash
+jq empty \
+  examples/daily-digest.sample.json \
+  examples/urgent-alert.sample.json \
+  examples/board-summary.sample.json
+```
+
+Use the sample payloads as the canonical reference shape when comparing runtime
+cards to the schema and visible Feishu rendering.
 
 ## 7. Verify Paperclip And Feishu Outcomes
 

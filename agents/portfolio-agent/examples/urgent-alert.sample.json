@@ -1,0 +1,32 @@
+{
+  "channel": "feishu",
+  "target": "ou_employee_alice",
+  "type": "portfolio_update",
+  "data": {
+    "kind": "urgent_alert",
+    "generated_at": "2026-03-31T02:30:00Z",
+    "alert_reason": "No project activity for 31 days",
+    "item": {
+      "project_id": "proj-roboticsai",
+      "project_name": "RoboticsAI",
+      "stage": "acceleration",
+      "health": "at_risk",
+      "owner": "Alice",
+      "summary": "Milestone check-in slipped and no follow-up has landed for a month.",
+      "recommendation": "Call the founder this week and offer mentor support on distribution before the next milestone review.",
+      "resource": "Mentor James Liu can review the go-to-market plan."
+    },
+    "buttons": [
+      {
+        "action": "schedule_followup",
+        "label": "Schedule Follow-up",
+        "project_id": "proj-roboticsai"
+      },
+      {
+        "action": "snooze_1_week",
+        "label": "Snooze 1 Week",
+        "project_id": "proj-roboticsai"
+      }
+    ]
+  }
+}

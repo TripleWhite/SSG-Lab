@@ -1,0 +1,88 @@
+{
+  "channel": "feishu",
+  "target": "ou_employee_alice",
+  "type": "portfolio_update",
+  "data": {
+    "kind": "daily_digest",
+    "generated_at": "2026-03-31T01:00:00Z",
+    "employee_name": "Alice",
+    "active_project_count": 3,
+    "sections": [
+      {
+        "title": "Overdue",
+        "priority": "urgent",
+        "items": [
+          {
+            "project_id": "proj-designai",
+            "project_name": "DesignAI",
+            "stage": "diligence",
+            "health": "overdue",
+            "owner": "Alice",
+            "summary": "Founder follow-up is overdue by 9 days after the demo review.",
+            "recommendation": "Schedule a check-in with Zhang Wei this week and confirm the enterprise pilot timeline.",
+            "resource": "AWS Activate credits can be offered after the pilot scope is confirmed.",
+            "due_at": "2026-04-02T09:00:00Z",
+            "actions": [
+              {
+                "action": "schedule_followup",
+                "label": "Schedule Follow-up",
+                "project_id": "proj-designai"
+              },
+              {
+                "action": "snooze_1_week",
+                "label": "Snooze 1 Week",
+                "project_id": "proj-designai"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Ready To Advance",
+        "priority": "high",
+        "items": [
+          {
+            "project_id": "proj-financeai",
+            "project_name": "FinanceAI",
+            "stage": "decision",
+            "health": "needs_attention",
+            "owner": "Alice",
+            "summary": "All diligence criteria are complete and partner feedback is positive.",
+            "recommendation": "Review the investment decision plan with Carol before Friday.",
+            "plan_steps": [
+              "Confirm LP appetite for the round.",
+              "Review the enterprise pilot customer references.",
+              "Draft the term sheet checklist.",
+              "Book the decision meeting with Carol."
+            ],
+            "actions": [
+              {
+                "action": "view_plan",
+                "label": "View Plan",
+                "project_id": "proj-financeai",
+                "url": "https://dashboard.example.com/projects/proj-financeai/plan"
+              },
+              {
+                "action": "modify_plan",
+                "label": "Modify Plan",
+                "project_id": "proj-financeai"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "buttons": [
+      {
+        "action": "view_dashboard",
+        "label": "View Dashboard",
+        "url": "https://dashboard.example.com/portfolio/alice"
+      },
+      {
+        "action": "details",
+        "label": "Details",
+        "url": "https://dashboard.example.com/digests/2026-03-31/alice"
+      }
+    ]
+  }
+}

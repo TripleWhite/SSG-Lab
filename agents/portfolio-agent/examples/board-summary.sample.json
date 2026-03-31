@@ -1,0 +1,57 @@
+{
+  "channel": "feishu",
+  "target": "board-channel-arthur",
+  "type": "portfolio_update",
+  "data": {
+    "kind": "board_summary",
+    "generated_at": "2026-03-31T01:15:00Z",
+    "headline": "38 active projects scanned, 5 urgent actions need owner follow-up today.",
+    "stage_counts": {
+      "contact": 12,
+      "diligence": 8,
+      "decision": 3,
+      "acceleration": 11,
+      "exit": 4
+    },
+    "health_counts": {
+      "on_track": 24,
+      "needs_attention": 8,
+      "at_risk": 3,
+      "overdue": 2,
+      "blocked": 1
+    },
+    "top_actions": [
+      {
+        "project_id": "proj-designai",
+        "project_name": "DesignAI",
+        "owner": "Alice",
+        "stage": "diligence",
+        "health": "overdue",
+        "summary": "Founder follow-up is overdue and the enterprise pilot timeline is slipping."
+      },
+      {
+        "project_id": "proj-financeai",
+        "project_name": "FinanceAI",
+        "owner": "Carol",
+        "stage": "decision",
+        "health": "needs_attention",
+        "summary": "Decision memo is ready; partner review must happen before Friday."
+      },
+      {
+        "project_id": "proj-logiai",
+        "project_name": "LogiAI",
+        "owner": "Eve",
+        "stage": "acceleration",
+        "health": "at_risk",
+        "summary": "Needs a distribution mentor introduction before the April milestone review."
+      }
+    ],
+    "buttons": [
+      {
+        "action": "view_dashboard",
+        "label": "View Dashboard",
+        "url": "https://dashboard.example.com/portfolio/board"
+      }
+    ]
+  }
+}
