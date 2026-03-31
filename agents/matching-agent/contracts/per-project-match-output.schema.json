@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ssglab.local/matching-agent/contracts/per-project-match-output.schema.json",
+  "title": "MatchingPerProjectSubagentOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_id",
+    "project_name",
+    "processed_at",
+    "status",
+    "summary",
+    "matches",
+    "cross_project_signals",
+    "metrics",
+    "notes"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "processed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "partial", "blocked", "no_new_content"]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "blocked_reason": {
+      "type": "string"
+    },
+    "matches": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/projectMatch"
+      }
+    },
+    "cross_project_signals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/crossProjectSignal"
+      }
+    },
+    "metrics": {
+      "$ref": "#/$defs/metrics"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "matchSide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity_id", "entity", "description"],
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_employee": {
+          "type": "string"
+        },
+        "event_log_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "confidenceBreakdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "specificity",
+        "complementarity",
+        "recency",
+        "actionability"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 100
+        },
+        "specificity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "complementarity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "recency": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        },
+        "actionability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25
+        }
+      }
+    },
+    "projectMatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "match_id",
+        "match_type",
+        "side_a",
+        "side_b",
+        "confidence",
+        "level",
+        "summary",
+        "suggestion",
+        "evidence"
+      ],
+      "properties": {
+        "match_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "match_type": {
+          "type": "string",
+          "enum": [
+            "supply-demand",
+            "resource",
+            "talent",
+            "investor",
+            "mentor"
+          ]
+        },
+        "side_a": {
+          "$ref": "#/$defs/matchSide"
+        },
+        "side_b": {
+          "$ref": "#/$defs/matchSide"
+        },
+        "confidence": {
+          "$ref": "#/$defs/confidenceBreakdown"
+        },
+        "level": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggestion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "crossProjectSignal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signal_id",
+        "entity_id",
+        "entity_name",
+        "signal_role",
+        "match_types",
+        "summary",
+        "signal_priority"
+      ],
+      "properties": {
+        "signal_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "signal_role": {
+          "type": "string",
+          "enum": ["need", "offer", "capability", "constraint"]
+        },
+        "match_types": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "supply-demand",
+              "resource",
+              "talent",
+              "investor",
+              "cross-project",
+              "mentor"
+            ]
+          }
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "counterparty_hints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_employee": {
+          "type": "string"
+        },
+        "source_event_log_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "signal_priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entities_scanned",
+        "event_logs_scanned",
+        "matches_found",
+        "cross_project_signals",
+        "low_confidence_filtered",
+        "dedup_skipped"
+      ],
+      "properties": {
+        "entities_scanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_logs_scanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matches_found": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cross_project_signals": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "low_confidence_filtered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dedup_skipped": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
