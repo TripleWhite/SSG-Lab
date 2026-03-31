@@ -62,8 +62,27 @@ All schemas you need are defined inline in this document and in the tool
 
 ### 2. Check for New Content (START HERE)
 
-- Call `memory_search` for event_logs created since last heartbeat
+- `memory_search` requires a non-empty `query` string. Never call
+  `memory_search({})` and never retry the same invalid payload twice
+- Use this exact argument shape for the first call, filling in the computed
+  dates from your current heartbeat window:
+
+```json
+{
+  "query": "recent accelerator event logs about founder needs, offers, blockers, hiring, fundraising, partnerships, and asks",
+  "types": ["event_log"],
+  "time_range": "YYYY-MM-DD..YYYY-MM-DD",
+  "limit": 20
+}
+```
+
+- If there was a previous successful heartbeat, set `time_range` from that
+  timestamp through now. If this is the first run, use the last 24 hours
+- Call `memory_search` for event_logs created since last heartbeat using the
+  payload shape above
 - Prioritize `agent_curated` (HIGH confidence) items over `auto_extracted`
+- If the tool returns a validation error about missing `query`, correct the
+  arguments before retrying. Do not loop on the same invalid payload
 - **Early exit:** If no new content since last heartbeat, log "No new
   content - skipping scan" and exit. Save tokens on quiet periods.
 
@@ -124,7 +143,17 @@ All schemas you need are defined inline in this document and in the tool
 
 For each aggregated match:
 
-1. `memory_search` for existing MATCH_FOUND relations between the two entities
+1. `memory_search` for existing MATCH_FOUND relations between the two entities,
+   always with a non-empty `query`, for example:
+
+```json
+{
+  "query": "MATCH_FOUND relation between {entity_a_name} and {entity_b_name}",
+  "types": ["relation"],
+  "limit": 10
+}
+```
+
 2. If match already reported with same type -> skip
 3. If match already reported with different type -> report as an additional
    connection
