@@ -1,3 +1,10 @@
+# CRITICAL — DO NOT USE THE `read` TOOL
+
+You do NOT have a `read` or `write` file tool. If you see a `read` tool in your
+tool list, DO NOT CALL IT. It will fail. All information you need is already in
+this prompt. There are NO files you need to read. Proceed directly to your
+execution plan below.
+
 # Matching Agent Heartbeat
 
 Run every 30 minutes. Each heartbeat scans for new content in Mimir,
@@ -5,11 +12,6 @@ dispatches project-scoped matching subagents, aggregates cross-project
 signals in the parent, scores potential matches, deduplicates, and notifies.
 
 ## Tools Available
-
-**IMPORTANT:** You do NOT have a `read` or `write` file tool. All workspace files
-(AGENTS.md, SOUL.md, HEARTBEAT.md, TOOLS.md) are pre-injected into your system
-prompt by the OpenClaw runtime. Do not attempt file I/O — proceed directly with
-your available tools listed below.
 
 **memory-mimir plugin** (standard operations):
 - `memory_search` — search entities and event_logs by query
@@ -25,34 +27,26 @@ your available tools listed below.
   result issues are written separately after the Mimir write succeeds
 - `send_feishu_card` — send interactive card to SSG Feishu group chat
 
-## Contracts
+## Contracts (all inline — do NOT attempt to read any files)
 
-- `contracts/SUBAGENT_CONTRACT.md` — parent-to-subagent prompt contract for
-  per-project matching
-- `contracts/per-project-match-output.schema.json` — required JSON output for
-  each project subagent
-- `contracts/feishu-notify.schema.json` — required shape for
-  `send_feishu_card` payloads
-- `contracts/mimir-match.schema.json` — heartbeat result record schema
-  (aggregate output, NOT the `store_match` per-match input)
-- `contracts/match-result.json` — match result output schema with
-  4-dimension confidence scoring
-- `contracts/heartbeat-metrics.json` — per-heartbeat reporting schema
-- `skills/matching/SKILL.md` — 6 match type taxonomy, scoring rubric, dedup
-  rules
-- `skills/feishu-format/SKILL.md` — card template for group chat and digest
-- `runbooks/paperclip-api.sh` — wrapper for Paperclip API calls that loads the
-  claimed API key from disk without ever pasting the bearer token into the
-  command line or logs
+All schemas you need are defined inline in this document and in the tool
+`input_schema` definitions already available in your tool list. Specifically:
+
+- **Subagent contract** — the template for per-project subagents is described
+  in step 4 of the execution plan below
+- **Tool payload schemas** — `store_match`, `send_feishu_card`, and
+  `graph_traverse` all have their `input_schema` defined in your tool
+  definitions; follow those schemas exactly
+- **Match scoring** — the 6 match types and 4-dimension scoring rubric are
+  in SOUL.md (already injected into your prompt)
+- **Heartbeat exit metrics** — the reporting format is in step 9 below
 
 ## Secret Handling
 
 - Never inline `PAPERCLIP_API_KEY` or any bearer token into a command, comment,
   or status message
-- For every Paperclip API call, use `runbooks/paperclip-api.sh`
-- If you need the claimed key file, point the helper at
-  `~/.openclaw/workspace/paperclip-claimed-api-key.json`; do not print its
-  contents
+- For Paperclip API calls, use the paperclip-api helper script (already
+  available in your workspace runtime) instead of raw `curl`
 - A run is considered failed if the literal bearer token appears in stdout,
   stderr, a session transcript, or a Paperclip comment
 
@@ -60,15 +54,15 @@ your available tools listed below.
 
 ### 1. Identity and Context
 
-- SOUL.md content (6 match types, scoring rubric, dedup rules) is already in your system prompt — do not attempt to read it with a tool
-- Get timestamp of last successful heartbeat from Paperclip run history
+- All instructions (SOUL.md match types, scoring rubric, dedup rules) are
+  already in your system prompt — do NOT read any files
+- **YOUR FIRST TOOL CALL MUST BE `memory_search`** — go directly to step 2
 - If this is the first run, use 24 hours ago as baseline
-- When the heartbeat prompt includes the Paperclip workflow, execute the listed
-  `/api` calls through `runbooks/paperclip-api.sh` instead of raw `curl`
+- For Paperclip API calls, use the paperclip-api helper script
 
-### 2. Check for New Content
+### 2. Check for New Content (START HERE)
 
-- `memory_search` for event_logs created since last heartbeat
+- Call `memory_search` for event_logs created since last heartbeat
 - Prioritize `agent_curated` (HIGH confidence) items over `auto_extracted`
 - **Early exit:** If no new content since last heartbeat, log "No new
   content - skipping scan" and exit. Save tokens on quiet periods.
@@ -88,8 +82,7 @@ your available tools listed below.
 
 ### 4. Dispatch Per-Project Matching Subagents
 
-- Spawn one subagent per active project using
-  `contracts/SUBAGENT_CONTRACT.md`
+- Spawn one subagent per active project using the contract template below
 - Hard cap concurrency at 5 subagents at a time. If more than 5 projects are
   active, process them in batches of 5
 - Pass only project-scoped input into each subagent:
@@ -100,10 +93,10 @@ your available tools listed below.
   - `dedup_existing`
 - Each subagent should:
   - extract project-local needs, offers, blockers, and capabilities
-  - use the unchanged scoring rubric from `skills/matching/SKILL.md`
+  - use the unchanged scoring rubric from SOUL.md (already in your prompt)
   - emit only project-scoped matches plus `cross_project_signals`
-  - return JSON only matching
-    `contracts/per-project-match-output.schema.json`
+  - return JSON only with fields: `status`, `matches`, `cross_project_signals`,
+    `metrics`, `notes`
   - set `status=partial` or `status=blocked` with `notes` when tools or
     inputs fail
 - Failure isolation is mandatory:
@@ -140,8 +133,8 @@ For each aggregated match:
 
 ### 7. Store
 
-For each match above 60% confidence, call `store_match` with the single-match
-payload defined by the tool's `input_schema` in settings.json:
+For each match above 60% confidence, call `store_match` with the payload
+matching the tool's `input_schema` (already in your tool definitions):
 
 ```json
 {
@@ -169,7 +162,7 @@ payload defined by the tool's `input_schema` in settings.json:
   - `PAPERCLIP_MATCHING_PARENT_ISSUE_ID`
   - `PAPERCLIP_API_KEY` when Paperclip auth is enabled
 - For `GET /api/agents/me`, issue lookup, checkout, comments, and document
-  writes, call `runbooks/paperclip-api.sh METHOD /api/... [json-body]`
+  writes, use the paperclip-api helper script
 - Call `store_match` first so Mimir remains the source-of-truth write for
   dedup, analytics, and relation storage
 - Set `create_task: false` for the dashboard feed path. If a separate Board
@@ -210,10 +203,9 @@ payload defined by the tool's `input_schema` in settings.json:
 - Paperclip writes are best-effort only. If the structured mirror fails, log
   the failure and continue; do not roll back the Mimir relation
 
-**Note:** `contracts/mimir-match.schema.json` defines the **heartbeat result
-record** - the aggregate batch output logged after all matches are processed.
-It is NOT the per-match `store_match` input. The `store_match` tool accepts
-one match at a time per its `input_schema`.
+**Note:** The heartbeat result record (aggregate batch output) is different from
+the per-match `store_match` input. The `store_match` tool accepts one match at
+a time per its `input_schema`.
 
 ### 8. Notify
 
@@ -224,7 +216,7 @@ immediate notification to the SSG Feishu group chat.
   the Feishu card so the operator can open the same record from the
   notification
 
-Payload must conform to `contracts/feishu-notify.schema.json`:
+Payload must conform to the `send_feishu_card` tool schema. Example:
 
 ```json
 {
