@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ssglab.local/portfolio-agent/contracts/per-project-scan-output.schema.json",
+  "title": "PortfolioPerProjectScanOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_id",
+    "project_name",
+    "status",
+    "health",
+    "recommendations",
+    "followups",
+    "metrics"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "partial", "blocked", "no_action"]
+    },
+    "health": {
+      "type": "string",
+      "enum": ["on_track", "needs_attention", "at_risk", "overdue", "blocked"]
+    },
+    "blocked_reason": {
+      "type": "string"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/recommendation"
+      }
+    },
+    "followups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/followup"
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "metrics": {
+      "$ref": "#/$defs/metrics"
+    }
+  },
+  "$defs": {
+    "recommendation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["priority", "kind", "summary", "action"],
+      "properties": {
+        "priority": {
+          "type": "string",
+          "enum": ["urgent", "important", "informational"]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "overdue_followup",
+            "stage_advance",
+            "stage_rollback",
+            "resource_match",
+            "at_risk_warning",
+            "action_plan"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "related_entities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "followup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "reason"],
+      "properties": {
+        "due_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assigned_to": {
+          "type": "string"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_logs_scanned",
+        "comments_scanned",
+        "recommendations_generated",
+        "followups_detected"
+      ],
+      "properties": {
+        "event_logs_scanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "comments_scanned": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recommendations_generated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "followups_detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resources_considered": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

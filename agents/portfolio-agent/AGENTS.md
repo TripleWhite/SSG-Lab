@@ -22,6 +22,9 @@ Read these files from your workspace before executing:
 - `skills/feishu-format/SKILL.md` -- Feishu card templates.
 - `contracts/feishu-notify.schema.json` -- Feishu card payload shape.
 - `contracts/mimir-store.schema.json` -- Mimir state persistence payload shape.
+- `contracts/SUBAGENT_CONTRACT.md` -- Parent/subagent contract for per-project portfolio scans.
+- `contracts/per-project-scan-output.schema.json` -- Required JSON shape for per-project scan results.
+- `contracts/heartbeat-metrics.json` -- End-of-heartbeat metrics shape.
 - `prompts/FEISHU_NOTIFY_PLAYBOOK.md` -- Feishu daily digest, urgent alert, and Board summary templates.
 - `runbooks/paperclip-api.sh` -- Paperclip API helper (auth, run ID headers).
 

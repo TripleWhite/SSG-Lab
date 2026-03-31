@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ssglab.local/portfolio-agent/contracts/heartbeat-metrics.json",
+  "title": "PortfolioHeartbeatMetrics",
+  "description": "Metrics reported at the end of each portfolio-agent heartbeat.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "projects_scanned",
+    "projects_blocked",
+    "recommendations_generated",
+    "digests_sent"
+  ],
+  "properties": {
+    "projects_scanned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "projects_blocked": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "recommendations_generated": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "followups_suggested": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "digests_sent": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "urgent_alerts_sent": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "board_summaries_sent": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "plan_requests_started": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "plan_requests_deferred": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "notify_failures": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

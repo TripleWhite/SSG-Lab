@@ -30,6 +30,14 @@ For each project, collect:
 - Last 30 days of relevant `event_log` context from Mimir
 - New sourcing or matching updates that affect the project
 
+When parallel subagents help with project scans:
+
+- Batch them in groups of 5-10 projects
+- Keep each subagent project-scoped; no cross-project synthesis in child runs
+- Require JSON-only output that matches
+  `contracts/per-project-scan-output.schema.json`
+- Use `contracts/SUBAGENT_CONTRACT.md` as the parent prompt contract
+
 ### 4. Assess Health
 
 For each project, calculate:
@@ -77,6 +85,10 @@ Rules:
 
 - Group project updates by employee
 - Separate urgent items from routine updates
+- Merge only `ok` and `partial` subagent outputs; keep blocked project results
+  isolated and visible in the final summary
+- Deduplicate repeated recommendations for the same project before building the
+  digest sections
 - Build a Board summary with:
   - project counts by stage
   - health distribution
@@ -139,5 +151,7 @@ All entries use `confidence=high`, `source=agent_curated`.
 - Report projects scanned, urgent items, and blockers
 - Report any deferred plan generations or notify failures without hiding the
   rest of the batch outcome
+- Emit end-of-heartbeat counters in `contracts/heartbeat-metrics.json` shape so
+  the run summary stays machine-readable
 - Leave the task `in_progress` when more implementation remains
 - Mark `blocked` only when a concrete dependency prevents progress
