@@ -263,8 +263,8 @@ write_openclaw_config() {
                 config: {
                   apiKey: "${MIMIR_API_KEY}",
                   mimirUrl: "${MIMIR_URL}",
-                  autoRecall: true,
-                  autoCapture: true,
+                  autoRecall: false,
+                  autoCapture: false,
                   tools: true,
                   displayName: "SSG Accelerator"
                 }

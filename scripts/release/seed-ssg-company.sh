@@ -56,6 +56,7 @@ desired_agent_payload() {
   local icon="$4"
   local capabilities="$5"
   local interval_sec="$6"
+  local payload_message="${7:-}"
   local session_key="agent:${name}:main"
 
   jq -n \
@@ -69,6 +70,7 @@ desired_agent_payload() {
     --arg token "$OPENCLAW_GATEWAY_TOKEN" \
     --arg apiUrl "$PAPERCLIP_PUBLIC_BASE_URL" \
     --argjson intervalSec "$interval_sec" \
+    --arg payloadMessage "$payload_message" \
     '{
       name: $name,
       role: $role,
@@ -94,7 +96,13 @@ desired_agent_payload() {
           maxConcurrentRuns: 1
         }
       }
-    }'
+    }
+    | if ($payloadMessage | length) > 0 then
+        .adapterConfig.payloadTemplate = { message: $payloadMessage }
+      else
+        .
+      end
+    '
 }
 
 companies_json="$(curl_json GET "${PAPERCLIP_API_URL}/api/companies")"
@@ -116,12 +124,13 @@ ensure_agent() {
   local icon="$4"
   local capabilities="$5"
   local interval_sec="$6"
+  local payload_message="${7:-}"
   local existing_agent=""
   local desired_payload=""
   local patch_payload=""
   local agent_id=""
 
-  desired_payload="$(desired_agent_payload "$name" "$role" "$title" "$icon" "$capabilities" "$interval_sec")"
+  desired_payload="$(desired_agent_payload "$name" "$role" "$title" "$icon" "$capabilities" "$interval_sec" "$payload_message")"
   existing_agent="$(jq -c --arg name "$name" '.[] | select(.name == $name)' <<<"$agents_json" | head -n 1)"
 
   if [[ -z "$existing_agent" ]]; then
@@ -160,10 +169,12 @@ ensure_agent() {
   refresh_agents_json
 }
 
+HEARTBEAT_OVERRIDE_MSG="IMPORTANT: You have a domain-specific HEARTBEAT.md in your system prompt. Follow HEARTBEAT.md as your primary execution procedure. The Paperclip coordination context below provides API credentials and task routing only — do NOT follow the generic workflow steps below; use your HEARTBEAT.md procedure instead."
+
 ensure_agent "feishu-bot" "general" "Employee conversation gateway" "message-square" "Feishu intake, routing, acknowledgement." 0
 ensure_agent "sourcing-agent" "researcher" "Founder sourcing" "search" "Founder discovery, web research, enrichment." 14400
-ensure_agent "portfolio-agent" "pm" "Portfolio follow-up" "target" "Portfolio review, daily prioritization, follow-up planning." 86400
-ensure_agent "matching-agent" "researcher" "Cross-project matching" "radar" "Relationship mapping, opportunity matching, signal detection." 1800
+ensure_agent "portfolio-agent" "pm" "Portfolio follow-up" "target" "Portfolio review, daily prioritization, follow-up planning." 86400 "$HEARTBEAT_OVERRIDE_MSG"
+ensure_agent "matching-agent" "researcher" "Cross-project matching" "radar" "Relationship mapping, opportunity matching, signal detection." 1800 "$HEARTBEAT_OVERRIDE_MSG"
 
 curl_json GET "${PAPERCLIP_API_URL}/api/companies/${company_id}" | jq '{id, name, description}'
 jq '[.[] | {name, role, title, adapterType, agentId: .adapterConfig.agentId, heartbeat: .runtimeConfig.heartbeat}]' <<<"$agents_json"
