@@ -6,6 +6,11 @@ signals in the parent, scores potential matches, deduplicates, and notifies.
 
 ## Tools Available
 
+**IMPORTANT:** You do NOT have a `read` or `write` file tool. All workspace files
+(AGENTS.md, SOUL.md, HEARTBEAT.md, TOOLS.md) are pre-injected into your system
+prompt by the OpenClaw runtime. Do not attempt file I/O — proceed directly with
+your available tools listed below.
+
 **memory-mimir plugin** (standard operations):
 - `memory_search` — search entities and event_logs by query
 - `memory_graph` — basic entity graph exploration (entities, hops, max_results)
@@ -36,14 +41,30 @@ signals in the parent, scores potential matches, deduplicates, and notifies.
 - `skills/matching/SKILL.md` — 6 match type taxonomy, scoring rubric, dedup
   rules
 - `skills/feishu-format/SKILL.md` — card template for group chat and digest
+- `runbooks/paperclip-api.sh` — wrapper for Paperclip API calls that loads the
+  claimed API key from disk without ever pasting the bearer token into the
+  command line or logs
+
+## Secret Handling
+
+- Never inline `PAPERCLIP_API_KEY` or any bearer token into a command, comment,
+  or status message
+- For every Paperclip API call, use `runbooks/paperclip-api.sh`
+- If you need the claimed key file, point the helper at
+  `~/.openclaw/workspace/paperclip-claimed-api-key.json`; do not print its
+  contents
+- A run is considered failed if the literal bearer token appears in stdout,
+  stderr, a session transcript, or a Paperclip comment
 
 ## Execution Plan
 
 ### 1. Identity and Context
 
-- Load `SOUL.md` (6 match types, scoring rubric, dedup rules)
+- SOUL.md content (6 match types, scoring rubric, dedup rules) is already in your system prompt — do not attempt to read it with a tool
 - Get timestamp of last successful heartbeat from Paperclip run history
 - If this is the first run, use 24 hours ago as baseline
+- When the heartbeat prompt includes the Paperclip workflow, execute the listed
+  `/api` calls through `runbooks/paperclip-api.sh` instead of raw `curl`
 
 ### 2. Check for New Content
 
@@ -147,6 +168,8 @@ payload defined by the tool's `input_schema` in settings.json:
   - `PAPERCLIP_COMPANY_ID`
   - `PAPERCLIP_MATCHING_PARENT_ISSUE_ID`
   - `PAPERCLIP_API_KEY` when Paperclip auth is enabled
+- For `GET /api/agents/me`, issue lookup, checkout, comments, and document
+  writes, call `runbooks/paperclip-api.sh METHOD /api/... [json-body]`
 - Call `store_match` first so Mimir remains the source-of-truth write for
   dedup, analytics, and relation storage
 - Set `create_task: false` for the dashboard feed path. If a separate Board
