@@ -42,8 +42,8 @@ export function Sidebar({ userName, role }: SidebarProps) {
   const visibleItems = navItems.filter((item) => !item.boardOnly || role === "board");
 
   return (
-    <aside className="flex h-screen w-56 flex-col border-r border-[var(--border)] bg-[var(--card)] px-3 py-6">
-      <div className="mb-8 px-3">
+    <aside className="border-b border-[var(--border)] bg-[var(--card)]/95 px-3 py-4 backdrop-blur md:flex md:h-screen md:w-56 md:flex-col md:border-b-0 md:border-r md:px-3 md:py-6">
+      <div className="px-2 md:mb-8 md:px-3">
         <h1 className="text-glow bg-gradient-to-r from-[var(--ssg-green)] to-[var(--ssg-yellow)] bg-clip-text text-xl font-bold text-transparent">
           SSG Accelerator
         </h1>
@@ -52,14 +52,14 @@ export function Sidebar({ userName, role }: SidebarProps) {
         </p>
       </div>
 
-      <nav className="flex-1 space-y-1">
+      <nav className="-mx-1 mt-4 flex gap-1 overflow-x-auto px-1 pb-2 md:mx-0 md:mt-0 md:flex-1 md:flex-col md:gap-1 md:overflow-visible md:px-0 md:pb-0">
         {visibleItems.map((item, idx) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`animate-fade-in flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+              className={`animate-fade-in flex flex-none items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors md:w-full ${
                 isActive
                   ? "bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]"
                   : "text-[var(--muted-foreground)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
@@ -73,13 +73,15 @@ export function Sidebar({ userName, role }: SidebarProps) {
         })}
       </nav>
 
-      <div className="border-t border-[var(--border)] pt-4 px-3">
-        <p className="text-xs text-[var(--muted-foreground)]">Logged in as</p>
-        <p className="text-sm font-medium">{userName}</p>
-        <p className="mt-0.5 text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
-          {role}
-        </p>
-        <form action="/api/auth/logout" method="post" className="mt-3">
+      <div className="mt-3 flex items-end justify-between gap-3 border-t border-[var(--border)] px-2 pt-3 md:mt-auto md:block md:px-3 md:pt-4">
+        <div>
+          <p className="text-xs text-[var(--muted-foreground)]">Logged in as</p>
+          <p className="text-sm font-medium">{userName}</p>
+          <p className="mt-0.5 text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+            {role}
+          </p>
+        </div>
+        <form action="/api/auth/logout" method="post" className="md:mt-3">
           <button
             type="submit"
             className="inline-flex text-xs text-[var(--ssg-green)] transition-colors hover:text-[var(--ssg-yellow)]"
