@@ -50,16 +50,22 @@ function BarChart({
   maxValue = 100,
   valueSuffix = "%",
 }: BarChartProps) {
+  const isSinglePoint = data.length === 1;
+
   return (
     <Card>
       <CardTitle className="mb-4">{title}</CardTitle>
-      <div className="flex items-end gap-3 h-32">
+      <div
+        className={`flex h-32 items-end gap-3 ${isSinglePoint ? "justify-center" : ""}`}
+      >
         {data.map(({ week, value }) => {
           const heightPct = Math.round((value / maxValue) * 100);
           return (
             <div
               key={week}
-              className="flex flex-1 flex-col items-center gap-1 h-full"
+              className={`flex h-full flex-col items-center gap-1 ${
+                isSinglePoint ? "w-full max-w-[12rem]" : "flex-1"
+              }`}
             >
               <span className="text-xs font-medium text-[var(--foreground)]">
                 {value}
