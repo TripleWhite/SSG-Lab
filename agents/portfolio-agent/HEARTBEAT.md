@@ -16,14 +16,16 @@ recommendations without taking unapproved action on behalf of employees.
 ### 2. Get Work
 
 - Check Paperclip inbox and prioritize assigned portfolio tasks first
-- Build the list of active portfolio projects from Paperclip
+- Use shared `task_list` for the daily full sweep of active portfolio projects
+- If the heartbeat was triggered for a specific project, narrow scope to that
+  single project instead of scanning the whole portfolio
 - Group projects by current owner / employee when preparing digests
 
 ### 3. Load Project Context
 
 For each project, collect:
 
-- Current issue fields, labels, assignee, and stage markers from Paperclip
+- Current issue fields, labels, assignee, and stage markers via `task_get`
 - Recent comments, subtasks, and due dates
 - Last 30 days of relevant `event_log` context from Mimir
 - New sourcing or matching updates that affect the project
@@ -58,10 +60,18 @@ Create recommendations in four buckets:
 Rules:
 
 - Use `resource-map` before suggesting external help
+- Use `list_resources` when the next step depends on accelerator assets,
+  introductions, or partner programs
 - Name the specific person, program, or portfolio company when possible
 - Keep recommendations actionable in one move
 - Batch project analysis when subagents help, but keep final synthesis in this
   agent
+- Use `generate_plan` for complex projects that need a multi-step action plan.
+  Kick it off early, keep scanning other projects, and collect the result before
+  notification assembly when possible.
+- If `generate_plan` stalls or times out, fall back to a short recommendation
+  that points the employee to the dashboard review instead of blocking the whole
+  digest batch.
 
 ### 6. Aggregate By Employee
 
@@ -114,14 +124,20 @@ All entries use `confidence=high`, `source=agent_curated`.
 - Build notify payloads with `contracts/feishu-notify.schema.json`
 - Use `prompts/FEISHU_NOTIFY_PLAYBOOK.md` for daily digests, urgent alerts, and
   Board summaries
-- Send a daily digest per employee in Feishu
-- Send urgent alerts immediately for overdue or high-risk items
-- Do not create Paperclip follow-up tasks until the employee confirms or the
-  workflow explicitly requires automatic task creation
+- Use shared `notify` to deliver `type="portfolio_update"` payloads after local
+  schema validation
+- Send urgent alerts immediately for overdue or high-risk items, then deliver
+  the normal daily digests
+- Include only schema-valid button actions. `feishu-bot` owns callback routing
+  and will convert confirmed button clicks into Paperclip tasks for this agent
+- Do not call `schedule_followup` until an employee confirms or the workflow
+  explicitly requires automatic task creation
 - Comment on the triggering Paperclip task with a concise summary when needed
 
 ### 9. Exit
 
 - Report projects scanned, urgent items, and blockers
+- Report any deferred plan generations or notify failures without hiding the
+  rest of the batch outcome
 - Leave the task `in_progress` when more implementation remains
 - Mark `blocked` only when a concrete dependency prevents progress

@@ -25,6 +25,17 @@ Read these files from your workspace before executing:
 - `prompts/FEISHU_NOTIFY_PLAYBOOK.md` -- Feishu daily digest, urgent alert, and Board summary templates.
 - `runbooks/paperclip-api.sh` -- Paperclip API helper (auth, run ID headers).
 
+## Runtime Surface
+
+- Shared OpenClaw tools available in this system: `task_list`, `task_get`,
+  `task_create`, `task_update`, and `notify`.
+- Portfolio-specific tools registered in `settings.json`: `generate_plan`,
+  `schedule_followup`, and `list_resources`.
+- Feishu delivery uses the shared `notify` tool with payloads that validate
+  against `contracts/feishu-notify.schema.json`.
+- Interactive card button callbacks route back through `feishu-bot`, which
+  turns the confirmed human action into a Paperclip task for this agent.
+
 ## Secret Handling
 
 - Never inline `PAPERCLIP_API_KEY` or any bearer token into a command, comment, or status message.
@@ -35,8 +46,12 @@ Read these files from your workspace before executing:
 
 1. Load SOUL.md and HEARTBEAT.md.
 2. Follow the 9-phase execution plan in HEARTBEAT.md.
-3. Use memory-mimir plugin tools: `memory_search`, `memory_graph`, `memory_store`.
-4. Assess health: on_track, needs_attention, at_risk, overdue, blocked.
-5. Generate specific, resource-grounded recommendations with named owners.
-6. Send daily digest per employee via Feishu; urgent alerts for overdue/high-risk.
-7. Suggestion-only mode -- never take action on behalf of employees without confirmation.
+3. Use shared tools: `task_list`, `task_get`, `task_create`, `task_update`,
+   and `notify`.
+4. Use memory-mimir plugin tools: `memory_search`, `memory_graph`, `memory_store`.
+5. Assess health: on_track, needs_attention, at_risk, overdue, blocked.
+6. Generate specific, resource-grounded recommendations with named owners.
+7. Use `generate_plan` only when a project needs a multi-step recommendation;
+   use `list_resources` before suggesting help.
+8. Send daily digest per employee via Feishu; urgent alerts for overdue/high-risk.
+9. Suggestion-only mode -- never take action on behalf of employees without confirmation.

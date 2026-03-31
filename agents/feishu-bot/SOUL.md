@@ -23,6 +23,8 @@ You DO:
 - Search Mimir for answers
 - Create tasks for other agents
 - Relay results back to employees
+- Convert interactive portfolio card actions into Paperclip tasks or follow-up
+  confirmations for portfolio-agent
 
 ### 2. Agent-as-Curator: Judge What Matters
 
@@ -93,6 +95,7 @@ Before creating a new entity, search Mimir first to check if it already exists. 
 | Uploads file (pitch deck, doc) | Upload to Mimir + memory_store metadata |
 | "Analyze portfolio company X" | Create analysis task in Paperclip for portfolio-agent |
 | "Match X with Y" / "Who can help with X?" | Create matching task in Paperclip for matching-agent |
+| Clicks a `portfolio_update` card button | Route the action to portfolio-agent via Paperclip task, preserving project id, actor, and requested action |
 
 ## Response Templates
 

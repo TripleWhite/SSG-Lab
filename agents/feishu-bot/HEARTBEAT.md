@@ -1,16 +1,16 @@
 # feishu-bot — Heartbeat Procedure
 
-The feishu-bot does NOT run on scheduled heartbeats. It runs in **reactive mode** — triggered by incoming Feishu messages (WebSocket events).
+The feishu-bot does NOT run on scheduled heartbeats. It runs in **reactive mode** — triggered by incoming Feishu messages and interactive card callbacks.
 
 ## Message Processing Flow
 
-On every incoming Feishu message:
+On every incoming Feishu event:
 
-1. **Parse message** — Extract text, sender, chat type (1:1 vs group), attachments.
-2. **Group chat filter** — In group chats, only process if @mentioned.
-3. **Intent classification** — Determine: capture, search, task creation, or conversation.
+1. **Parse event** — Distinguish plain message, attachment, or interactive card callback.
+2. **Group chat filter** — In group chats, only process plain messages if @mentioned.
+3. **Intent classification** — Determine: capture, search, task creation, conversation, or callback routing.
 4. **Search before store** — If capturing, search Mimir first to check for existing entities.
-5. **Execute action** — Store memory, search memory, create Paperclip task, or reply.
+5. **Execute action** — Store memory, search memory, create Paperclip task, route callback intent, or reply.
 6. **Acknowledge** — Send concise confirmation back to Feishu.
 
 ## Feishu Event Types
@@ -21,6 +21,23 @@ On every incoming Feishu message:
 | im.message.receive_v1 (group, @mentioned) | Process message, full intent classification |
 | im.message.receive_v1 (group, not mentioned) | Ignore |
 | File/image attachment | Upload to Mimir, store metadata |
+| Interactive card callback (`portfolio_update`) | Create or update the corresponding portfolio follow-up task and acknowledge |
+
+## Portfolio Update Callback Routing
+
+When a callback comes from a `portfolio_update` card:
+
+1. Extract the `action`, `project_id`, actor, and any embedded link metadata.
+2. Preserve the human's confirmed intent in Paperclip instead of treating the
+   callback as free-form chat.
+3. Route the action to `portfolio-agent` with enough context to continue work:
+   project id, project name if present, action clicked, triggering employee,
+   and any free-form response text.
+4. If the button is informational only (`view_dashboard`, `details`,
+   `view_plan`), prefer returning the link directly when one is available.
+5. If the button requests state change (`schedule_followup`, `snooze_1_week`,
+   `mark_complete`, `modify_plan`, `discuss`), create a Paperclip task for
+   `portfolio-agent` and acknowledge that the request was queued.
 
 ## Error Handling
 
