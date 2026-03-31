@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { getSession } from "@/lib/auth";
 import { getBoardRoleMappingCheck, getFeishuAuthCheck } from "@/lib/runtime";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -152,12 +151,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           )}
 
           {authCheck.status === "configured" ? (
-            <Link
+            <a
               href={signInHref}
               className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-[var(--ssg-green)] to-[var(--ssg-yellow)] px-4 py-2 text-sm font-semibold text-[var(--primary-foreground)] transition-all duration-300 hover:scale-105 hover-glow"
             >
               Sign in with Feishu
-            </Link>
+            </a>
           ) : (
             <Button className="mt-6 w-full" disabled>
               Sign in with Feishu
