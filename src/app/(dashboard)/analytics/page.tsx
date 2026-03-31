@@ -175,12 +175,26 @@ export default async function AnalyticsPage() {
         description="Live operational metrics from Paperclip runs and costs"
       />
 
-      <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[var(--muted-foreground)]">
-            Analytics now reflects Paperclip heartbeat success, task throughput,
-            and agent cost data.
-          </p>
+      <Card className="overflow-hidden border-[var(--ssg-green)]/20 bg-[linear-gradient(135deg,rgba(100,254,186,0.08),rgba(19,24,24,0.96)_50%,rgba(10,10,15,0.98))] p-0">
+        <div className="flex flex-col gap-4 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={isFallback ? "warning" : "success"}>
+                {isFallback ? "Fallback Snapshot" : "Live Paperclip Data"}
+              </Badge>
+              <Badge variant="info">Board View</Badge>
+            </div>
+            <div>
+              <p className="text-base font-semibold text-[var(--foreground)]">
+                Operational numbers with no placeholder smoothing
+              </p>
+              <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
+                These cards and charts reflect Paperclip heartbeat success, task
+                throughput, and agent cost data directly. If a feed drops, the page says
+                so instead of silently inventing smoother-looking numbers.
+              </p>
+            </div>
+          </div>
           {isFallback && <Badge variant="warning">Fallback Active</Badge>}
         </div>
       </Card>
