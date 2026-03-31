@@ -29,9 +29,11 @@ If you need a reproducible rollout, export `OPENCLAW_REPO_REF` as a tag or commi
 
 ## Phase 3 Matching-Agent Deploy Note
 
-- The verified matching-agent runtime tree on `2026-03-30` was `/home/ubuntu/.openclaw/agents/matching-agent/`.
-- A restore snapshot was captured at `/home/ubuntu/.openclaw/agents/matching-agent.release.20260330202111.tgz`.
-- That live deploy used an `ubuntu` home layout, not the older `/home/ec2-user/openclaw-agents/...` example path.
+- OpenClaw injects `AGENTS.md`, `SOUL.md`, and `HEARTBEAT.md` from the agent `workspace`, not from `agentDir`.
+- For `matching-agent`, the intended bootstrap workspace is `/home/ec2-user/openclaw-agents/matching-agent/` unless `OPENCLAW_WORKSPACE_ROOT` was overridden during host bootstrap.
+- The `/home/ubuntu/.openclaw/agents/matching-agent/` tree observed on `2026-03-30` is agent state and transcript storage, not the workspace that feeds bootstrap injection.
+- A restore snapshot was captured at `/home/ubuntu/.openclaw/agents/matching-agent.release.20260330202111.tgz`; treat that as state backup evidence only.
+- Because `matching-agent` uses a fixed session key, any change to workspace bootstrap files must be followed by a reset or deletion of session `agent:matching-agent:main` before QA reruns, otherwise OpenClaw can reuse a cached bootstrap snapshot.
 - `board.ssgaccelerator.com` currently resolves to `ssg-agent-system`; do not use that DNS name as proof that the matching-agent runtime lives on the same instance.
 
 ## Services And Paths
@@ -46,7 +48,8 @@ If you need a reproducible rollout, export `OPENCLAW_REPO_REF` as a tag or commi
 - OpenClaw service: `openclaw-gateway.service`
 - Shared gateway token file: `/home/ec2-user/openclaw-gateway.env`
 - Bootstrap script default workspaces: `/home/ec2-user/openclaw-agents/{feishu-bot,sourcing-agent,portfolio-agent,matching-agent}`
-- Current verified matching-agent runtime path: `/home/ubuntu/.openclaw/agents/matching-agent/`
+- Matching-agent bootstrap workspace: `/home/ec2-user/openclaw-agents/matching-agent/`
+- Matching-agent agentDir/state path: `/home/ec2-user/.openclaw/agents/matching-agent/agent/`
 
 ## Required Runtime Details
 
@@ -77,6 +80,8 @@ curl -fsS http://127.0.0.1:18789/openclaw/
 curl -I https://dash.ssgaccelerator.com
 curl -fsS https://dash.ssgaccelerator.com/login | grep -o 'href="/api/auth/feishu"'
 curl -sS -D - -o /dev/null https://dash.ssgaccelerator.com/api/auth/feishu
+jq '.agents.list[] | select(.id == "matching-agent") | {workspace, agentDir}' /home/ec2-user/.openclaw/openclaw.json
+ls -l /home/ec2-user/openclaw-agents/matching-agent/AGENTS.md /home/ec2-user/openclaw-agents/matching-agent/SOUL.md /home/ec2-user/openclaw-agents/matching-agent/HEARTBEAT.md
 systemctl status paperclip --no-pager
 systemctl status openclaw-gateway --no-pager
 systemctl status caddy --no-pager
@@ -92,6 +97,8 @@ Expected results:
 - `https://dash.ssgaccelerator.com` returns `307` from `/` to `/login`.
 - `/login` includes a sign-in link to `/api/auth/feishu`.
 - `GET https://dash.ssgaccelerator.com/api/auth/feishu` returns `307` to Feishu authorize and sets the `ssg_oauth_state` cookie.
+- `openclaw.json` reports `matching-agent.workspace` under `/home/ec2-user/openclaw-agents/matching-agent` and keeps `agentDir` under `.openclaw/agents/...`.
+- The matching-agent workspace contains the expected bootstrap files before any QA rerun.
 - `systemctl show caddy` reports `User=caddy` and `Group=caddy`.
 - AWS security group ingress shows only `22` and `443` as public rules.
 - All three services are `active (running)`.

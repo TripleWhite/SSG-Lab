@@ -56,6 +56,7 @@ desired_agent_payload() {
   local icon="$4"
   local capabilities="$5"
   local interval_sec="$6"
+  local session_key="agent:${name}:main"
 
   jq -n \
     --arg name "$name" \
@@ -63,6 +64,7 @@ desired_agent_payload() {
     --arg title "$title" \
     --arg icon "$icon" \
     --arg capabilities "$capabilities" \
+    --arg sessionKey "$session_key" \
     --arg url "$OPENCLAW_GATEWAY_URL" \
     --arg token "$OPENCLAW_GATEWAY_TOKEN" \
     --arg apiUrl "$PAPERCLIP_PUBLIC_BASE_URL" \
@@ -80,7 +82,9 @@ desired_agent_payload() {
           "x-openclaw-token": $token
         },
         paperclipApiUrl: $apiUrl,
-        agentId: $name
+        agentId: $name,
+        sessionKeyStrategy: "fixed",
+        sessionKey: $sessionKey
       },
       runtimeConfig: {
         heartbeat: {
