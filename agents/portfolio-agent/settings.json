@@ -1,0 +1,112 @@
+{
+  "plugins": ["memory-mimir"],
+  "memory-mimir": {
+    "apiUrl": "https://api.allinmimir.com",
+    "apiKey": "<mimir-api-key>",
+    "maxRecallItems": 30,
+    "maxRecallTokens": 3000,
+    "autoCapture": false,
+    "autoRecall": false,
+    "tools": [
+      "memory_store",
+      "memory_search",
+      "memory_graph",
+      "memory_update",
+      "memory_delete"
+    ]
+  },
+  "model": {
+    "provider": "openai-compatible",
+    "name": "minimax-m2.7",
+    "apiUrl": "<minimax-api-url>",
+    "apiKey": "<minimax-api-key>"
+  },
+  "browser": false,
+  "tools": [
+    {
+      "name": "generate_plan",
+      "description": "Generate an actionable plan for a project based on its current stage, health, and the accelerator resources available to it.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "description": "Project or company name"
+          },
+          "current_stage": {
+            "type": "string",
+            "enum": [
+              "contact",
+              "diligence",
+              "decision",
+              "acceleration",
+              "exit"
+            ],
+            "description": "Current pipeline stage"
+          },
+          "context": {
+            "type": "string",
+            "description": "Recent activity, health status, blockers, and relevant evidence"
+          },
+          "goal": {
+            "type": "string",
+            "description": "Optional planning goal such as advance stage, resolve blocker, or deploy resources"
+          }
+        },
+        "required": ["project_name", "current_stage", "context"]
+      }
+    },
+    {
+      "name": "schedule_followup",
+      "description": "Create a dated follow-up reminder for a project and assign the reminder to an employee.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "project_name": {
+            "type": "string",
+            "description": "Project or company name"
+          },
+          "follow_up_date": {
+            "type": "string",
+            "description": "ISO 8601 follow-up date, for example 2026-04-15"
+          },
+          "action": {
+            "type": "string",
+            "description": "What should happen on the follow-up date"
+          },
+          "assigned_to": {
+            "type": "string",
+            "description": "Employee responsible for the follow-up"
+          }
+        },
+        "required": ["project_name", "follow_up_date", "action", "assigned_to"]
+      }
+    },
+    {
+      "name": "list_resources",
+      "description": "List accelerator resources that match a specific need across connections, investors, mentors, programs, and portfolio companies.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "need": {
+            "type": "string",
+            "description": "The resource need to search for"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "all",
+              "connections",
+              "investors",
+              "mentors",
+              "programs",
+              "talent"
+            ],
+            "description": "Optional resource category filter"
+          }
+        },
+        "required": ["need"]
+      }
+    }
+  ]
+}

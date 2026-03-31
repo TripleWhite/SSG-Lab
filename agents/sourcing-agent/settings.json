@@ -1,0 +1,160 @@
+{
+  "plugins": ["memory-mimir"],
+  "memory-mimir": {
+    "apiUrl": "https://api.allinmimir.com",
+    "apiKey": "<mimir-api-key>",
+    "maxRecallItems": 25,
+    "maxRecallTokens": 2500,
+    "autoCapture": false,
+    "autoRecall": false,
+    "tools": [
+      "memory_store",
+      "memory_search",
+      "memory_graph",
+      "memory_update",
+      "memory_delete"
+    ]
+  },
+  "model": {
+    "provider": "openai-compatible",
+    "name": "kimi-k2.5",
+    "apiUrl": "<kimi-api-url>",
+    "apiKey": "<kimi-api-key>"
+  },
+  "browser": true,
+  "tools": [
+    {
+      "name": "web_search",
+      "description": "Search the web for startup founders, companies, and technology trends. Returns search result snippets.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "num_results": {
+            "type": "integer",
+            "description": "Number of results to return (default 10, max 20)"
+          }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "browse",
+      "description": "Navigate to a URL and extract page content for profile or article review.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to browse"
+          },
+          "extract": {
+            "type": "string",
+            "description": "Extraction mode: text, links, profiles, or structured"
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    {
+      "name": "github_search",
+      "description": "Search GitHub for repositories, users, and organizations related to a technology or domain.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "GitHub search query"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["repositories", "users", "organizations"],
+            "description": "GitHub search type"
+          },
+          "sort": {
+            "type": "string",
+            "enum": ["stars", "forks", "updated"],
+            "description": "Sort key"
+          }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "xiaohongshu_search",
+      "description": "Search Xiaohongshu for startup, founder, and market content.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search query in Chinese or English"
+          },
+          "content_type": {
+            "type": "string",
+            "enum": ["notes", "users"],
+            "description": "Search for notes or user profiles"
+          }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "wechat_article_search",
+      "description": "Search WeChat public account articles for industry analysis, founder interviews, and funding news.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Chinese search query"
+          },
+          "recent_days": {
+            "type": "integer",
+            "description": "Limit to articles from the last N days"
+          }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "extract_contact",
+      "description": "Extract contact information from a founder or company profile page.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Profile URL"
+          },
+          "name": {
+            "type": "string",
+            "description": "Person or company name for extraction context"
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    {
+      "name": "screenshot",
+      "description": "Take a screenshot of a web page for evidence or records.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to capture"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Output filename"
+          }
+        },
+        "required": ["url"]
+      }
+    }
+  ]
+}

@@ -6,6 +6,7 @@
     "maxRecallItems": 50,
     "maxRecallTokens": 4000,
     "autoCapture": false,
+    "autoRecall": false,
     "tools": [
       "memory_store",
       "memory_search",
@@ -60,7 +61,7 @@
     },
     {
       "name": "store_match",
-      "description": "Persist a MATCH_FOUND relation in Mimir and optionally create a Paperclip follow-up issue. Payload must conform to contracts/mimir-match.schema.json.",
+      "description": "Persist a MATCH_FOUND relation in Mimir. Dashboard-facing Paperclip result issues are written separately under PAPERCLIP_MATCHING_PARENT_ISSUE_ID after this tool succeeds.",
       "input_schema": {
         "type": "object",
         "properties": {
@@ -117,7 +118,7 @@
           "create_task": {
             "type": "boolean",
             "default": false,
-            "description": "If true, create a Paperclip follow-up issue (status: in_review). Always true for HIGH matches."
+            "description": "Optional Board follow-up issue (status: in_review). Do not use this for the dashboard feed; every match result is mirrored separately as a child of PAPERCLIP_MATCHING_PARENT_ISSUE_ID."
           }
         },
         "required": ["match_id", "match_type", "entity_a", "entity_b", "confidence", "confidence_level", "summary", "suggested_action"]
