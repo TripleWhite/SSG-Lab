@@ -31,7 +31,7 @@
 - Signed-in users can access `/`, `/pipeline`, `/agents`, `/sourcing`, `/matching`, and `/resources`.
 - `/analytics` and `/settings` are board-only. Populate `BOARD_FEISHU_OPEN_IDS` with comma-separated Feishu open IDs or emails to map those users into the `board` role.
 - Overview, Pipeline, Sourcing, and Matching revalidate every 30 seconds. Agents revalidates every 15 seconds.
-- `/sourcing` and `/matching` now render honest empty states until a live candidate or match feed is wired. `/resources` falls back to `data/resource-graph-seed.json` when Mimir is unavailable.
+- `/sourcing` and `/matching` now read live Paperclip structured-result issues when the `SSG Lab` project contains `Sourcing Results` and `Matching Results` parent issues. If that project, parent issue, or `result` document is missing, the routes intentionally keep the honest empty state. `/resources` falls back to `data/resource-graph-seed.json` when Mimir is unavailable.
 
 ## Runtime Environment
 

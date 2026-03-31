@@ -67,8 +67,10 @@ Confirmed paths used by the current dashboard code:
 - `GET /api/companies/{companyId}/agents`
 - `GET /api/companies/{companyId}/projects`
 - `GET /api/companies/{companyId}/issues?projectId={projectId}`
+- `GET /api/companies/{companyId}/issues?parentId={parentId}`
 - `GET /api/companies/{companyId}/heartbeat-runs?limit={limit}`
 - `GET /api/companies/{companyId}/costs/by-agent`
+- `GET /api/issues/{issueId}/documents/result`
 
 Caching behavior:
 
@@ -77,11 +79,11 @@ Caching behavior:
 - Paginated fetches request pages of 100 items at a time.
 - Operational verification after Caddy proxy or service-user changes should use `https://board.ssgaccelerator.com/api/health`.
 
-Current feed gaps:
+Current live-feed behavior:
 
-- `getSourcingResults()` currently returns an empty array in `src/lib/paperclip.ts`.
-- `getMatches()` currently returns an empty array in `src/lib/paperclip.ts`.
-- `/sourcing` and `/matching` intentionally show honest empty states until a live record source is wired.
+- `getSourcingResults()` resolves the `SSG Lab` project, finds the `Sourcing Results` parent issue, and maps each child issue's `result` document into the `SourcingResult` dashboard type.
+- `getMatches()` resolves the `SSG Lab` project, finds the `Matching Results` parent issue, and maps each child issue's `result` document into the `Match` dashboard type.
+- If the `SSG Lab` project, the parent issue, or the `result` document is missing, `/sourcing` and `/matching` intentionally preserve the honest empty state instead of showing fallback demo records.
 
 ### Mimir API
 

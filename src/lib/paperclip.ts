@@ -23,6 +23,9 @@ const API_KEY = process.env.PAPERCLIP_API_KEY || "";
 const COMPANY_ID = process.env.PAPERCLIP_COMPANY_ID || "";
 const DEFAULT_REVALIDATE_SECONDS = 30;
 const DEFAULT_HEARTBEAT_RUN_LIMIT = 100;
+const DASHBOARD_PROJECT_NAME = "SSG Lab";
+const SOURCING_RESULTS_PARENT_TITLE = "Sourcing Results";
+const MATCHING_RESULTS_PARENT_TITLE = "Matching Results";
 
 interface FetchPaperclipOptions {
   revalidateSeconds?: number;
@@ -122,6 +125,14 @@ interface PaperclipCostByAgent {
   subscriptionRunCount: number;
 }
 
+interface PaperclipIssueDocument {
+  key?: string;
+  format?: string;
+  body?: unknown;
+}
+
+type JsonRecord = Record<string, unknown>;
+
 async function fetchPaperclip<T>(
   path: string,
   options: FetchPaperclipOptions = {}
@@ -154,7 +165,235 @@ function isCursorPage<T>(value: unknown): value is CursorPage<T> {
   );
 }
 
-export async function fetchPaperclipPaginated<T>(path: string): Promise<T[]> {
+function isJsonRecord(value: unknown): value is JsonRecord {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function getDateTimestamp(value: string): number {
+  const timestamp = new Date(value).getTime();
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function coerceString(value: unknown): string | undefined {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  return undefined;
+}
+
+function coerceNumber(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+}
+
+function coerceStringArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => coerceString(item))
+      .filter((item): item is string => Boolean(item));
+  }
+
+  const item = coerceString(value);
+  return item ? [item] : [];
+}
+
+function parseDocumentBody(body: unknown): JsonRecord | null {
+  if (isJsonRecord(body)) {
+    return body;
+  }
+
+  if (typeof body !== "string") {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(body);
+    return isJsonRecord(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function parseSourcingStatus(value: unknown): SourcingResult["status"] | undefined {
+  switch (value) {
+    case "new":
+    case "reviewed":
+    case "converted":
+    case "dismissed":
+      return value;
+    default:
+      return undefined;
+  }
+}
+
+function mapSourcingIssueStatus(status: WorkItem["status"]): SourcingResult["status"] {
+  switch (status) {
+    case "done":
+      return "converted";
+    case "cancelled":
+      return "dismissed";
+    case "todo":
+    case "backlog":
+      return "new";
+    default:
+      return "reviewed";
+  }
+}
+
+function parseMatchType(value: unknown): Match["type"] | undefined {
+  switch (value) {
+    case "supply-demand":
+    case "resource":
+    case "talent":
+    case "investor":
+    case "cross-project":
+    case "mentor":
+      return value;
+    default:
+      return undefined;
+  }
+}
+
+function parseMatchStatus(value: unknown): Match["status"] | undefined {
+  switch (value) {
+    case "pending":
+    case "accepted":
+    case "dismissed":
+      return value;
+    default:
+      return undefined;
+  }
+}
+
+function mapMatchIssueStatus(status: WorkItem["status"]): Match["status"] {
+  switch (status) {
+    case "done":
+      return "accepted";
+    case "cancelled":
+      return "dismissed";
+    default:
+      return "pending";
+  }
+}
+
+function parseSourcingTitle(title: string): {
+  companyName?: string;
+  founderName?: string;
+} {
+  const normalized = title.replace(/^Sourcing:\s*/i, "");
+  const [companyName, founderName] = normalized.split("/").map((part) => part.trim());
+  return { companyName, founderName };
+}
+
+function parseMatchTitle(title: string): {
+  sideA?: string;
+  sideB?: string;
+} {
+  const normalized = title.replace(/^Match:\s*/i, "");
+  const [sideA, sideB] = normalized.split("↔").map((part) => part.trim());
+  return { sideA, sideB };
+}
+
+function mapSourcingResult(
+  issue: PaperclipIssue,
+  document: JsonRecord | null
+): SourcingResult | null {
+  if (!document) {
+    return null;
+  }
+
+  const titleFallback = parseSourcingTitle(issue.title);
+  const contact = isJsonRecord(document.contact) ? document.contact : null;
+
+  return {
+    id: issue.id,
+    founderName:
+      coerceString(document.founderName) ??
+      titleFallback.founderName ??
+      "Unknown founder",
+    companyName:
+      coerceString(document.companyName) ??
+      titleFallback.companyName ??
+      "Unknown company",
+    domain: coerceString(document.domain) ?? "Unknown",
+    stage: coerceString(document.stage) ?? "Unknown",
+    relevanceScore: coerceNumber(document.relevanceScore) ?? 0,
+    sources: coerceStringArray(document.sources),
+    contactEmail:
+      coerceString(document.contactEmail) ??
+      (contact ? coerceString(contact.email) : undefined),
+    contactTwitter:
+      coerceString(document.contactTwitter) ??
+      (contact ? coerceString(contact.twitter) : undefined),
+    contactLinkedin:
+      coerceString(document.contactLinkedin) ??
+      (contact ? coerceString(contact.linkedin) : undefined),
+    matchReason: (
+      coerceString(document.matchReason) ??
+      issue.description ??
+      "No match reason provided."
+    ),
+    createdAt: coerceString(document.createdAt) ?? issue.createdAt,
+    status:
+      parseSourcingStatus(document.status) ??
+      mapSourcingIssueStatus(issue.status),
+    requestedBy: coerceString(document.requestedBy) ?? "Unknown",
+  };
+}
+
+function mapMatchResult(issue: PaperclipIssue, document: JsonRecord | null): Match | null {
+  if (!document) {
+    return null;
+  }
+
+  const sideA = isJsonRecord(document.sideA) ? document.sideA : null;
+  const sideB = isJsonRecord(document.sideB) ? document.sideB : null;
+  const titleFallback = parseMatchTitle(issue.title);
+
+  return {
+    id: issue.id,
+    type: parseMatchType(document.type) ?? "resource",
+    confidence: coerceNumber(document.confidence) ?? 0,
+    sideA: {
+      entity: coerceString(sideA?.entity) ?? titleFallback.sideA ?? "Unknown",
+      description: coerceString(sideA?.description) ?? "",
+      sourceEmployee: coerceString(sideA?.sourceEmployee) ?? "Unknown",
+    },
+    sideB: {
+      entity: coerceString(sideB?.entity) ?? titleFallback.sideB ?? "Unknown",
+      description: coerceString(sideB?.description) ?? "",
+      sourceEmployee: coerceString(sideB?.sourceEmployee) ?? "Unknown",
+    },
+    suggestion: (
+      coerceString(document.suggestion) ??
+      issue.description ??
+      "No suggestion provided."
+    ),
+    status: parseMatchStatus(document.status) ?? mapMatchIssueStatus(issue.status),
+    createdAt: coerceString(document.createdAt) ?? issue.createdAt,
+  };
+}
+
+export async function fetchPaperclipPaginated<T>(
+  path: string,
+  options: FetchPaperclipOptions = {}
+): Promise<T[]> {
   let cursor: string | null = null;
   const results: T[] = [];
 
@@ -166,7 +405,10 @@ export async function fetchPaperclipPaginated<T>(path: string): Promise<T[]> {
     }
 
     const separator = path.includes("?") ? "&" : "?";
-    const page = await fetchPaperclip<CursorPage<T> | T[]>(`${path}${separator}${params.toString()}`);
+    const page = await fetchPaperclip<CursorPage<T> | T[]>(
+      `${path}${separator}${params.toString()}`,
+      options
+    );
 
     if (Array.isArray(page)) {
       results.push(...page);
@@ -284,6 +526,67 @@ async function getRawProjects(
   return fetchPaperclip<PaperclipProject[]>(`/api/companies/${COMPANY_ID}/projects`, {
     revalidateSeconds,
   });
+}
+
+async function getDashboardProject(
+  revalidateSeconds = DEFAULT_REVALIDATE_SECONDS
+): Promise<PaperclipProject | null> {
+  const projects = await getRawProjects(revalidateSeconds);
+  return (
+    projects.find(
+      (project) => project.name.trim().toLowerCase() === DASHBOARD_PROJECT_NAME.toLowerCase()
+    ) ?? null
+  );
+}
+
+async function getProjectIssues(
+  projectId: string,
+  revalidateSeconds = DEFAULT_REVALIDATE_SECONDS
+): Promise<PaperclipIssue[]> {
+  return fetchPaperclipPaginated<PaperclipIssue>(
+    `/api/companies/${COMPANY_ID}/issues?projectId=${projectId}`,
+    { revalidateSeconds }
+  );
+}
+
+async function resolveResultParentIssueId(
+  title: string,
+  revalidateSeconds = DEFAULT_REVALIDATE_SECONDS
+): Promise<string | null> {
+  const project = await getDashboardProject(revalidateSeconds);
+  if (!project) {
+    return null;
+  }
+
+  const issues = await getProjectIssues(project.id, revalidateSeconds);
+  return issues.find((issue) => issue.title === title)?.id ?? null;
+}
+
+async function getResultIssues(
+  parentTitle: string,
+  revalidateSeconds = DEFAULT_REVALIDATE_SECONDS
+): Promise<PaperclipIssue[]> {
+  const parentId = await resolveResultParentIssueId(parentTitle, revalidateSeconds);
+  if (!parentId) {
+    return [];
+  }
+
+  return fetchPaperclipPaginated<PaperclipIssue>(
+    `/api/companies/${COMPANY_ID}/issues?parentId=${parentId}`,
+    { revalidateSeconds }
+  );
+}
+
+async function getResultDocument(
+  issueId: string,
+  revalidateSeconds = DEFAULT_REVALIDATE_SECONDS
+): Promise<JsonRecord | null> {
+  const result = await safeFetchPaperclip<PaperclipIssueDocument>(
+    `/api/issues/${issueId}/documents/result`,
+    { revalidateSeconds }
+  );
+
+  return result.data ? parseDocumentBody(result.data.body) : null;
 }
 
 export async function getProjectWorkItems(
@@ -445,11 +748,25 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 export async function getSourcingResults(): Promise<SourcingResult[]> {
-  return [];
+  const issues = await getResultIssues(SOURCING_RESULTS_PARENT_TITLE);
+  const results = await Promise.all(
+    issues.map(async (issue) => mapSourcingResult(issue, await getResultDocument(issue.id)))
+  );
+
+  return results
+    .filter((result): result is SourcingResult => Boolean(result))
+    .sort((left, right) => getDateTimestamp(right.createdAt) - getDateTimestamp(left.createdAt));
 }
 
 export async function getMatches(): Promise<Match[]> {
-  return [];
+  const issues = await getResultIssues(MATCHING_RESULTS_PARENT_TITLE);
+  const results = await Promise.all(
+    issues.map(async (issue) => mapMatchResult(issue, await getResultDocument(issue.id)))
+  );
+
+  return results
+    .filter((result): result is Match => Boolean(result))
+    .sort((left, right) => getDateTimestamp(right.createdAt) - getDateTimestamp(left.createdAt));
 }
 
 export async function getEmployees(): Promise<Employee[]> {
