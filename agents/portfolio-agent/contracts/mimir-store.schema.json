@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ssglab.local/portfolio-agent/contracts/mimir-store.schema.json",
+  "title": "PortfolioMimirStorePlan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_date",
+    "generated_at",
+    "projects_scanned",
+    "entries"
+  ],
+  "properties": {
+    "run_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "projects_scanned": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/storeEntry"
+      }
+    }
+  },
+  "$defs": {
+    "storeEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "project_name",
+        "event_type",
+        "health",
+        "memory_text",
+        "store_status"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event_type": {
+          "type": "string",
+          "enum": [
+            "health_change",
+            "stage_change",
+            "overdue_followup",
+            "stall_detected",
+            "blocker_identified",
+            "milestone_reached"
+          ]
+        },
+        "previous_health": {
+          "type": "string",
+          "enum": [
+            "on_track",
+            "needs_attention",
+            "at_risk",
+            "overdue",
+            "blocked"
+          ]
+        },
+        "health": {
+          "type": "string",
+          "enum": [
+            "on_track",
+            "needs_attention",
+            "at_risk",
+            "overdue",
+            "blocked"
+          ]
+        },
+        "stage": {
+          "type": "string",
+          "enum": [
+            "contact",
+            "diligence",
+            "decision",
+            "acceleration",
+            "exit"
+          ]
+        },
+        "owner": {
+          "type": "string"
+        },
+        "days_inactive": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "days_in_stage": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "memory_text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high"]
+        },
+        "source": {
+          "type": "string",
+          "enum": ["agent_curated"]
+        },
+        "store_status": {
+          "type": "string",
+          "enum": ["pending", "stored", "failed"]
+        },
+        "memory_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
