@@ -74,7 +74,10 @@ write_state_env() {
   {
     printf 'OPENCLAW_GATEWAY_TOKEN=%s\n' "$OPENCLAW_GATEWAY_TOKEN"
     printf 'KIMI_API_KEY=%s\n' "$KIMI_API_KEY"
-    printf 'MINIMAX_API_KEY=%s\n' "$MINIMAX_API_KEY"
+
+    if [[ -n "$MINIMAX_API_KEY" ]]; then
+      printf 'MINIMAX_API_KEY=%s\n' "$MINIMAX_API_KEY"
+    fi
 
     if [[ -n "$MIMIR_API_KEY" ]]; then
       printf 'MIMIR_API_KEY=%s\n' "$MIMIR_API_KEY"
@@ -157,6 +160,7 @@ write_openclaw_config() {
     --arg hasFeishuAppSecret "$FEISHU_APP_SECRET" \
     --arg hasFeishuVerificationToken "$FEISHU_VERIFICATION_TOKEN" \
     --arg hasFeishuEncryptKey "$FEISHU_ENCRYPT_KEY" \
+    --arg hasMinimax "$MINIMAX_API_KEY" \
     '{
       session: {
         dmScope: "per-channel-peer"
@@ -178,12 +182,9 @@ write_openclaw_config() {
       agents: {
         defaults: {
           model: {
-            primary: "minimax/MiniMax-M2.7"
+            primary: "kimi-coding/k2p5"
           },
           models: {
-            "minimax/MiniMax-M2.7": {
-              alias: "Minimax"
-            },
             "kimi-coding/k2p5": {
               alias: "Kimi K2.5"
             }
@@ -195,7 +196,7 @@ write_openclaw_config() {
             default: true,
             workspace: ($workspaceRoot + "/feishu-bot"),
             agentDir: ($stateDir + "/agents/feishu-bot/agent"),
-            model: "minimax/MiniMax-M2.7"
+            model: "kimi-coding/k2p5"
           },
           {
             id: "sourcing-agent",
@@ -207,37 +208,43 @@ write_openclaw_config() {
             id: "portfolio-agent",
             workspace: ($workspaceRoot + "/portfolio-agent"),
             agentDir: ($stateDir + "/agents/portfolio-agent/agent"),
-            model: "minimax/MiniMax-M2.7"
+            model: "kimi-coding/k2p5",
+            heartbeat: {
+              every: "24h",
+              at: "01:00",
+              session: "main",
+              target: "none"
+            }
           },
           {
             id: "matching-agent",
             workspace: ($workspaceRoot + "/matching-agent"),
             agentDir: ($stateDir + "/agents/matching-agent/agent"),
-            model: "minimax/MiniMax-M2.7"
+            model: "kimi-coding/k2p5"
           }
         ]
       },
       models: {
         mode: "merge",
         providers: {
-          minimax: {
-            baseUrl: "https://api.minimax.io/anthropic",
-            apiKey: "${MINIMAX_API_KEY}",
+          "kimi-coding": {
+            baseUrl: "https://api.kimi.com/coding/",
+            apiKey: "${KIMI_API_KEY}",
             api: "anthropic-messages",
             models: [
               {
-                id: "MiniMax-M2.7",
-                name: "MiniMax M2.7",
+                id: "k2p5",
+                name: "Kimi for Coding",
                 reasoning: true,
-                input: ["text"],
+                input: ["text", "image"],
                 cost: {
-                  input: 0.3,
-                  output: 1.2,
-                  cacheRead: 0.03,
-                  cacheWrite: 0.12
+                  input: 0,
+                  output: 0,
+                  cacheRead: 0,
+                  cacheWrite: 0
                 },
-                contextWindow: 200000,
-                maxTokens: 8192
+                contextWindow: 262144,
+                maxTokens: 32768
               }
             ]
           }
@@ -274,6 +281,32 @@ write_openclaw_config() {
         end
       )
     }
+    | if ($hasMinimax | length) > 0 then
+        .models.providers.minimax = {
+          baseUrl: "https://api.minimax.io/anthropic",
+          apiKey: "${MINIMAX_API_KEY}",
+          api: "anthropic-messages",
+          models: [
+            {
+              id: "MiniMax-M2.7",
+              name: "MiniMax M2.7",
+              reasoning: true,
+              input: ["text"],
+              cost: {
+                input: 0.3,
+                output: 1.2,
+                cacheRead: 0.03,
+                cacheWrite: 0.12
+              },
+              contextWindow: 200000,
+              maxTokens: 8192
+            }
+          ]
+        }
+        | .agents.defaults.models."minimax/MiniMax-M2.7" = { alias: "Minimax" }
+      else
+        .
+      end
     | if ($hasFeishuAppId | length) > 0 and ($hasFeishuAppSecret | length) > 0 then
         .channels = {
           feishu: {
@@ -344,7 +377,7 @@ EOF
 
 pkg_install git jq gcc-c++ make python3
 ensure_node
-require_env OPENCLAW_GATEWAY_TOKEN KIMI_API_KEY MINIMAX_API_KEY
+require_env OPENCLAW_GATEWAY_TOKEN KIMI_API_KEY
 
 if [[ -n "$FEISHU_APP_ID" || -n "$FEISHU_APP_SECRET" ]]; then
   require_env FEISHU_APP_ID FEISHU_APP_SECRET
