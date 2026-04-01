@@ -1,0 +1,8 @@
+{
+  "id": "matching-agent-tools",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
