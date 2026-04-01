@@ -109,7 +109,7 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 rounded-md p-1.5 text-[var(--muted-foreground)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)] transition-colors"
+          className="absolute top-4 right-4 border border-transparent p-1.5 text-[var(--muted-foreground)] transition-colors hover:border-[var(--border)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
         >
           <X size={18} />
         </button>
@@ -122,9 +122,9 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
             <div className="mt-3 flex items-center gap-2">
               <Badge variant={project.stageVariant}>{project.stage}</Badge>
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${healthClassName}`}
+                className={`inline-flex items-center gap-1.5 border border-current/15 px-2.5 py-0.5 text-xs font-medium ${healthClassName}`}
               >
-                <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+                <span className={`h-1.5 w-1.5 ${dot}`} />
                 {healthLabel}
               </span>
             </div>
@@ -178,7 +178,7 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
                   return (
                     <li
                       key={task.id}
-                      className="rounded-md border border-[var(--border)] bg-[var(--background)] px-3 py-3"
+                      className="border border-[var(--border)] bg-[var(--background)] px-3 py-3"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -211,7 +211,7 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
               <ul className="space-y-4 pl-6">
                 {project.timeline.map((entry) => (
                   <li key={`${entry.date}-${entry.event}`} className="relative">
-                    <span className="absolute -left-[19px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--ssg-green)] ring-2 ring-[var(--card)]" />
+                    <span className="absolute -left-[19px] top-1.5 h-2.5 w-2.5 bg-[var(--ssg-green)] ring-2 ring-[var(--card)]" />
                     <p className="text-sm text-[var(--foreground)]">{entry.event}</p>
                     <p className="text-xs text-[var(--muted-foreground)]">
                       {entry.date} &middot; {entry.actor}

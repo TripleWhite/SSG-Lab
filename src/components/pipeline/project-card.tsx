@@ -83,9 +83,9 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <div className="mt-1 flex flex-wrap gap-1.5">
             <Badge variant={stageVariant}>{stage}</Badge>
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${healthClassName}`}
+              className={`inline-flex items-center gap-1.5 border border-current/15 px-2.5 py-0.5 text-xs font-medium ${healthClassName}`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+              <span className={`h-1.5 w-1.5 ${dot}`} />
               {healthLabel}
             </span>
           </div>
