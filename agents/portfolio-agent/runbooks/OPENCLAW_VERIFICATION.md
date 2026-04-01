@@ -5,18 +5,30 @@ EC2-B.
 
 ## Preconditions
 
-- Paperclip is healthy on `127.0.0.1:3100`
-- OpenClaw is healthy on `127.0.0.1:18789`
+- Paperclip is healthy at `$PAPERCLIP_API_URL` (remote — `https://board.ssgaccelerator.com`)
+- OpenClaw is healthy on `127.0.0.1:18789` (local on EC2-B)
 - The runtime agent directory exists at
   `/home/ec2-user/openclaw-agents/portfolio-agent/`
 - Paperclip runtime env is available at
   `/home/ec2-user/.paperclip/runtime.env`
 - OpenClaw is running as `openclaw-gateway.service`
 
+**Important:** Paperclip runs as a remote service at `board.ssgaccelerator.com`,
+not locally on EC2-B. All Paperclip API calls must use `$PAPERCLIP_API_URL`.
+
 Load runtime env before any API calls:
 
 ```bash
 source /home/ec2-user/.paperclip/runtime.env
+```
+
+Verify the env is loaded correctly:
+
+```bash
+echo "PAPERCLIP_API_URL=$PAPERCLIP_API_URL"
+echo "PAPERCLIP_COMPANY_ID=$PAPERCLIP_COMPANY_ID"
+# PAPERCLIP_API_KEY should be set but never printed
+test -n "$PAPERCLIP_API_KEY" && echo "PAPERCLIP_API_KEY is set" || echo "ERROR: PAPERCLIP_API_KEY is missing"
 ```
 
 ## 1. Sync Repo-Local Files Into The Runtime Agent Directory
@@ -54,17 +66,20 @@ Expected files include:
 ## 2. Verify Services Before Triggering The Agent
 
 ```bash
-curl -fsS http://127.0.0.1:3100/api/health | jq
+# Paperclip is remote — check the remote health endpoint
+curl -fsS "$PAPERCLIP_API_URL/api/health" | jq
+
+# OpenClaw is local on EC2-B
 curl -fsS http://127.0.0.1:18789/openclaw/ >/dev/null
-systemctl status paperclip --no-pager
 systemctl status openclaw-gateway --no-pager
 ```
 
 Expected result:
 
-- Paperclip health returns `200`
-- OpenClaw UI responds
-- Both services report `active (running)`
+- Paperclip health returns `200` from remote endpoint
+- OpenClaw UI responds locally
+- `openclaw-gateway` reports `active (running)`
+- Note: there is no local `paperclip.service` on EC2-B — Paperclip is remote infrastructure
 
 ## 3. Verify Heartbeat Scheduling
 
@@ -73,7 +88,7 @@ Inspect the portfolio-agent heartbeat configuration:
 ```bash
 curl -fsS \
   -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  "http://127.0.0.1:3100/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats" \
+  "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats" \
   | jq
 ```
 
@@ -88,7 +103,7 @@ Trigger a scoped portfolio run for one project:
 curl -fsS -X POST \
   -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
   -H "Content-Type: application/json" \
-  "http://127.0.0.1:3100/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats/trigger" \
+  "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats/trigger" \
   -d '{
     "scope": "project",
     "project_id": "<paperclip-project-id>"
