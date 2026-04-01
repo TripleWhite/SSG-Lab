@@ -56,8 +56,8 @@ describe("sourcing-agent HEARTBEAT.md", () => {
     expect(heartbeat).toContain("\"founderName\": \"Alice Chen\"");
     expect(heartbeat).toContain("\"companyName\": \"Acme AI\"");
     expect(heartbeat).toContain("\"sources\": [");
-    expect(heartbeat).toContain(
-      "Do not wrap the payload inside `{\"SourcingResult\": ...}`"
+    expect(heartbeat).toMatch(
+      /Do not wrap the result payload inside `\{"SourcingResult": \.\.\.\}`\.\s+The/
     );
   });
 });
