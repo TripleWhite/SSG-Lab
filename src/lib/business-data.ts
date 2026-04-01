@@ -58,7 +58,9 @@ function asStringArray(value: unknown): string[] {
 }
 
 function uniqueStrings(values: Array<string | null | undefined>): string[] {
-  return [...new Set(values.filter((value): value is string => Boolean(value)))];
+  return [
+    ...new Set(values.filter((value): value is string => Boolean(value))),
+  ];
 }
 
 function getDaysSince(value: string): number {
@@ -85,7 +87,7 @@ function normalizePercent(value: unknown): number {
 
 function mapBusinessProjectStatus(
   stage: string | null,
-  status: string
+  status: string,
 ): Project["status"] {
   const normalized = `${status} ${stage ?? ""}`.toLowerCase();
 
@@ -126,7 +128,7 @@ function mapBusinessProjectStatus(
 
 function mapBusinessProjectPriority(
   status: string,
-  nextFollowUpAt: string | null
+  nextFollowUpAt: string | null,
 ): Project["priority"] {
   if (nextFollowUpAt) {
     const diffDays =
@@ -150,7 +152,7 @@ function mapBusinessProjectPriority(
 
 function mapBusinessProjectHealth(
   status: string,
-  nextFollowUpAt: string | null
+  nextFollowUpAt: string | null,
 ): Project["healthStatus"] {
   const normalized = status.toLowerCase();
 
@@ -204,7 +206,9 @@ function mapMatchStatus(value: unknown): Match["status"] {
   }
 }
 
-async function getProjectMap(projectIds: string[]): Promise<Map<string, ProjectRow>> {
+async function getProjectMap(
+  projectIds: string[],
+): Promise<Map<string, ProjectRow>> {
   if (projectIds.length === 0) {
     return new Map();
   }
@@ -219,11 +223,12 @@ async function getProjectMap(projectIds: string[]): Promise<Map<string, ProjectR
     throw new Error(`Supabase projects query failed: ${error.message}`);
   }
 
-  return new Map((data ?? []).map((project) => [project.id, project]));
+  const rows = (data ?? []) as unknown as ProjectRow[];
+  return new Map(rows.map((project) => [project.id, project]));
 }
 
 async function getPortfolioItemMap(
-  projectIds: string[]
+  projectIds: string[],
 ): Promise<Map<string, PortfolioItemRow>> {
   if (projectIds.length === 0) {
     return new Map();
@@ -240,9 +245,10 @@ async function getPortfolioItemMap(
     throw new Error(`Supabase portfolio query failed: ${error.message}`);
   }
 
+  const items = (data ?? []) as unknown as PortfolioItemRow[];
   const portfolioItemMap = new Map<string, PortfolioItemRow>();
 
-  for (const item of data ?? []) {
+  for (const item of items) {
     if (item.project_id && !portfolioItemMap.has(item.project_id)) {
       portfolioItemMap.set(item.project_id, item);
     }
@@ -253,7 +259,7 @@ async function getPortfolioItemMap(
 
 function mapBusinessProject(
   project: ProjectRow,
-  portfolioItem: PortfolioItemRow | null
+  portfolioItem: PortfolioItemRow | null,
 ): Project {
   const metadata = asRecord(project.metadata);
   const portfolioMetadata = asRecord(portfolioItem?.metadata);
@@ -284,7 +290,9 @@ function mapBusinessProject(
       asString(portfolioMetadata?.owner) ??
       "Unassigned",
     founderName:
-      project.founder_name ?? asString(metadata?.founderName) ?? "Unknown founder",
+      project.founder_name ??
+      asString(metadata?.founderName) ??
+      "Unknown founder",
     companyName: project.name,
     stage: project.stage ?? asString(metadata?.stage) ?? project.status,
     daysInStage: getDaysSince(project.updated_at),
@@ -297,7 +305,7 @@ function mapBusinessProject(
 
 function mapSourcingResult(
   row: SourcingResultRow,
-  project: ProjectRow | null
+  project: ProjectRow | null,
 ): SourcingResult {
   const raw = asRecord(row.raw_data);
   const contact = asRecord(raw?.contact);
@@ -336,7 +344,9 @@ function mapSourcingResult(
     contactTwitter:
       asString(raw?.contactTwitter) ?? asString(contact?.twitter) ?? undefined,
     contactLinkedin:
-      asString(raw?.contactLinkedin) ?? asString(contact?.linkedin) ?? undefined,
+      asString(raw?.contactLinkedin) ??
+      asString(contact?.linkedin) ??
+      undefined,
     matchReason:
       row.summary ??
       asString(raw?.matchReason) ??
@@ -360,7 +370,7 @@ function mapMatchResult(row: MatchRow, project: ProjectRow | null): Match {
     id: row.id,
     type: mapMatchType(row.match_type ?? metadata?.type),
     confidence: normalizePercent(
-      row.confidence_score ?? metadata?.confidenceScore ?? metadata?.confidence
+      row.confidence_score ?? metadata?.confidenceScore ?? metadata?.confidence,
     ),
     sideA: {
       entity: asString(sideA?.entity) ?? project?.name ?? "Unknown entity",
@@ -410,13 +420,13 @@ export async function getBusinessProjects(): Promise<Project[]> {
     throw new Error(`Supabase projects query failed: ${error.message}`);
   }
 
-  const projects = data ?? [];
+  const projects = (data ?? []) as unknown as ProjectRow[];
   const portfolioItemMap = await getPortfolioItemMap(
-    projects.map((project) => project.id)
+    projects.map((project) => project.id),
   );
 
   return projects.map((project) =>
-    mapBusinessProject(project, portfolioItemMap.get(project.id) ?? null)
+    mapBusinessProject(project, portfolioItemMap.get(project.id) ?? null),
   );
 }
 
@@ -436,12 +446,14 @@ export async function getSourcingResults(): Promise<SourcingResult[]> {
     throw new Error(`Supabase sourcing query failed: ${error.message}`);
   }
 
-  const rows = data ?? [];
+  const rows = (data ?? []) as unknown as SourcingResultRow[];
   const projectMap = await getProjectMap(
-    uniqueStrings(rows.map((row) => row.project_id))
+    uniqueStrings(rows.map((row) => row.project_id)),
   );
 
-  return rows.map((row) => mapSourcingResult(row, projectMap.get(row.project_id ?? "") ?? null));
+  return rows.map((row) =>
+    mapSourcingResult(row, projectMap.get(row.project_id ?? "") ?? null),
+  );
 }
 
 export async function getMatches(): Promise<Match[]> {
@@ -460,10 +472,12 @@ export async function getMatches(): Promise<Match[]> {
     throw new Error(`Supabase matches query failed: ${error.message}`);
   }
 
-  const rows = data ?? [];
+  const rows = (data ?? []) as unknown as MatchRow[];
   const projectMap = await getProjectMap(
-    uniqueStrings(rows.map((row) => row.project_id))
+    uniqueStrings(rows.map((row) => row.project_id)),
   );
 
-  return rows.map((row) => mapMatchResult(row, projectMap.get(row.project_id ?? "") ?? null));
+  return rows.map((row) =>
+    mapMatchResult(row, projectMap.get(row.project_id ?? "") ?? null),
+  );
 }
