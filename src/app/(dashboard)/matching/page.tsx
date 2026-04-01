@@ -4,13 +4,17 @@ import { MatchingBoard } from "@/components/matching/matching-board";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { getMatches } from "@/lib/paperclip";
+import { hasSupabaseCredentials } from "@/lib/supabase";
 import type { Match } from "@/lib/types";
-import { ArrowUpRight, Radar, ShieldAlert } from "lucide-react";
+import { ArrowUpRight, PlugZap, Radar, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 30;
 
-function getEmptyStateMessage(loadFailed: boolean): {
+function getEmptyStateMessage(
+  hasSupabaseConfig: boolean,
+  loadFailed: boolean
+): {
   title: string;
   body: string;
   eyebrow: string;
@@ -20,6 +24,19 @@ function getEmptyStateMessage(loadFailed: boolean): {
   tone: "danger" | "warning" | "info";
   icon: typeof ShieldAlert;
 } {
+  if (!hasSupabaseConfig) {
+    return {
+      title: "Supabase credentials missing",
+      body: "No Supabase read credentials are configured for this environment yet, so the matching board stays empty instead of rendering synthetic pairings.",
+      eyebrow: "Setup required",
+      href: "/settings",
+      action: "Open settings",
+      note: "Add the SSG Supabase URL and anon key before expecting match rows here.",
+      tone: "warning",
+      icon: PlugZap,
+    };
+  }
+
   if (loadFailed) {
     return {
       title: "Live match feed unavailable",
@@ -46,6 +63,7 @@ function getEmptyStateMessage(loadFailed: boolean): {
 }
 
 export default async function MatchingPage() {
+  const hasSupabaseConfig = hasSupabaseCredentials();
   let matches: Match[] = [];
   let loadFailed = false;
 
@@ -55,7 +73,7 @@ export default async function MatchingPage() {
     loadFailed = true;
   }
 
-  const emptyState = getEmptyStateMessage(loadFailed);
+  const emptyState = getEmptyStateMessage(hasSupabaseConfig, loadFailed);
   const EmptyStateIcon = emptyState.icon;
 
   return (

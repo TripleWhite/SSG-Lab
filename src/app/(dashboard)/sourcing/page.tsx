@@ -4,6 +4,7 @@ import { SourcingBoard } from "@/components/sourcing/sourcing-board";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { getSourcingResults } from "@/lib/paperclip";
+import { hasSupabaseCredentials } from "@/lib/supabase";
 import type { SourcingResult } from "@/lib/types";
 import { ArrowUpRight, PlugZap, Radar, ShieldAlert } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +12,7 @@ import Link from "next/link";
 export const revalidate = 30;
 
 function getEmptyStateMessage(
-  hasMimirCredentials: boolean,
+  hasSupabaseConfig: boolean,
   loadFailed: boolean
 ): {
   title: string;
@@ -36,14 +37,14 @@ function getEmptyStateMessage(
     };
   }
 
-  if (!hasMimirCredentials) {
+  if (!hasSupabaseConfig) {
     return {
-      title: "Mimir credentials missing",
-      body: "No live sourcing candidates are configured for this environment yet, so the dashboard now shows an honest empty state instead of demo founders.",
+      title: "Supabase credentials missing",
+      body: "No Supabase read credentials are configured for this environment yet, so the dashboard shows an honest empty state instead of invented founders.",
       eyebrow: "Setup required",
       href: "/settings",
       action: "Open settings",
-      note: "Connect the sourcing integration before expecting candidate rows here.",
+      note: "Add the SSG Supabase URL and anon key before expecting candidate rows here.",
       tone: "warning",
       icon: PlugZap,
     };
@@ -62,7 +63,7 @@ function getEmptyStateMessage(
 }
 
 export default async function SourcingPage() {
-  const hasMimirCredentials = Boolean(process.env.MIMIR_API_KEY);
+  const hasSupabaseConfig = hasSupabaseCredentials();
   let candidates: SourcingResult[] = [];
   let loadFailed = false;
 
@@ -72,7 +73,7 @@ export default async function SourcingPage() {
     loadFailed = true;
   }
 
-  const emptyState = getEmptyStateMessage(hasMimirCredentials, loadFailed);
+  const emptyState = getEmptyStateMessage(hasSupabaseConfig, loadFailed);
   const EmptyStateIcon = emptyState.icon;
 
   return (
