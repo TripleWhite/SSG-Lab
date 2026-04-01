@@ -28,6 +28,8 @@ MIMIR_API_KEY="${MIMIR_API_KEY:-}"
 PAPERCLIP_API_URL="${PAPERCLIP_API_URL:-https://board.ssgaccelerator.com}"
 PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:-}"
 PAPERCLIP_COMPANY_ID="${PAPERCLIP_COMPANY_ID:-}"
+PAPERCLIP_SOURCING_PARENT_ISSUE_ID="${PAPERCLIP_SOURCING_PARENT_ISSUE_ID:-}"
+PAPERCLIP_MATCHING_PARENT_ISSUE_ID="${PAPERCLIP_MATCHING_PARENT_ISSUE_ID:-}"
 
 pkg_install() {
   if command -v dnf >/dev/null 2>&1; then
@@ -71,8 +73,41 @@ ensure_pnpm() {
   fi
 }
 
+load_existing_env_value() {
+  local file="$1"
+  local key="$2"
+
+  python3 - "$file" "$key" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+key = sys.argv[2]
+
+if not path.exists():
+    raise SystemExit(0)
+
+for line in path.read_text().splitlines():
+    if line.startswith(f"{key}="):
+        print(line.split("=", 1)[1])
+        raise SystemExit(0)
+PY
+}
+
 write_state_env() {
   mkdir -p "$OPENCLAW_STATE_DIR"
+
+  if [[ -z "$PAPERCLIP_SOURCING_PARENT_ISSUE_ID" ]]; then
+    PAPERCLIP_SOURCING_PARENT_ISSUE_ID="$(
+      load_existing_env_value "$OPENCLAW_ENV_FILE" "PAPERCLIP_SOURCING_PARENT_ISSUE_ID" || true
+    )"
+  fi
+
+  if [[ -z "$PAPERCLIP_MATCHING_PARENT_ISSUE_ID" ]]; then
+    PAPERCLIP_MATCHING_PARENT_ISSUE_ID="$(
+      load_existing_env_value "$OPENCLAW_ENV_FILE" "PAPERCLIP_MATCHING_PARENT_ISSUE_ID" || true
+    )"
+  fi
 
   {
     printf 'OPENCLAW_GATEWAY_TOKEN=%s\n' "$OPENCLAW_GATEWAY_TOKEN"
@@ -105,6 +140,14 @@ write_state_env() {
 
     if [[ -n "$PAPERCLIP_COMPANY_ID" ]]; then
       printf 'PAPERCLIP_COMPANY_ID=%s\n' "$PAPERCLIP_COMPANY_ID"
+    fi
+
+    if [[ -n "$PAPERCLIP_SOURCING_PARENT_ISSUE_ID" ]]; then
+      printf 'PAPERCLIP_SOURCING_PARENT_ISSUE_ID=%s\n' "$PAPERCLIP_SOURCING_PARENT_ISSUE_ID"
+    fi
+
+    if [[ -n "$PAPERCLIP_MATCHING_PARENT_ISSUE_ID" ]]; then
+      printf 'PAPERCLIP_MATCHING_PARENT_ISSUE_ID=%s\n' "$PAPERCLIP_MATCHING_PARENT_ISSUE_ID"
     fi
   } >"$OPENCLAW_ENV_FILE"
 

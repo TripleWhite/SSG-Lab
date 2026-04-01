@@ -210,8 +210,8 @@ matching the tool's `input_schema` (already in your tool definitions):
 - Write or update the Paperclip document with:
   - `PUT /api/issues/{issueId}/documents/result`
   - `format: "json"`
-  - `body`: `{"Match": {...}}`
-- The `Match` JSON must match the dashboard contract:
+  - `body`: top-level match fields, not a nested wrapper object
+- The result JSON must match the dashboard contract:
   - `id`
   - `type`
   - `confidence`
@@ -227,6 +227,31 @@ matching the tool's `input_schema` (already in your tool definitions):
   - `sideB.entity`
   - `sideB.description`
   - `sideB.sourceEmployee`
+- Example `documents/result` body:
+
+```json
+{
+  "id": "entity-a:entity-b:supply-demand",
+  "type": "supply-demand",
+  "confidence": 85,
+  "sideA": {
+    "entity": "DesignAI",
+    "description": "AI design tool seeking enterprise customers",
+    "sourceEmployee": "Alice"
+  },
+  "sideB": {
+    "entity": "MegaCorp",
+    "description": "Design team evaluating AI design solutions",
+    "sourceEmployee": "Bob"
+  },
+  "suggestion": "Introduce the DesignAI founder to the MegaCorp design lead",
+  "status": "pending",
+  "createdAt": "2026-04-01T07:45:00Z"
+}
+```
+
+- Do not wrap the payload inside `{"Match": ...}`. The dashboard reads the
+  top-level fields directly from `documents/result`
 - When updating an existing `result` document, fetch it first and pass its
   `latestRevisionId` as `baseRevisionId`
 - Paperclip writes are best-effort only. If the structured mirror fails, log
