@@ -44,11 +44,8 @@ export function Sidebar({ userName, role }: SidebarProps) {
 
   return (
     <aside className="border-b border-[var(--border)] bg-[linear-gradient(180deg,rgba(17,20,22,0.96),rgba(10,12,15,0.98))] px-3 py-4 backdrop-blur md:flex md:h-screen md:w-64 md:flex-col md:border-b-0 md:border-r md:px-4 md:py-6">
-      <div className="px-2 md:mb-8 md:px-3">
-        <BrandLockup compact />
-        <p className="mt-3 text-xs uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
-          Accelerator OS
-        </p>
+      <div className="px-2 md:mb-6 md:px-3">
+        <BrandLockup compact title="Founder Ops" />
       </div>
 
       <nav className="-mx-1 mt-4 flex gap-1 overflow-x-auto px-1 pb-2 md:mx-0 md:mt-0 md:flex-1 md:flex-col md:gap-1 md:overflow-visible md:px-0 md:pb-0">
@@ -58,10 +55,10 @@ export function Sidebar({ userName, role }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`animate-fade-in flex flex-none items-center gap-3 border-l px-3 py-2.5 text-sm transition-colors md:w-full ${
+              className={`animate-fade-in flex flex-none items-center gap-3 border-l-2 px-3 py-2.5 text-sm font-medium transition-[border-color,background-color,color,transform] duration-200 md:w-full ${
                 isActive
                   ? "border-[var(--ssg-green)] bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]"
-                  : "border-transparent text-[var(--muted-foreground)] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
+                  : "border-transparent text-[var(--muted-foreground)] hover:translate-x-[2px] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
               }`}
               style={{ animationDelay: `${idx * 0.05}s` }}
             >
@@ -85,7 +82,7 @@ export function Sidebar({ userName, role }: SidebarProps) {
         <form action="/api/auth/logout" method="post" className="md:mt-3">
           <button
             type="submit"
-            className="inline-flex text-xs uppercase tracking-[0.16em] text-[var(--ssg-green)] transition-colors hover:text-[var(--ssg-yellow)]"
+            className="inline-flex items-center px-1 text-xs uppercase tracking-[0.16em] text-[var(--ssg-green)] transition-colors hover:text-[var(--ssg-yellow)]"
           >
             Sign out
           </button>
