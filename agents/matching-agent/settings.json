@@ -1,8 +1,6 @@
 {
   "plugins": ["memory-mimir"],
   "memory-mimir": {
-    "apiUrl": "https://api.allinmimir.com",
-    "apiKey": "<mimir-api-key>",
     "maxRecallItems": 50,
     "maxRecallTokens": 4000,
     "autoCapture": false,
@@ -14,12 +12,6 @@
       "memory_update",
       "memory_delete"
     ]
-  },
-  "model": {
-    "provider": "openai-compatible",
-    "name": "minimax-m2.7",
-    "apiUrl": "<minimax-api-url>",
-    "apiKey": "<minimax-api-key>"
   },
   "browser": false,
   "tools": [
