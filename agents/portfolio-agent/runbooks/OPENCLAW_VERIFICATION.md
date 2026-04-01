@@ -8,18 +8,19 @@ EC2-B.
 - Paperclip is healthy at `$PAPERCLIP_API_URL` (remote — `https://board.ssgaccelerator.com`)
 - OpenClaw is healthy on `127.0.0.1:18789` (local on EC2-B)
 - The runtime agent directory exists at
-  `/home/ec2-user/openclaw-agents/portfolio-agent/`
-- Paperclip runtime env is available at
-  `/home/ec2-user/.paperclip/runtime.env`
+  `/home/ubuntu/.openclaw/agents/portfolio-agent/`
+- The OpenClaw gateway env is available at
+  `/home/ubuntu/.openclaw/.env`
 - OpenClaw is running as `openclaw-gateway.service`
+- Portfolio Agent is present in the company agent list before verification starts
 
 **Important:** Paperclip runs as a remote service at `board.ssgaccelerator.com`,
 not locally on EC2-B. All Paperclip API calls must use `$PAPERCLIP_API_URL`.
 
-Load runtime env before any API calls:
+Load the OpenClaw gateway env before any API calls:
 
 ```bash
-source /home/ec2-user/.paperclip/runtime.env
+source /home/ubuntu/.openclaw/.env
 ```
 
 Verify the env is loaded correctly:
@@ -31,6 +32,10 @@ echo "PAPERCLIP_COMPANY_ID=$PAPERCLIP_COMPANY_ID"
 test -n "$PAPERCLIP_API_KEY" && echo "PAPERCLIP_API_KEY is set" || echo "ERROR: PAPERCLIP_API_KEY is missing"
 ```
 
+If any of those variables are empty after sourcing `.openclaw/.env`, stop and
+fix the runtime configuration before attempting QA. The current gateway build
+does not read `/home/ec2-user/.paperclip/runtime.env`.
+
 ## 1. Sync Repo-Local Files Into The Runtime Agent Directory
 
 From the repo root on EC2-B:
@@ -38,13 +43,13 @@ From the repo root on EC2-B:
 ```bash
 rsync -av --delete \
   agents/portfolio-agent/ \
-  /home/ec2-user/openclaw-agents/portfolio-agent/
+  /home/ubuntu/.openclaw/agents/portfolio-agent/
 ```
 
 Spot-check the runtime tree:
 
 ```bash
-find /home/ec2-user/openclaw-agents/portfolio-agent -maxdepth 4 -type f | sort
+find /home/ubuntu/.openclaw/agents/portfolio-agent -maxdepth 4 -type f | sort
 ```
 
 Expected files include:
@@ -52,8 +57,11 @@ Expected files include:
 - `SOUL.md`
 - `HEARTBEAT.md`
 - `settings.json`
+- `contracts/SUBAGENT_CONTRACT.md`
 - `contracts/feishu-notify.schema.json`
+- `contracts/heartbeat-metrics.json`
 - `contracts/mimir-store.schema.json`
+- `contracts/per-project-scan-output.schema.json`
 - `examples/daily-digest.sample.json`
 - `examples/urgent-alert.sample.json`
 - `examples/board-summary.sample.json`
@@ -63,11 +71,17 @@ Expected files include:
 - `skills/feishu-format/SKILL.md`
 - `runbooks/paperclip-api.sh`
 
-## 2. Verify Services Before Triggering The Agent
+## 2. Verify Services And Agent Registration
 
 ```bash
 # Paperclip is remote — check the remote health endpoint
 curl -fsS "$PAPERCLIP_API_URL/api/health" | jq
+
+# Portfolio Agent must already exist in the company agent registry
+curl -fsS \
+  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents" \
+  | jq '.[] | select(.urlKey == "portfolio-agent" or .name == "Portfolio Agent")'
 
 # OpenClaw is local on EC2-B
 curl -fsS http://127.0.0.1:18789/openclaw/ >/dev/null
@@ -77,42 +91,59 @@ systemctl status openclaw-gateway --no-pager
 Expected result:
 
 - Paperclip health returns `200` from remote endpoint
+- Portfolio Agent appears in the company agent list
 - OpenClaw UI responds locally
 - `openclaw-gateway` reports `active (running)`
 - Note: there is no local `paperclip.service` on EC2-B — Paperclip is remote infrastructure
 
-## 3. Verify Heartbeat Scheduling
+## 3. Verify Heartbeat Scheduling And Recent Runs
 
-Inspect the portfolio-agent heartbeat configuration:
+Inspect the portfolio-agent registration and recent heartbeat history:
 
 ```bash
+portfolio_agent_id="$(
+  curl -fsS "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents" \
+  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  | jq -r '.[] | select(.urlKey == "portfolio-agent" or .name == "Portfolio Agent") | .id' \
+  | head -n 1
+)"
+
+test -n "$portfolio_agent_id"
+
 curl -fsS \
   -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats" \
-  | jq
+  "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents" \
+  | jq --arg id "$portfolio_agent_id" '.[] | select(.id == $id) | {id, name, urlKey, runtimeConfig}'
+
+curl -fsS \
+  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
+  "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/heartbeat-runs?limit=50" \
+  | jq --arg id "$portfolio_agent_id" '[.[] | select(.agentId == $id)] | .[:10]'
 ```
 
-Confirm the daily schedule still reflects `9am UTC+8` and that manual triggers
-remain enabled.
+Confirm the registration shows heartbeat config for the daily schedule and that
+recent runs exist for the resolved `portfolio_agent_id`.
 
-## 4. Trigger A Manual Portfolio Run
+## 4. Trigger Verification Notes
 
-Trigger a scoped portfolio run for one project:
+The historical routes below are not a reliable verification path on the current
+control-plane build and should not be used as the source of truth:
 
 ```bash
-curl -fsS -X POST \
-  -H "Authorization: Bearer $PAPERCLIP_API_KEY" \
-  -H "Content-Type: application/json" \
-  "$PAPERCLIP_API_URL/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats/trigger" \
-  -d '{
-    "scope": "project",
-    "project_id": "<paperclip-project-id>"
-  }' \
-  | jq
+/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats
+/api/companies/$PAPERCLIP_COMPANY_ID/agents/portfolio-agent/heartbeats/trigger
 ```
 
-For a full digest run, omit the scoped body and trigger the default daily
-heartbeat path instead.
+On current deployments they return `404`. Validate portfolio execution from:
+
+1. the registered company agent record,
+2. recent entries in `/api/companies/$PAPERCLIP_COMPANY_ID/heartbeat-runs`,
+3. `openclaw-gateway` logs, and
+4. the resulting Feishu/Paperclip side effects.
+
+If on-demand verification is required before the next scheduled run, use the
+current board/operator flow that wakes the agent after registration is fixed.
+Do not guess undocumented trigger endpoints.
 
 ## 5. Watch Runtime Logs
 
@@ -163,7 +194,7 @@ cards to the schema and visible Feishu rendering.
 
 Expected Paperclip results:
 
-- the heartbeat run is recorded
+- the heartbeat run is recorded for the resolved `portfolio_agent_id`
 - any triggered follow-up task or summary comment appears on the relevant issue
 - blocked conditions are called out explicitly when verification fails
 
@@ -179,17 +210,24 @@ Expected Feishu results:
 Treat the run as successful only if all of the following are true:
 
 1. The heartbeat run is recorded in Paperclip.
-2. OpenClaw logs show the portfolio-agent session starting and completing.
-3. The notify payload validates against the portfolio contract.
-4. The employee digest is correctly sorted by urgency.
-5. The Board summary shows coherent aggregate counts.
-6. Any urgent project produces an urgent card instead of waiting for the daily
+2. Portfolio Agent is present in the company agent registry.
+3. The runtime tree includes the full contract/example set from the repo.
+4. OpenClaw logs show the portfolio-agent session starting and completing.
+5. The notify payload validates against the portfolio contract.
+6. The employee digest is correctly sorted by urgency.
+7. The Board summary shows coherent aggregate counts.
+8. Any urgent project produces an urgent card instead of waiting for the daily
    digest.
 
 ## 9. Failure Handling
 
 - If the agent fails to load, re-check the runtime tree under
-  `/home/ec2-user/openclaw-agents/portfolio-agent/`.
+  `/home/ubuntu/.openclaw/agents/portfolio-agent/`.
+- If Portfolio Agent is missing from `/api/companies/$PAPERCLIP_COMPANY_ID/agents`,
+  stop and block release. The runtime cannot receive scheduled heartbeats until
+  registration is fixed.
+- If `.openclaw/.env` does not export Paperclip API settings, stop and block
+  release. The gateway runtime is not configured for control-plane access.
 - If the heartbeat fires but notifications do not send, inspect
   `settings.json`, `HEARTBEAT.md`, and the session logs together.
 - If Feishu delivery fails, validate the payload against
