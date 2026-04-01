@@ -25,6 +25,9 @@ FEISHU_APP_SECRET="${FEISHU_APP_SECRET:-}"
 FEISHU_VERIFICATION_TOKEN="${FEISHU_VERIFICATION_TOKEN:-}"
 FEISHU_ENCRYPT_KEY="${FEISHU_ENCRYPT_KEY:-}"
 MIMIR_API_KEY="${MIMIR_API_KEY:-}"
+PAPERCLIP_API_URL="${PAPERCLIP_API_URL:-https://board.ssgaccelerator.com}"
+PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:-}"
+PAPERCLIP_COMPANY_ID="${PAPERCLIP_COMPANY_ID:-}"
 
 pkg_install() {
   if command -v dnf >/dev/null 2>&1; then
@@ -92,6 +95,16 @@ write_state_env() {
     if [[ -n "$FEISHU_VERIFICATION_TOKEN" ]]; then
       printf 'FEISHU_VERIFICATION_TOKEN=%s\n' "$FEISHU_VERIFICATION_TOKEN"
       printf 'FEISHU_ENCRYPT_KEY=%s\n' "$FEISHU_ENCRYPT_KEY"
+    fi
+
+    printf 'PAPERCLIP_API_URL=%s\n' "$PAPERCLIP_API_URL"
+
+    if [[ -n "$PAPERCLIP_API_KEY" ]]; then
+      printf 'PAPERCLIP_API_KEY=%s\n' "$PAPERCLIP_API_KEY"
+    fi
+
+    if [[ -n "$PAPERCLIP_COMPANY_ID" ]]; then
+      printf 'PAPERCLIP_COMPANY_ID=%s\n' "$PAPERCLIP_COMPANY_ID"
     fi
   } >"$OPENCLAW_ENV_FILE"
 
@@ -220,7 +233,7 @@ write_openclaw_config() {
             id: "matching-agent",
             workspace: ($workspaceRoot + "/matching-agent"),
             agentDir: ($stateDir + "/agents/matching-agent/agent"),
-            model: "kimi-coding/k2p5"
+            model: "minimax/MiniMax-M2.7"
           }
         ]
       },
@@ -283,7 +296,7 @@ write_openclaw_config() {
     }
     | if ($hasMinimax | length) > 0 then
         .models.providers.minimax = {
-          baseUrl: "https://api.minimax.io/anthropic",
+          baseUrl: "https://api.minimaxi.com/anthropic",
           apiKey: "${MINIMAX_API_KEY}",
           api: "anthropic-messages",
           models: [

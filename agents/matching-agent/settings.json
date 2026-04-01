@@ -17,9 +17,9 @@
   },
   "model": {
     "provider": "openai-compatible",
-    "name": "kimi-k2.5",
-    "apiUrl": "<kimi-api-url>",
-    "apiKey": "<kimi-api-key>"
+    "name": "minimax-m2.7",
+    "apiUrl": "<minimax-api-url>",
+    "apiKey": "<minimax-api-key>"
   },
   "browser": false,
   "tools": [
