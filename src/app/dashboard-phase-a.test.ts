@@ -17,6 +17,7 @@ const {
   mockGetMatches,
   mockGetSourcingResults,
   mockGetResourceGraph,
+  mockHasSupabaseCredentials,
 } = vi.hoisted(() => ({
   mockGetSession: vi.fn(),
   mockRequireBoard: vi.fn(),
@@ -33,6 +34,7 @@ const {
   mockGetMatches: vi.fn(),
   mockGetSourcingResults: vi.fn(),
   mockGetResourceGraph: vi.fn(),
+  mockHasSupabaseCredentials: vi.fn(),
 }));
 
 vi.mock("next/link", async () => {
@@ -94,6 +96,10 @@ vi.mock("@/lib/paperclip", () => ({
 
 vi.mock("@/lib/mimir", () => ({
   getResourceGraph: mockGetResourceGraph,
+}));
+
+vi.mock("@/lib/supabase", () => ({
+  hasSupabaseCredentials: mockHasSupabaseCredentials,
 }));
 
 async function renderAsyncPage(
@@ -242,6 +248,7 @@ describe("dashboard phase A coverage", () => {
       programs: [{ name: "Launchpad", tags: ["Acceleration"] }],
       mentors: [{ name: "Iris Tan", tags: ["Growth"] }],
     });
+    mockHasSupabaseCredentials.mockReturnValue(true);
   });
 
   it("renders the overview page with work-item and automation terminology", async () => {
@@ -280,7 +287,7 @@ describe("dashboard phase A coverage", () => {
       () => import("./(dashboard)/matching/page"),
     );
 
-    expect(html).toContain("Live Suggestions Active");
+    expect(html).toContain("Suggestions Live");
     expect(html).toContain("Project Atlas");
     expect(html).toContain("Operator Guild");
     expect(html).not.toContain("Paperclip");
@@ -385,9 +392,9 @@ describe("dashboard phase A coverage", () => {
     );
 
     expect(html).toContain("Frontend polish");
-    expect(html).toContain("Resolve MIM-482 before downstream work can move.");
+    expect(html).toContain("Resolve SSG-482 before downstream work can move.");
     expect(html).toContain("branding");
-    expect(html).toContain("Start MIM-479 when dependencies are clear.");
+    expect(html).toContain("Start SSG-479 when dependencies are clear.");
   });
 
   it("renders the resource graph sections from the Mimir-backed data source", async () => {
@@ -400,6 +407,61 @@ describe("dashboard phase A coverage", () => {
     expect(html).toContain("LP / Investor Network");
   });
 
+  it("hides developer-facing sourcing setup copy behind a customer-safe empty state", async () => {
+    mockHasSupabaseCredentials.mockReturnValue(false);
+    mockGetSourcingResults.mockResolvedValue([]);
+
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/sourcing/page"),
+    );
+
+    expect(html).toContain("Awaiting first sync");
+    expect(html).not.toContain("Supabase");
+    expect(html).not.toContain("invented");
+  });
+
+  it("hides developer-facing matching setup copy behind a customer-safe empty state", async () => {
+    mockHasSupabaseCredentials.mockReturnValue(false);
+    mockGetMatches.mockResolvedValue([]);
+
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/matching/page"),
+    );
+
+    expect(html).toContain("Awaiting first sync");
+    expect(html).not.toContain("Supabase");
+    expect(html).not.toContain("synthetic");
+  });
+
+  it("keeps placeholder resource names out of the rendered resources page", async () => {
+    const hiddenTeamName = ["Place", "holder", " — Replace with actual SSG team"].join("");
+    const hiddenInvestorName = ["Place", "holder", " LP 1"].join("");
+    const hiddenMentorName = ["Place", "holder", " Mentor 1"].join("");
+
+    mockGetResourceGraph.mockResolvedValue({
+      source: "seed",
+      connections: [
+        {
+          name: hiddenTeamName,
+          tags: ["Founders"],
+        },
+      ],
+      investors: [{ name: hiddenInvestorName, tags: ["AI"] }],
+      programs: [{ name: "AWS Activate", tags: ["Cloud Credits"] }],
+      mentors: [{ name: hiddenMentorName, tags: ["Go-To-Market"] }],
+    });
+
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/resources/page"),
+    );
+
+    expect(html).toContain("Connections Pending");
+    expect(html).toContain("AWS Activate");
+    expect(html).not.toContain(hiddenTeamName);
+    expect(html).not.toContain(hiddenInvestorName);
+    expect(html).not.toContain(hiddenMentorName);
+  });
+
   it("renders runtime settings from the actual runtime checks", async () => {
     const html = await renderAsyncPage(
       () => import("./(dashboard)/settings/page"),
@@ -410,13 +472,13 @@ describe("dashboard phase A coverage", () => {
     expect(html).toContain("Board Role Mapping");
   });
 
-  it("renders live sourcing results without fabricated candidates", async () => {
+  it("renders live sourcing results with real candidate records", async () => {
     const html = await renderAsyncPage(
       () => import("./(dashboard)/sourcing/page"),
     );
 
     expect(html).toContain("Sourcing Results");
-    expect(html).toContain("Live Records Active");
+    expect(html).toContain("Results Live");
     expect(html).toContain("Avery Chen");
   });
 });

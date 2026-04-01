@@ -15,6 +15,10 @@ type StageVariant = ProjectDetailData["stageVariant"];
 
 const DAY_MS = 86_400_000;
 
+function toDisplayIdentifier(identifier: string): string {
+  return identifier.replace(/^MIM-/, "SSG-");
+}
+
 const STATUS_LABELS: Record<WorkItem["status"], string> = {
   backlog: "Backlog",
   todo: "Todo",
@@ -39,7 +43,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
   {
     id: "phase-1",
     title: "Data Pipeline",
-    subtitle: "MIM-307 · Phase 1",
+    subtitle: "SSG-307 · Phase 1",
     stage: "In Progress",
     stageVariant: "success",
     health: "at-risk",
@@ -55,9 +59,9 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     blockedTasks: 1,
     doneTasks: 0,
     timeline: [
-      { date: "Mar 28", event: "MIM-307 workstream started", actor: "CTO" },
-      { date: "Mar 28", event: "MIM-312 updated · Blocked", actor: "Release Engineer" },
-      { date: "Mar 28", event: "MIM-315 queued for review", actor: "Security Reviewer" },
+      { date: "Mar 28", event: "SSG-307 workstream started", actor: "CTO" },
+      { date: "Mar 28", event: "SSG-312 updated · Blocked", actor: "Release Engineer" },
+      { date: "Mar 28", event: "SSG-315 queued for review", actor: "Security Reviewer" },
     ],
     actions: [
       "Resolve the EC2-B deployment blocker before downstream verification can begin.",
@@ -67,7 +71,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     tasks: [
       {
         id: "phase-1-task-1",
-        identifier: "MIM-312",
+        identifier: "SSG-312",
         title: "Provision EC2-B + Deploy control plane + OpenClaw + Caddy + Feishu",
         status: "blocked",
         assignee: "Release Engineer",
@@ -75,7 +79,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
       },
       {
         id: "phase-1-task-2",
-        identifier: "MIM-314",
+        identifier: "SSG-314",
         title: "Phase 1 E2E Verification — Feishu → Mimir pipeline",
         status: "backlog",
         assignee: "QA Engineer",
@@ -86,7 +90,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
   {
     id: "phase-2",
     title: "Sourcing Automation",
-    subtitle: "MIM-308 · Phase 2",
+    subtitle: "SSG-308 · Phase 2",
     stage: "Blocked",
     stageVariant: "danger",
     health: "at-risk",
@@ -102,7 +106,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     blockedTasks: 0,
     doneTasks: 0,
     timeline: [
-      { date: "Mar 29", event: "MIM-308 status set to Blocked", actor: "CTO" },
+      { date: "Mar 29", event: "SSG-308 status set to Blocked", actor: "CTO" },
     ],
     actions: [
       "Keep this workstream parked until the shared platform and Feishu dependencies are live.",
@@ -113,7 +117,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
   {
     id: "phase-3",
     title: "Matching Automation",
-    subtitle: "MIM-309 · Phase 3",
+    subtitle: "SSG-309 · Phase 3",
     stage: "Blocked",
     stageVariant: "danger",
     health: "at-risk",
@@ -129,7 +133,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     blockedTasks: 0,
     doneTasks: 0,
     timeline: [
-      { date: "Mar 28", event: "MIM-309 status set to Blocked", actor: "CTO" },
+      { date: "Mar 28", event: "SSG-309 status set to Blocked", actor: "CTO" },
     ],
     actions: [
       "Wait on the upstream data plane before opening matching implementation work items.",
@@ -140,7 +144,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
   {
     id: "phase-4",
     title: "Portfolio Automation",
-    subtitle: "MIM-310 · Phase 4",
+    subtitle: "SSG-310 · Phase 4",
     stage: "Blocked",
     stageVariant: "danger",
     health: "at-risk",
@@ -156,7 +160,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     blockedTasks: 0,
     doneTasks: 0,
     timeline: [
-      { date: "Mar 28", event: "MIM-310 status set to Blocked", actor: "CTO" },
+      { date: "Mar 28", event: "SSG-310 status set to Blocked", actor: "CTO" },
     ],
     actions: [
       "Keep the workstream blocked until the shared integrations are available.",
@@ -167,7 +171,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
   {
     id: "phase-5",
     title: "Dashboard Integration",
-    subtitle: "MIM-311 · Phase 5",
+    subtitle: "SSG-311 · Phase 5",
     stage: "In Progress",
     stageVariant: "success",
     health: "on-track",
@@ -183,19 +187,19 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     blockedTasks: 0,
     doneTasks: 0,
     timeline: [
-      { date: "Mar 29", event: "MIM-311 workstream started", actor: "CTO" },
-      { date: "Mar 29", event: "MIM-318 updated · In Progress", actor: "Frontend Engineer" },
-      { date: "Mar 29", event: "MIM-319 queued for code review", actor: "Security Reviewer" },
+      { date: "Mar 29", event: "SSG-311 workstream started", actor: "CTO" },
+      { date: "Mar 29", event: "SSG-318 updated · In Progress", actor: "Frontend Engineer" },
+      { date: "Mar 29", event: "SSG-319 queued for code review", actor: "Security Reviewer" },
     ],
     actions: [
-      "Finish the remaining live route conversions on MIM-318.",
-      "Queue MIM-319 once the implementation branch is stable.",
+      "Finish the remaining live route conversions on SSG-318.",
+      "Queue SSG-319 once the implementation branch is stable.",
       "Keep QA and design review work items gated behind the live data merge.",
     ],
     tasks: [
       {
         id: "phase-5-task-1",
-        identifier: "MIM-318",
+        identifier: "SSG-318",
         title: "Implement Phase 5 Dashboard Integration — API clients, live data, polling",
         status: "in_progress",
         assignee: "Frontend Engineer",
@@ -203,7 +207,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
       },
       {
         id: "phase-5-task-2",
-        identifier: "MIM-319",
+        identifier: "SSG-319",
         title: "Review Phase 5 Dashboard Integration code",
         status: "backlog",
         assignee: "Security Reviewer",
@@ -330,7 +334,7 @@ function getHealth(workstream: WorkItem, descendants: WorkItem[]): HealthStatus 
 
 function buildLatestSignal(workstream: WorkItem, descendants: WorkItem[]): string {
   if (descendants.length === 0) {
-    return `${workstream.identifier} is ${STATUS_LABELS[workstream.status].toLowerCase()} with no linked work items started yet.`;
+    return `${toDisplayIdentifier(workstream.identifier)} is ${STATUS_LABELS[workstream.status].toLowerCase()} with no linked work items started yet.`;
   }
 
   const activeTasks = descendants.filter((item) => item.status === "in_progress").length;
@@ -362,31 +366,31 @@ function buildLatestSignal(workstream: WorkItem, descendants: WorkItem[]): strin
 function buildNextAction(workstream: WorkItem, descendants: WorkItem[]): string {
   const blockedTask = descendants.find((item) => item.status === "blocked");
   if (blockedTask) {
-    return `Resolve ${blockedTask.identifier} before downstream work can move.`;
+    return `Resolve ${toDisplayIdentifier(blockedTask.identifier)} before downstream work can move.`;
   }
 
   const activeTask = descendants.find((item) => item.status === "in_progress");
   if (activeTask) {
-    return `Advance ${activeTask.identifier} through implementation and verification.`;
+    return `Advance ${toDisplayIdentifier(activeTask.identifier)} through implementation and verification.`;
   }
 
   const reviewTask = descendants.find((item) => item.status === "in_review");
   if (reviewTask) {
-    return `Close review on ${reviewTask.identifier}.`;
+    return `Close review on ${toDisplayIdentifier(reviewTask.identifier)}.`;
   }
 
   const queuedTask = descendants.find(
     (item) => item.status === "backlog" || item.status === "todo"
   );
   if (queuedTask) {
-    return `Start ${queuedTask.identifier} when dependencies are clear.`;
+    return `Start ${toDisplayIdentifier(queuedTask.identifier)} when dependencies are clear.`;
   }
 
   if (workstream.status === "blocked") {
-    return `Unblock ${workstream.identifier} before execution can resume.`;
+    return `Unblock ${toDisplayIdentifier(workstream.identifier)} before execution can resume.`;
   }
 
-  return `Monitor ${workstream.identifier} for the next assignment change.`;
+  return `Monitor ${toDisplayIdentifier(workstream.identifier)} for the next assignment change.`;
 }
 
 function buildActions(workstream: WorkItem, descendants: WorkItem[]): string[] {
@@ -400,29 +404,29 @@ function buildActions(workstream: WorkItem, descendants: WorkItem[]): string[] {
 
   if (blockedTask) {
     actions.push(
-      `Resolve blocker on ${blockedTask.identifier}: ${truncateText(blockedTask.title, 72)}`
+      `Resolve blocker on ${toDisplayIdentifier(blockedTask.identifier)}: ${truncateText(blockedTask.title, 72)}`
     );
   }
   if (activeTask) {
     actions.push(
-      `Advance ${activeTask.identifier}: ${truncateText(activeTask.title, 72)}`
+      `Advance ${toDisplayIdentifier(activeTask.identifier)}: ${truncateText(activeTask.title, 72)}`
     );
   }
   if (reviewTask) {
     actions.push(
-      `Close review on ${reviewTask.identifier}: ${truncateText(reviewTask.title, 72)}`
+      `Close review on ${toDisplayIdentifier(reviewTask.identifier)}: ${truncateText(reviewTask.title, 72)}`
     );
   }
   if (queuedTask) {
     actions.push(
-      `Prepare ${queuedTask.identifier}: ${truncateText(queuedTask.title, 72)}`
+      `Prepare ${toDisplayIdentifier(queuedTask.identifier)}: ${truncateText(queuedTask.title, 72)}`
     );
   }
   if (actions.length === 0 && workstream.status === "blocked") {
-    actions.push(`Clear the current blocker on ${workstream.identifier}.`);
+    actions.push(`Clear the current blocker on ${toDisplayIdentifier(workstream.identifier)}.`);
   }
   if (actions.length === 0) {
-    actions.push(`No open linked work items. Monitor ${workstream.identifier} for new follow-up work.`);
+    actions.push(`No open linked work items. Monitor ${toDisplayIdentifier(workstream.identifier)} for new follow-up work.`);
   }
 
   return [...new Set(actions)].slice(0, 3);
@@ -432,7 +436,7 @@ function buildTimeline(workstream: WorkItem, descendants: WorkItem[]) {
   const timeline = [
     {
       timestamp: workstream.startedAt ?? workstream.createdAt,
-      event: `${workstream.identifier} workstream started`,
+      event: `${toDisplayIdentifier(workstream.identifier)} workstream started`,
       actor: workstream.assigneeName,
     },
     ...descendants
@@ -444,7 +448,7 @@ function buildTimeline(workstream: WorkItem, descendants: WorkItem[]) {
       .slice(0, 4)
       .map((item) => ({
         timestamp: item.updatedAt,
-        event: `${item.identifier} updated · ${STATUS_LABELS[item.status]}`,
+        event: `${toDisplayIdentifier(item.identifier)} updated · ${STATUS_LABELS[item.status]}`,
         actor: item.assigneeName,
       })),
   ]
@@ -471,7 +475,7 @@ function buildTaskSummaries(descendants: WorkItem[]) {
     .slice(0, 6)
     .map((item) => ({
       id: item.id,
-      identifier: item.identifier,
+      identifier: toDisplayIdentifier(item.identifier),
       title: item.title,
       status: item.status,
       assignee: item.assigneeName,
@@ -529,7 +533,7 @@ function buildWorkstreams(items: WorkItem[]): ProjectDetailData[] {
     return {
       id: workstream.id,
       title: meta.shortTitle,
-      subtitle: `${workstream.identifier} · ${meta.phaseLabel}`,
+      subtitle: `${toDisplayIdentifier(workstream.identifier)} · ${meta.phaseLabel}`,
       stage: STATUS_LABELS[workstream.status],
       stageVariant: STATUS_VARIANTS[workstream.status],
       health: getHealth(workstream, descendants),
@@ -591,10 +595,7 @@ export default async function PipelinePage() {
               Pipeline now reflects the real SSG workstream hierarchy instead of the static portfolio examples.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="info">30s Refresh</Badge>
-            {isFallback && <Badge variant="warning">Fallback Active</Badge>}
-          </div>
+          {isFallback && <Badge variant="warning">Snapshot View</Badge>}
         </div>
       </Card>
 

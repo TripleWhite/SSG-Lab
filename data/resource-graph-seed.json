@@ -1,57 +1,13 @@
 {
-  "_comment": "SSG Accelerator Resource Graph — Seed Data. Replace placeholders before seeding production. All entities should be treated as explicit, user-provided resource data.",
+  "_comment": "SSG Accelerator Resource Graph seed. Use verified network data when available; empty lists keep the dashboard in a clean ready state.",
   "_deploy_target": "https://api.allinmimir.com",
-  "_instructions": "Run the seed step only after replacing the placeholder people and relationships. No Mimir schema migration is required. Requires MIMIR_API_KEY and MIMIR_USER_ID env vars.",
+  "_instructions": "Seed only verified resource connections. Empty lists are valid until live data is connected. Requires MIMIR_API_KEY and MIMIR_USER_ID env vars.",
 
-  "employees": [
-    {
-      "name": "Placeholder — Replace with actual SSG team",
-      "role": "Investment Associate",
-      "focus": "AI/ML, Developer Tools",
-      "connections": ["AWS Activate", "Sequoia Scout Network", "Google Cloud Startup Program"],
-      "notes": "Replace with actual employee data before seeding"
-    }
-  ],
+  "employees": [],
 
-  "lp_investors": [
-    {
-      "name": "Placeholder LP 1",
-      "type": "Venture Fund",
-      "focus_sectors": ["AI Infrastructure", "Developer Tools", "Enterprise SaaS"],
-      "stage_range": "Seed to Series A",
-      "ticket_size": "$500K - $2M",
-      "notes": "Replace with actual LP data"
-    },
-    {
-      "name": "Placeholder LP 2",
-      "type": "Angel Investor",
-      "focus_sectors": ["Healthcare AI", "Biotech"],
-      "stage_range": "Pre-seed",
-      "ticket_size": "$50K - $200K",
-      "notes": "Replace with actual LP data"
-    }
-  ],
+  "lp_investors": [],
 
-  "mentors": [
-    {
-      "name": "Placeholder Mentor 1",
-      "expertise": ["B2B Sales", "SaaS GTM", "Enterprise Pricing"],
-      "availability": "2 hours/month",
-      "notes": "Replace with actual mentor data"
-    },
-    {
-      "name": "Placeholder Mentor 2",
-      "expertise": ["AI/ML", "Robotics", "Computer Vision"],
-      "availability": "1 hour/month",
-      "notes": "Replace with actual mentor data"
-    },
-    {
-      "name": "Placeholder Mentor 3",
-      "expertise": ["Product Strategy", "UX Research", "Growth"],
-      "availability": "2 hours/month",
-      "notes": "Replace with actual mentor data"
-    }
-  ],
+  "mentors": [],
 
   "partner_programs": [
     {

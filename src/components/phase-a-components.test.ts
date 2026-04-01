@@ -54,7 +54,7 @@ function render(component: React.ReactElement) {
 const sampleProject: ProjectDetailData = {
   id: "workstream-1",
   title: "Dashboard Integration",
-  subtitle: "MIM-311 · Phase 5",
+  subtitle: "SSG-311 · Phase 5",
   stage: "In Progress",
   stageVariant: "success",
   health: "on-track",
@@ -80,7 +80,7 @@ const sampleProject: ProjectDetailData = {
   tasks: [
     {
       id: "task-1",
-      identifier: "MIM-480",
+      identifier: "SSG-480",
       title: "Restore frontend coverage gate",
       status: "in_review",
       assignee: "Frontend Engineer",
@@ -170,7 +170,7 @@ describe("phase A UI components", () => {
     );
 
     expect(html).toContain("Linked Work Items");
-    expect(html).toContain("MIM-480");
+    expect(html).toContain("SSG-480");
     expect(html).toContain("Coverage follow-up opened");
   });
 });

@@ -189,7 +189,7 @@ export default async function AnalyticsPage() {
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant={isFallback ? "warning" : "success"}>
-                {isFallback ? "Fallback Snapshot" : "Live Operations Data"}
+                {isFallback ? "Snapshot View" : "Live Operations Data"}
               </Badge>
               <Badge variant="info">Board View</Badge>
             </div>
@@ -205,7 +205,6 @@ export default async function AnalyticsPage() {
               </p>
             </div>
           </div>
-          {isFallback && <Badge variant="warning">Fallback Active</Badge>}
         </div>
       </Card>
 

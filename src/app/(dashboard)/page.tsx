@@ -331,8 +331,7 @@ export default async function OverviewPage({
               查看自动化
               <ArrowUpRight size={14} />
             </Link>
-            <Badge variant="info">30s Refresh</Badge>
-            {isFallback && <Badge variant="warning">Fallback Active</Badge>}
+            {isFallback && <Badge variant="warning">Snapshot View</Badge>}
           </div>
         </div>
       </Card>

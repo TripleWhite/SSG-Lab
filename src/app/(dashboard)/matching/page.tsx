@@ -26,12 +26,12 @@ function getEmptyStateMessage(
 } {
   if (!hasSupabaseConfig) {
     return {
-      title: "Supabase credentials missing",
-      body: "No Supabase read credentials are configured for this environment yet, so the matching board stays empty instead of rendering synthetic pairings.",
-      eyebrow: "Setup required",
-      href: "/settings",
-      action: "Open settings",
-      note: "Add the SSG Supabase URL and anon key before expecting match rows here.",
+      title: "No matching data available yet",
+      body: "The matching board will populate after the first sourcing and resource records are ready for this workspace.",
+      eyebrow: "Awaiting first sync",
+      href: "/sourcing",
+      action: "Open sourcing",
+      note: "Suggested introductions will appear here automatically once new records are processed.",
       tone: "warning",
       icon: PlugZap,
     };
@@ -39,24 +39,24 @@ function getEmptyStateMessage(
 
   if (loadFailed) {
     return {
-      title: "Live match feed unavailable",
-      body: "The matching feed could not be loaded right now, so the page intentionally renders no synthetic matches.",
-      eyebrow: "Feed interrupted",
-      href: "/analytics",
-      action: "Review analytics",
-      note: "The dashboard will keep this blank until the next successful match sync.",
+      title: "Matching feed unavailable",
+      body: "We could not load match suggestions right now. The board will refresh automatically when the feed is back.",
+      eyebrow: "Refresh pending",
+      href: "/pipeline",
+      action: "View pipeline",
+      note: "Suggested introductions will return after the next successful match sync.",
       tone: "danger",
       icon: ShieldAlert,
     };
   }
 
   return {
-    title: "No live matches yet",
-    body: "No match records have been written for this workspace yet. The dashboard now shows an honest empty state instead of fabricated pairings.",
-    eyebrow: "Queue waiting",
+    title: "No matches yet",
+    body: "No match suggestions have been created for this workspace yet.",
+    eyebrow: "Queue ready",
     href: "/sourcing",
     action: "Open sourcing",
-    note: "New match suggestions will land here as soon as a sourcing record is ready.",
+    note: "Suggested introductions will land here as soon as new candidate records are ready.",
     tone: "info",
     icon: Radar,
   };
@@ -81,7 +81,7 @@ export default async function MatchingPage() {
       <AutoRefresh intervalMs={30_000} />
       <Header
         title="Matching"
-        description="Live cross-project and resource matches only, with no demo pairings."
+        description="Review current project and resource matches for this workspace."
         eyebrow="Founder Matching"
       />
 
@@ -89,24 +89,20 @@ export default async function MatchingPage() {
         <div className="flex flex-col gap-4 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge>Match Integrity</Badge>
+              <Badge>Match Status</Badge>
               <Badge variant={matches.length > 0 ? "success" : "warning"}>
-                {matches.length > 0 ? "Live Suggestions Active" : "No Live Suggestions"}
+                {matches.length > 0 ? "Suggestions Live" : "No Suggestions Yet"}
               </Badge>
             </div>
             <div>
               <p className="text-base font-semibold text-[var(--foreground)]">
-                Real match records only
+                Current match suggestions
               </p>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
-                This page waits for actual match outputs and explains the empty
-                state instead of padding the board with invented pairings.
+                This board fills with suggested introductions once sourcing and
+                resource records are available for review.
               </p>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="info">30s Refresh</Badge>
-            {matches.length === 0 && <Badge variant="warning">Awaiting Feed</Badge>}
           </div>
         </div>
       </Card>

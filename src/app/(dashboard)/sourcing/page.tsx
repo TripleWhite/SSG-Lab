@@ -26,12 +26,12 @@ function getEmptyStateMessage(
 } {
   if (loadFailed) {
     return {
-      title: "Live feed unavailable",
-      body: "The sourcing feed could not be loaded right now, so the page is intentionally showing no fabricated candidates.",
-      eyebrow: "Feed interrupted",
-      href: "/analytics",
-      action: "Review analytics",
-      note: "The list stays empty until the next successful sourcing sync.",
+      title: "Sourcing feed unavailable",
+      body: "We could not load sourcing results right now. The list will refresh automatically when the feed is back.",
+      eyebrow: "Refresh pending",
+      href: "/pipeline",
+      action: "View pipeline",
+      note: "This page will repopulate after the next successful sourcing sync.",
       tone: "danger",
       icon: ShieldAlert,
     };
@@ -39,24 +39,24 @@ function getEmptyStateMessage(
 
   if (!hasSupabaseConfig) {
     return {
-      title: "Supabase credentials missing",
-      body: "No Supabase read credentials are configured for this environment yet, so the dashboard shows an honest empty state instead of invented founders.",
-      eyebrow: "Setup required",
-      href: "/settings",
-      action: "Open settings",
-      note: "Add the SSG Supabase URL and anon key before expecting candidate rows here.",
+      title: "No sourcing data available yet",
+      body: "This workspace is ready for sourcing, but candidate records have not started flowing into the dashboard yet.",
+      eyebrow: "Awaiting first sync",
+      href: "/pipeline",
+      action: "View pipeline",
+      note: "Candidate profiles will appear here as soon as the first sourcing import completes.",
       tone: "warning",
       icon: PlugZap,
     };
   }
 
   return {
-    title: "No live candidates yet",
-    body: "The live sourcing feed is connected, but no candidate records have been stored for this workspace yet.",
-    eyebrow: "Feed ready",
+    title: "No sourcing results yet",
+    body: "The sourcing feed is connected, but there are no candidate records for this workspace yet.",
+    eyebrow: "Ready for results",
     href: "/matching",
     action: "Open matching",
-    note: "As soon as the platform stores a candidate result, it will appear here on the next refresh.",
+    note: "New candidate profiles will appear here automatically after each sourcing cycle.",
     tone: "info",
     icon: Radar,
   };
@@ -81,7 +81,7 @@ export default async function SourcingPage() {
       <AutoRefresh intervalMs={30_000} />
       <Header
         title="Sourcing Results"
-        description="Live candidate discoveries only, with demo prospects removed."
+        description="Track sourced founders and companies as new opportunities are added."
         eyebrow="Founder Sourcing"
       />
 
@@ -89,24 +89,20 @@ export default async function SourcingPage() {
         <div className="flex flex-col gap-4 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <Badge>Feed Integrity</Badge>
+              <Badge>Sourcing Status</Badge>
               <Badge variant={candidates.length > 0 ? "success" : "warning"}>
-                {candidates.length > 0 ? "Live Records Active" : "No Live Records"}
+                {candidates.length > 0 ? "Results Live" : "No Results Yet"}
               </Badge>
             </div>
             <div>
               <p className="text-base font-semibold text-[var(--foreground)]">
-                Truthful sourcing records only
+                Current sourcing pipeline
               </p>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
-                Demo prospects are gone. This page either shows stored live candidates or a
-                clear reason the list is blank.
+                This view updates with sourced opportunities as soon as new
+                founder and company records are available.
               </p>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="info">30s Refresh</Badge>
-            {candidates.length === 0 && <Badge variant="warning">Awaiting Feed</Badge>}
           </div>
         </div>
       </Card>

@@ -208,13 +208,10 @@ export default async function AgentsPage() {
       <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-[var(--muted-foreground)]">
-            This page now reads live team status, schedule timing, and
-            automation runs.
+            This page tracks team status, recent execution history, and upcoming
+            check-ins.
           </p>
-          <div className="flex items-center gap-2">
-            <Badge variant="info">15s Refresh</Badge>
-            {isFallback && <Badge variant="warning">Fallback Active</Badge>}
-          </div>
+          {isFallback && <Badge variant="warning">Snapshot View</Badge>}
         </div>
       </Card>
 
