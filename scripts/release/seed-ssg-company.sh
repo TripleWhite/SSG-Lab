@@ -265,7 +265,8 @@ HEARTBEAT_OVERRIDE_MSG="IMPORTANT: You have a domain-specific HEARTBEAT.md in yo
 
 ensure_agent "feishu-bot" "general" "Employee conversation gateway" "message-square" "Feishu intake, routing, acknowledgement." 0
 ensure_agent "sourcing-agent" "researcher" "Founder sourcing" "search" "Founder discovery, web research, enrichment." 14400
-ensure_agent "portfolio-agent" "pm" "Portfolio follow-up" "target" "Portfolio review, daily prioritization, follow-up planning." 86400 "$HEARTBEAT_OVERRIDE_MSG"
+# portfolio-agent is a product-side OpenClaw runtime dispatched by EC2-B system cron.
+# Do not seed it into the local Paperclip control plane.
 ensure_agent "matching-agent" "researcher" "Cross-project matching" "radar" "Relationship mapping, opportunity matching, signal detection." 1800 "$HEARTBEAT_OVERRIDE_MSG"
 
 sourcing_parent_issue_id="$(ensure_project_issue \

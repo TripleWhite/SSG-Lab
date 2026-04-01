@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REMOTE_USER="${REMOTE_USER:-ec2-user}"
 REMOTE_HOME="${REMOTE_HOME:-/home/${REMOTE_USER}}"
 OPENCLAW_REPO_URL="${OPENCLAW_REPO_URL:-https://github.com/openclaw/openclaw.git}"
@@ -264,13 +265,7 @@ write_openclaw_config() {
             id: "portfolio-agent",
             workspace: ($workspaceRoot + "/portfolio-agent"),
             agentDir: ($stateDir + "/agents/portfolio-agent/agent"),
-            model: "kimi-coding/k2p5",
-            heartbeat: {
-              every: "24h",
-              at: "01:00",
-              session: "main",
-              target: "none"
-            }
+            model: "kimi-coding/k2p5"
           },
           {
             id: "matching-agent",
@@ -466,6 +461,18 @@ set +a
 
 install_systemd_service
 wait_for_gateway
+
+REMOTE_USER="$REMOTE_USER" \
+REMOTE_HOME="$REMOTE_HOME" \
+OPENCLAW_STATE_DIR="$OPENCLAW_STATE_DIR" \
+OPENCLAW_CONFIG_PATH="$OPENCLAW_CONFIG_PATH" \
+OPENCLAW_NODE_BIN="$(command -v node)" \
+OPENCLAW_MJS_PATH="${OPENCLAW_SRC_DIR}/openclaw.mjs" \
+PORTFOLIO_AGENT_CRON_SCHEDULE="${PORTFOLIO_AGENT_CRON_SCHEDULE:-}" \
+PORTFOLIO_AGENT_CRON_TZ="${PORTFOLIO_AGENT_CRON_TZ:-}" \
+PORTFOLIO_AGENT_TIMEOUT="${PORTFOLIO_AGENT_TIMEOUT:-}" \
+PORTFOLIO_AGENT_CRON_MESSAGE="${PORTFOLIO_AGENT_CRON_MESSAGE:-}" \
+"${SCRIPT_DIR}/install-portfolio-agent-cron.sh"
 
 jq -n \
   --arg service "$OPENCLAW_SERVICE_NAME" \

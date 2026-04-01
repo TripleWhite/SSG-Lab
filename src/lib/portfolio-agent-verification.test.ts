@@ -17,17 +17,18 @@ describe("portfolio-agent verification runbook", () => {
     const runbook = readFile(runbookPath);
 
     expect(runbook).toContain("/home/ubuntu/.openclaw/agents/portfolio-agent/");
-    expect(runbook).toContain("/home/ubuntu/.openclaw/.env");
-    expect(runbook).not.toContain("source /home/ec2-user/.paperclip/runtime.env");
+    expect(runbook).toContain("/home/ubuntu/.openclaw/openclaw.json");
     expect(runbook).not.toContain("/home/ec2-user/openclaw-agents/portfolio-agent/");
   });
 
-  it("verifies registration and heartbeat runs through supported company endpoints", () => {
+  it("documents the system cron scheduler instead of Paperclip heartbeats", () => {
     const runbook = readFile(runbookPath);
 
-    expect(runbook).toContain("/api/companies/$PAPERCLIP_COMPANY_ID/agents");
-    expect(runbook).toContain("/api/companies/$PAPERCLIP_COMPANY_ID/heartbeat-runs?limit=50");
-    expect(runbook).toContain("return `404`");
-    expect(runbook).not.toContain("curl -fsS -X POST");
+    expect(runbook).toContain("/etc/cron.d/portfolio-agent");
+    expect(runbook).toContain("/home/ubuntu/.openclaw/bin/run-portfolio-agent.sh");
+    expect(runbook).toContain("0 9 * * *");
+    expect(runbook).toContain("CRON_TZ=UTC");
+    expect(runbook).not.toContain("/api/companies/$PAPERCLIP_COMPANY_ID/heartbeat-runs?limit=50");
+    expect(runbook).not.toContain("/api/companies/$PAPERCLIP_COMPANY_ID/agents");
   });
 });

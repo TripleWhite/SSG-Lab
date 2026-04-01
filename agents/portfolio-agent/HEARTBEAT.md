@@ -1,8 +1,9 @@
 # portfolio-agent — Heartbeat Procedure
 
-The portfolio-agent runs on a daily schedule and on manual portfolio-analysis
-tasks. Its job is to scan active projects, assess health, and produce actionable
-recommendations without taking unapproved action on behalf of employees.
+The portfolio-agent runs when the EC2-B daily cron dispatch fires and on manual
+portfolio-analysis tasks. Its job is to scan active projects, assess health,
+and produce actionable recommendations without taking unapproved action on
+behalf of employees.
 
 ## Execution Plan
 
@@ -15,9 +16,10 @@ recommendations without taking unapproved action on behalf of employees.
 
 ### 2. Get Work
 
-- Check Paperclip inbox and prioritize assigned portfolio tasks first
+- If this run was triggered from a specific project request, prioritize that
+  scope first
 - Use shared `task_list` for the daily full sweep of active portfolio projects
-- If the heartbeat was triggered for a specific project, narrow scope to that
+- If the run was triggered for a specific project, narrow scope to that
   single project instead of scanning the whole portfolio
 - Group projects by current owner / employee when preparing digests
 

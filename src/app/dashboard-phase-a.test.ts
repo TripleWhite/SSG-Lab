@@ -1,0 +1,328 @@
+import { renderToStaticMarkup } from "react-dom/server";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const {
+  mockGetSession,
+  mockRequireBoard,
+  mockRedirect,
+  mockUsePathname,
+  mockUseRouter,
+  mockGetDashboardStats,
+  mockGetProjects,
+  mockGetHeartbeatRuns,
+  mockGetEmployees,
+  mockGetProjectWorkItems,
+  mockGetAgents,
+  mockGetAgentCosts,
+  mockGetMatches,
+  mockGetSourcingResults,
+  mockGetResourceGraph,
+} = vi.hoisted(() => ({
+  mockGetSession: vi.fn(),
+  mockRequireBoard: vi.fn(),
+  mockRedirect: vi.fn(),
+  mockUsePathname: vi.fn(),
+  mockUseRouter: vi.fn(),
+  mockGetDashboardStats: vi.fn(),
+  mockGetProjects: vi.fn(),
+  mockGetHeartbeatRuns: vi.fn(),
+  mockGetEmployees: vi.fn(),
+  mockGetProjectWorkItems: vi.fn(),
+  mockGetAgents: vi.fn(),
+  mockGetAgentCosts: vi.fn(),
+  mockGetMatches: vi.fn(),
+  mockGetSourcingResults: vi.fn(),
+  mockGetResourceGraph: vi.fn(),
+}));
+
+vi.mock("next/link", async () => {
+  const React = await import("react");
+
+  return {
+    default: ({
+      href,
+      children,
+      ...props
+    }: {
+      href: string | { pathname?: string };
+      children: unknown;
+    }) =>
+      React.createElement(
+        "a",
+        {
+          href: typeof href === "string" ? href : href.pathname ?? "#",
+          ...props,
+        },
+        children,
+      ),
+  };
+});
+
+vi.mock("next/navigation", async () => {
+  const actual = await vi.importActual<typeof import("next/navigation")>(
+    "next/navigation",
+  );
+
+  return {
+    ...actual,
+    redirect: mockRedirect,
+    usePathname: mockUsePathname,
+    useRouter: mockUseRouter,
+  };
+});
+
+vi.mock("@/components/dashboard/auto-refresh", () => ({
+  AutoRefresh: () => null,
+}));
+
+vi.mock("@/lib/auth", () => ({
+  getSession: mockGetSession,
+  requireBoard: mockRequireBoard,
+}));
+
+vi.mock("@/lib/paperclip", () => ({
+  getDashboardStats: mockGetDashboardStats,
+  getProjects: mockGetProjects,
+  getHeartbeatRuns: mockGetHeartbeatRuns,
+  getEmployees: mockGetEmployees,
+  getProjectWorkItems: mockGetProjectWorkItems,
+  getAgents: mockGetAgents,
+  getAgentCosts: mockGetAgentCosts,
+  getMatches: mockGetMatches,
+  getSourcingResults: mockGetSourcingResults,
+}));
+
+vi.mock("@/lib/mimir", () => ({
+  getResourceGraph: mockGetResourceGraph,
+}));
+
+async function renderAsyncPage(
+  loader: () => Promise<{ default: (props?: unknown) => unknown }>,
+  props?: unknown,
+) {
+  const { default: Page } = await loader();
+  const page = await Page(props);
+  return renderToStaticMarkup(page);
+}
+
+describe("dashboard phase A coverage", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    mockGetSession.mockResolvedValue(null);
+    mockRequireBoard.mockResolvedValue(undefined);
+    mockRedirect.mockImplementation(() => {
+      throw new Error("NEXT_REDIRECT");
+    });
+    mockUsePathname.mockReturnValue("/agents");
+    mockUseRouter.mockReturnValue({
+      refresh: vi.fn(),
+    });
+
+    process.env.FEISHU_APP_ID = "app-id";
+    process.env.FEISHU_APP_SECRET = "app-secret";
+    process.env.NEXTAUTH_SECRET = "secret";
+    process.env.NEXTAUTH_URL = "https://ssg.example.com";
+    process.env.BOARD_FEISHU_OPEN_IDS = "open-id-1";
+    process.env.PAPERCLIP_API_URL = "https://paperclip.example.com";
+    process.env.PAPERCLIP_API_KEY = "paperclip-key";
+    process.env.PAPERCLIP_COMPANY_ID = "company-id";
+    process.env.MIMIR_API_URL = "https://mimir.example.com";
+    process.env.MIMIR_API_KEY = "mimir-key";
+    process.env.MIMIR_USER_ID = "user-1";
+
+    mockGetDashboardStats.mockResolvedValue({
+      totalProjects: 2,
+      openTasks: 12,
+      inProgressTasks: 4,
+      agentsOnline: 3,
+      agentsTotal: 5,
+      runSuccessRate: 91,
+      completedTasks: 28,
+    });
+    mockGetProjects.mockResolvedValue([
+      {
+        id: "project-1",
+        title: "SSG Lab",
+      },
+    ]);
+    mockGetHeartbeatRuns.mockResolvedValue([
+      {
+        activityAt: "2026-04-01T08:00:00.000Z",
+        agentName: "Frontend Engineer",
+        summary: "Synced section badge rollout",
+        status: "succeeded",
+        tokenUsage: 3210,
+      },
+    ]);
+    mockGetEmployees.mockResolvedValue([
+      {
+        id: "frontend",
+        name: "Frontend Engineer",
+        inputsThisWeek: 6,
+        projectsOwned: 1,
+      },
+    ]);
+    mockGetProjectWorkItems.mockResolvedValue([
+      {
+        identifier: "MIM-480",
+        title: "Ship section badge rollout",
+        assigneeName: "Frontend Engineer",
+        status: "in_progress",
+        updatedAt: "2026-04-01T08:00:00.000Z",
+      },
+      {
+        identifier: "MIM-486",
+        title: "Review Phase A frontend",
+        assigneeName: "Staff Engineer",
+        status: "in_review",
+        updatedAt: "2026-04-01T07:30:00.000Z",
+      },
+    ]);
+    mockGetAgents.mockResolvedValue([
+      {
+        name: "Frontend Engineer",
+        status: "running",
+        lastHeartbeat: "2026-04-01T08:00:00.000Z",
+        nextHeartbeat: "2026-04-01T08:10:00.000Z",
+        todayRuns: 6,
+        tokenUsageToday: 18400,
+      },
+    ]);
+    mockGetAgentCosts.mockResolvedValue([
+      {
+        agentName: "Frontend Engineer",
+        costCents: 821,
+        totalTokens: 514000,
+      },
+    ]);
+    mockGetMatches.mockResolvedValue([
+      {
+        id: "match-1",
+        type: "resource",
+        confidence: 88,
+        status: "accepted",
+        createdAt: "2026-04-01T08:00:00.000Z",
+        sideA: {
+          entity: "Project Atlas",
+          description: "Seed-stage workflow automation",
+          sourceEmployee: "CTO",
+        },
+        sideB: {
+          entity: "Operator Guild",
+          description: "Portfolio talent network",
+          sourceEmployee: "Frontend Engineer",
+        },
+        suggestion: "Introduce Operator Guild for design systems support.",
+      },
+    ]);
+    mockGetSourcingResults.mockResolvedValue([
+      {
+        id: "candidate-1",
+        founderName: "Avery Chen",
+        companyName: "Signal Forge",
+        domain: "Dev Tools",
+        stage: "Seed",
+        relevanceScore: 92,
+        status: "new",
+        matchReason: "Strong operational fit",
+        sources: ["Manual review"],
+        contactEmail: "avery@example.com",
+        contactTwitter: null,
+        contactLinkedin: null,
+        requestedBy: "CTO",
+      },
+    ]);
+    mockGetResourceGraph.mockResolvedValue({
+      source: "live",
+      connections: [{ name: "Operator Circle", tags: ["Founder Ops"] }],
+      investors: [{ name: "North Star Capital", tags: ["LP"] }],
+      programs: [{ name: "Launchpad", tags: ["Acceleration"] }],
+      mentors: [{ name: "Iris Tan", tags: ["Growth"] }],
+    });
+  });
+
+  it("renders the overview page with work-item and automation terminology", async () => {
+    const html = await renderAsyncPage(() => import("./(dashboard)/page"), {
+      searchParams: Promise.resolve({}),
+    });
+
+    expect(html).toContain("Portfolio Command");
+    expect(html).toContain("Live workstreams, automation health, and team visibility");
+    expect(html).toContain("work items");
+    expect(html).toContain("Ship section badge rollout");
+  });
+
+  it("renders the team page with the renamed automation timeline", async () => {
+    const html = await renderAsyncPage(() => import("./(dashboard)/agents/page"));
+
+    expect(html).toContain("Team");
+    expect(html).toContain("Automation Timeline (Today)");
+    expect(html).toContain("Frontend Engineer");
+    expect(html).toContain("Live");
+  });
+
+  it("renders the activity page with board-only operating metrics", async () => {
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/analytics/page"),
+    );
+
+    expect(html).toContain("Activity");
+    expect(html).toContain("Automation Success Rate");
+    expect(html).toContain("Work Items In Progress");
+    expect(html).toContain("Operational numbers with no placeholder smoothing");
+  });
+
+  it("renders live matching suggestions without Paperclip terminology", async () => {
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/matching/page"),
+    );
+
+    expect(html).toContain("Live Suggestions Active");
+    expect(html).toContain("Project Atlas");
+    expect(html).toContain("Operator Guild");
+    expect(html).not.toContain("Paperclip");
+  });
+
+  it("renders the pipeline page with the fallback workstream deck", async () => {
+    mockGetProjects.mockResolvedValue([]);
+
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/pipeline/page"),
+    );
+
+    expect(html).toContain("Pipeline");
+    expect(html).toContain("Dashboard Integration");
+    expect(html).toContain("Latest Signal");
+  });
+
+  it("renders the resource graph sections from the Mimir-backed data source", async () => {
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/resources/page"),
+    );
+
+    expect(html).toContain("Network Graph");
+    expect(html).toContain("Employee Connections");
+    expect(html).toContain("LP / Investor Network");
+  });
+
+  it("renders runtime settings from the actual runtime checks", async () => {
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/settings/page"),
+    );
+
+    expect(html).toContain("Runtime Checks");
+    expect(html).toContain("Environment readiness");
+    expect(html).toContain("Board Role Mapping");
+  });
+
+  it("renders live sourcing results without fabricated candidates", async () => {
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/sourcing/page"),
+    );
+
+    expect(html).toContain("Sourcing Results");
+    expect(html).toContain("Live Records Active");
+    expect(html).toContain("Avery Chen");
+  });
+});
