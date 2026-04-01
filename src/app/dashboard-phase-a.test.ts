@@ -296,6 +296,98 @@ describe("dashboard phase A coverage", () => {
     expect(html).toContain("Latest Signal");
   });
 
+  it("renders the pipeline page from live work-item hierarchy data", async () => {
+    mockGetProjectWorkItems.mockResolvedValue([
+      {
+        id: "root-1",
+        identifier: "MIM-478",
+        title: "SSG Lab Delivery Root",
+        description: "Parent container",
+        status: "in_progress",
+        priority: "high",
+        assigneeName: "CTO",
+        createdAt: "2026-04-01T00:00:00.000Z",
+        updatedAt: "2026-04-01T09:00:00.000Z",
+        startedAt: "2026-04-01T00:00:00.000Z",
+        parentId: null,
+      },
+      {
+        id: "phase-a",
+        identifier: "MIM-480",
+        title: "Phase 1: Frontend polish — branding, coverage",
+        description: "Phase A",
+        status: "in_progress",
+        priority: "high",
+        assigneeName: "Frontend Engineer",
+        createdAt: "2026-04-01T01:00:00.000Z",
+        updatedAt: "2026-04-01T09:30:00.000Z",
+        startedAt: "2026-04-01T01:00:00.000Z",
+        parentId: "root-1",
+      },
+      {
+        id: "phase-a-task-1",
+        identifier: "MIM-486",
+        title: "Review Phase A frontend",
+        description: "Review task",
+        status: "in_review",
+        priority: "high",
+        assigneeName: "Staff Engineer",
+        createdAt: "2026-04-01T02:00:00.000Z",
+        updatedAt: "2026-04-01T10:00:00.000Z",
+        startedAt: "2026-04-01T02:00:00.000Z",
+        parentId: "phase-a",
+      },
+      {
+        id: "phase-a-task-2",
+        identifier: "MIM-482",
+        title: "Visual QA for Phase A",
+        description: "QA task",
+        status: "blocked",
+        priority: "medium",
+        assigneeName: "Design Engineer",
+        createdAt: "2026-04-01T02:30:00.000Z",
+        updatedAt: "2026-04-01T11:00:00.000Z",
+        startedAt: "2026-04-01T02:30:00.000Z",
+        parentId: "phase-a",
+      },
+      {
+        id: "phase-b",
+        identifier: "MIM-481",
+        title: "Phase 2: Component reskin — funnel, density",
+        description: "Phase B",
+        status: "blocked",
+        priority: "medium",
+        assigneeName: "Frontend Engineer",
+        createdAt: "2026-04-01T03:00:00.000Z",
+        updatedAt: "2026-04-01T08:00:00.000Z",
+        startedAt: "2026-04-01T03:00:00.000Z",
+        parentId: "root-1",
+      },
+      {
+        id: "phase-b-task-1",
+        identifier: "MIM-479",
+        title: "Design audit for Phase B",
+        description: "Design dependency",
+        status: "todo",
+        priority: "medium",
+        assigneeName: "Senior Designer",
+        createdAt: "2026-04-01T03:30:00.000Z",
+        updatedAt: "2026-04-01T08:15:00.000Z",
+        startedAt: "2026-04-01T03:30:00.000Z",
+        parentId: "phase-b",
+      },
+    ]);
+
+    const html = await renderAsyncPage(
+      () => import("./(dashboard)/pipeline/page"),
+    );
+
+    expect(html).toContain("Frontend polish");
+    expect(html).toContain("Resolve MIM-482 before downstream work can move.");
+    expect(html).toContain("branding");
+    expect(html).toContain("Start MIM-479 when dependencies are clear.");
+  });
+
   it("renders the resource graph sections from the Mimir-backed data source", async () => {
     const html = await renderAsyncPage(
       () => import("./(dashboard)/resources/page"),
