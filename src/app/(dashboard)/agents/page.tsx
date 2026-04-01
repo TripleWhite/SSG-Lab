@@ -26,11 +26,11 @@ const FALLBACK_AGENTS = [
     recentActions: [
       {
         time: "09:47",
-        description: "Mapped heartbeat runs into the Overview page",
+        description: "Mapped automation runs into the Overview page",
       },
       {
         time: "09:35",
-        description: "Replaced dashboard stats with live Paperclip totals",
+        description: "Replaced overview stats with live operations totals",
       },
       {
         time: "09:20",
@@ -80,7 +80,7 @@ const FALLBACK_AGENTS = [
       },
       {
         time: "09:18",
-        description: "Assigned QA and documentation follow-up tasks",
+        description: "Assigned QA and documentation follow-up work items",
       },
       { time: "09:05", description: "Reviewed the implementation wave plan" },
     ],
@@ -93,7 +93,7 @@ const FALLBACK_HEARTBEAT_ENTRIES = [
     agentName: "Frontend Engineer",
     status: "ok" as const,
     tokens: 3210,
-    summary: "Completed Paperclip dashboard sync for the Overview route",
+    summary: "Completed live dashboard sync for the Overview route",
   },
   {
     time: "09:44",
@@ -200,15 +200,16 @@ export default async function AgentsPage() {
     <div className="space-y-8">
       <AutoRefresh intervalMs={15_000} />
       <Header
-        title="Agents"
-        description="Monitor agent status and heartbeat history"
+        title="Team"
+        description="Monitor team status, automation timing, and recent execution history."
+        eyebrow="Team Visibility"
       />
 
       <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-[var(--muted-foreground)]">
-            This page now reads live agent state, schedule timing, and heartbeat
-            runs from Paperclip.
+            This page now reads live team status, schedule timing, and
+            automation runs.
           </p>
           <div className="flex items-center gap-2">
             <Badge variant="info">15s Refresh</Badge>

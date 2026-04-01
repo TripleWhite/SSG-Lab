@@ -2,6 +2,7 @@ import { Header } from "@/components/nav/header";
 import { Card, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/stat-card";
 import { Badge } from "@/components/ui/badge";
+import { SectionBadge } from "@/components/ui/section-badge";
 import { requireBoard } from "@/lib/auth";
 import { formatCompactNumber, formatWeekLabel, getWeekKey } from "@/lib/format";
 import {
@@ -54,7 +55,8 @@ function BarChart({
 
   return (
     <Card>
-      <CardTitle className="mb-4">{title}</CardTitle>
+      <SectionBadge>Weekly View</SectionBadge>
+      <CardTitle className="mb-4 mt-4">{title}</CardTitle>
       <div
         className={`flex h-32 items-end gap-3 ${isSinglePoint ? "justify-center" : ""}`}
       >
@@ -177,8 +179,9 @@ export default async function AnalyticsPage() {
   return (
     <div className="space-y-8">
       <Header
-        title="Analytics"
-        description="Live operational metrics from Paperclip runs and costs"
+        title="Activity"
+        description="Live operating metrics for automation runs, work-item flow, and team cost."
+        eyebrow="Operating Signals"
       />
 
       <Card className="overflow-hidden border-[var(--ssg-green)]/20 bg-[linear-gradient(135deg,rgba(100,254,186,0.08),rgba(19,24,24,0.96)_50%,rgba(10,10,15,0.98))] p-0">
@@ -186,7 +189,7 @@ export default async function AnalyticsPage() {
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant={isFallback ? "warning" : "success"}>
-                {isFallback ? "Fallback Snapshot" : "Live Paperclip Data"}
+                {isFallback ? "Fallback Snapshot" : "Live Operations Data"}
               </Badge>
               <Badge variant="info">Board View</Badge>
             </div>
@@ -195,9 +198,10 @@ export default async function AnalyticsPage() {
                 Operational numbers with no placeholder smoothing
               </p>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
-                These cards and charts reflect Paperclip heartbeat success, task
-                throughput, and agent cost data directly. If a feed drops, the page says
-                so instead of silently inventing smoother-looking numbers.
+                These cards and charts reflect automation success, work-item
+                throughput, and team cost data directly. If a feed drops, the
+                page says so instead of silently inventing smoother-looking
+                numbers.
               </p>
             </div>
           </div>
@@ -207,17 +211,17 @@ export default async function AnalyticsPage() {
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
         <StatCard
-          label="Run Success Rate"
+          label="Automation Success Rate"
           value={`${stats.runSuccessRate}%`}
-          trend="Recent heartbeat completions"
+          trend="Recent completed runs"
         />
         <StatCard
-          label="Tasks In Progress"
+          label="Work Items In Progress"
           value={stats.inProgressTasks}
           trend="Current active delivery work"
         />
         <StatCard
-          label="Tasks Done"
+          label="Work Items Completed"
           value={stats.completedTasks}
           trend="Lifetime completed work"
         />
@@ -225,7 +229,7 @@ export default async function AnalyticsPage() {
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <BarChart
-          title="Heartbeat Runs (Weekly)"
+          title="Automation Runs (Weekly)"
           data={weeklyRunVolume}
           maxValue={Math.max(...weeklyRunVolume.map((item) => item.value), 1)}
           valueSuffix=""
@@ -238,7 +242,8 @@ export default async function AnalyticsPage() {
       </div>
 
       <Card>
-        <CardTitle className="mb-4">Agent Cost Breakdown</CardTitle>
+        <SectionBadge>Budget View</SectionBadge>
+        <CardTitle className="mb-4 mt-4">Team Cost Breakdown</CardTitle>
         <div className="divide-y divide-[var(--border)]">
           {costBreakdown.map(({ agent, cost, tokens }) => (
             <div

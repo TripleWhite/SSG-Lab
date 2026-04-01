@@ -27,7 +27,7 @@ function getEmptyStateMessage(loadFailed: boolean): {
       eyebrow: "Feed interrupted",
       href: "/analytics",
       action: "Review analytics",
-      note: "The dashboard will keep this blank until the next successful Paperclip match sync.",
+      note: "The dashboard will keep this blank until the next successful match sync.",
       tone: "danger",
       icon: ShieldAlert,
     };
@@ -39,7 +39,7 @@ function getEmptyStateMessage(loadFailed: boolean): {
     eyebrow: "Queue waiting",
     href: "/sourcing",
     action: "Open sourcing",
-    note: "New Paperclip match suggestions will land here as soon as a sourcing record is ready.",
+    note: "New match suggestions will land here as soon as a sourcing record is ready.",
     tone: "info",
     icon: Radar,
   };
@@ -63,7 +63,8 @@ export default async function MatchingPage() {
       <AutoRefresh intervalMs={30_000} />
       <Header
         title="Matching"
-        description="Live cross-project and resource matches only; demo pairings have been removed"
+        description="Live cross-project and resource matches only, with no demo pairings."
+        eyebrow="Founder Matching"
       />
 
       <Card className="overflow-hidden border-[var(--ssg-green)]/20 bg-[linear-gradient(135deg,rgba(100,254,186,0.08),rgba(19,24,24,0.96)_50%,rgba(10,10,15,0.98))] p-0">
@@ -80,7 +81,7 @@ export default async function MatchingPage() {
                 Real match records only
               </p>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
-                This page waits for actual Paperclip match outputs and explains the empty
+                This page waits for actual match outputs and explains the empty
                 state instead of padding the board with invented pairings.
               </p>
             </div>

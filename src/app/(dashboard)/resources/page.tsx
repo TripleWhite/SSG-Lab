@@ -1,13 +1,15 @@
 import { Header } from "@/components/nav/header";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SectionBadge } from "@/components/ui/section-badge";
 import type { ResourceItem } from "@/lib/types";
 import { getResourceGraph } from "@/lib/mimir";
 
 function ResourceSection({ title, items }: ResourceSectionProps) {
   return (
     <Card>
-      <CardTitle className="mb-4">{title}</CardTitle>
+      <SectionBadge>Resource Graph</SectionBadge>
+      <CardTitle className="mb-4 mt-4">{title}</CardTitle>
       <div className="space-y-3">
         {items.map((item) => (
           <div key={item.name} className="flex flex-col gap-1.5">
@@ -39,6 +41,7 @@ export default async function ResourcesPage() {
       <Header
         title="Resources"
         description="Accelerator resource graph — connections, LPs, mentors, partners"
+        eyebrow="Network Graph"
       />
 
       <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">

@@ -30,7 +30,7 @@ function getEmptyStateMessage(
       eyebrow: "Feed interrupted",
       href: "/analytics",
       action: "Review analytics",
-      note: "The list stays empty until the next successful Paperclip sync.",
+      note: "The list stays empty until the next successful sourcing sync.",
       tone: "danger",
       icon: ShieldAlert,
     };
@@ -55,7 +55,7 @@ function getEmptyStateMessage(
     eyebrow: "Feed ready",
     href: "/matching",
     action: "Open matching",
-    note: "As soon as Paperclip stores a candidate result, it will appear here on the next refresh.",
+    note: "As soon as the platform stores a candidate result, it will appear here on the next refresh.",
     tone: "info",
     icon: Radar,
   };
@@ -80,7 +80,8 @@ export default async function SourcingPage() {
       <AutoRefresh intervalMs={30_000} />
       <Header
         title="Sourcing Results"
-        description="Live candidate discoveries only; demo prospects have been removed"
+        description="Live candidate discoveries only, with demo prospects removed."
+        eyebrow="Founder Sourcing"
       />
 
       <Card className="overflow-hidden border-[var(--ssg-green)]/20 bg-[linear-gradient(135deg,rgba(100,254,186,0.08),rgba(19,24,24,0.96)_50%,rgba(10,10,15,0.98))] p-0">

@@ -164,11 +164,11 @@ export function ProjectDetail({ project, onClose }: ProjectDetailProps) {
           {/* Child Tasks */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)] mb-2">
-              Child Tasks
+              Linked Work Items
             </h3>
             {project.tasks.length === 0 ? (
               <p className="text-sm text-[var(--muted-foreground)]">
-                No child tasks are attached to this workstream yet.
+                No linked work items are attached to this workstream yet.
               </p>
             ) : (
               <ul className="space-y-2">

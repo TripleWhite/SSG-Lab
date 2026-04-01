@@ -116,7 +116,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
             <p className="text-sm font-semibold">{assignee}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-[var(--muted-foreground)]">Active for</p>
+            <p className="text-xs text-[var(--muted-foreground)]">Open for</p>
             <p className="text-sm font-medium">{daysActive}d</p>
           </div>
           <div className="text-right">

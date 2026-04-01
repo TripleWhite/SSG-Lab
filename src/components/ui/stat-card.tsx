@@ -58,7 +58,7 @@ export function StatCard({ label, value, icon, trend, animated }: StatCardProps)
           {trend && <p className="mt-1 text-xs text-[var(--ssg-green)]">{trend}</p>}
         </div>
         {icon && (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-none bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]">
             {icon}
           </div>
         )}

@@ -1,5 +1,6 @@
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SectionBadge } from "@/components/ui/section-badge";
 import { type ReactNode } from "react";
 
 type AgentStatus = "running" | "idle" | "error";
@@ -11,9 +12,9 @@ const statusVariant: Record<AgentStatus, "success" | "info" | "danger"> = {
 };
 
 const statusLabel: Record<AgentStatus, string> = {
-  running: "Running",
-  idle: "Idle",
-  error: "Error",
+  running: "Live",
+  idle: "Queued",
+  error: "Blocked",
 };
 
 interface AgentAction {
@@ -60,8 +61,9 @@ export function AgentCard({
 }: AgentCardProps) {
   return (
     <Card>
+      <SectionBadge>Operator Snapshot</SectionBadge>
       <div className="flex items-center justify-between mb-4">
-        <CardTitle>{name}</CardTitle>
+        <CardTitle className="mt-4">{name}</CardTitle>
         <div className="flex items-center gap-2">
           {status === "running" && <PulsingDot />}
           <Badge variant={statusVariant[status]}>{statusLabel[status]}</Badge>
@@ -69,8 +71,8 @@ export function AgentCard({
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-5 border-b border-[var(--border)] pb-5">
-        <StatItem label="Last Heartbeat" value={lastHeartbeat} />
-        <StatItem label="Next Heartbeat" value={nextHeartbeat} />
+        <StatItem label="Last Run" value={lastHeartbeat} />
+        <StatItem label="Next Run" value={nextHeartbeat} />
         <StatItem
           label="Today"
           value={
@@ -84,7 +86,7 @@ export function AgentCard({
 
       <div className="space-y-1.5">
         <p className="text-xs font-medium text-[var(--muted-foreground)] uppercase tracking-wider mb-2">
-          Recent Actions
+          Recent Activity
         </p>
         {recentActions.map((action, index) => (
           <div key={index} className="flex gap-2 text-xs text-[var(--muted-foreground)]">

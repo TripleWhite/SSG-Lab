@@ -1,5 +1,6 @@
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SectionBadge } from "@/components/ui/section-badge";
 
 type HeartbeatStatus = "ok" | "slow" | "missed";
 
@@ -49,7 +50,8 @@ function TimelineDot({ status }: { status: HeartbeatStatus }) {
 export function HeartbeatTimeline({ entries }: HeartbeatTimelineProps) {
   return (
     <Card>
-      <CardTitle className="mb-5">Heartbeat Timeline (Today)</CardTitle>
+      <SectionBadge>Automation</SectionBadge>
+      <CardTitle className="mb-5 mt-4">Automation Timeline (Today)</CardTitle>
 
       <div className="relative">
         <div className="absolute left-[5px] top-2 bottom-2 w-px bg-[var(--border)]" />

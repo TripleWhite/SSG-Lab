@@ -47,7 +47,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     assignee: "CTO",
     daysActive: 1,
     lastActivityDate: "22m ago",
-    latestSignal: "1 blocked infra task, 2 queued follow-ups, and 1 cancelled backend branch. Progress is waiting on upstream credentials.",
+    latestSignal: "1 blocked infra work item, 2 queued follow-ups, and 1 cancelled backend branch. Progress is waiting on upstream credentials.",
     nextAction: "Resolve the EC2-B and Feishu blockers before verification work can start.",
     tags: ["EC2-B", "Feishu", "1 blocked", "2 queued"],
     totalTasks: 4,
@@ -61,14 +61,14 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     ],
     actions: [
       "Resolve the EC2-B deployment blocker before downstream verification can begin.",
-      "Re-sequence the queued review and docs tasks once infra is reachable.",
+      "Re-sequence the queued review and docs work items once infra is reachable.",
       "Keep the cancelled Mimir server branch out of the active rollout path.",
     ],
     tasks: [
       {
         id: "phase-1-task-1",
         identifier: "MIM-312",
-        title: "Provision EC2-B + Deploy Paperclip + OpenClaw + Caddy + Feishu",
+        title: "Provision EC2-B + Deploy control plane + OpenClaw + Caddy + Feishu",
         status: "blocked",
         assignee: "Release Engineer",
         updatedAtLabel: "22m ago",
@@ -85,7 +85,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
   },
   {
     id: "phase-2",
-    title: "Sourcing Agent",
+    title: "Sourcing Automation",
     subtitle: "MIM-308 · Phase 2",
     stage: "Blocked",
     stageVariant: "danger",
@@ -94,8 +94,8 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     assignee: "CTO",
     daysActive: 0,
     lastActivityDate: "4h ago",
-    latestSignal: "This workstream is still blocked behind Phase 1 system readiness and has no child tasks started yet.",
-    nextAction: "Wait for the shared infrastructure dependencies to clear before opening implementation tasks.",
+    latestSignal: "This workstream is still blocked behind Phase 1 system readiness and has no linked work items started yet.",
+    nextAction: "Wait for the shared infrastructure dependencies to clear before opening implementation work items.",
     tags: ["parallel search", "7 platforms", "blocked"],
     totalTasks: 0,
     activeTasks: 0,
@@ -105,14 +105,14 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
       { date: "Mar 29", event: "MIM-308 status set to Blocked", actor: "CTO" },
     ],
     actions: [
-      "Keep this workstream parked until the shared Paperclip and Feishu dependencies are live.",
-      "Do not create downstream sourcing tasks before the infra dependency is removed.",
+      "Keep this workstream parked until the shared platform and Feishu dependencies are live.",
+      "Do not create downstream sourcing work items before the infra dependency is removed.",
     ],
     tasks: [],
   },
   {
     id: "phase-3",
-    title: "Matching Agent",
+    title: "Matching Automation",
     subtitle: "MIM-309 · Phase 3",
     stage: "Blocked",
     stageVariant: "danger",
@@ -132,14 +132,14 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
       { date: "Mar 28", event: "MIM-309 status set to Blocked", actor: "CTO" },
     ],
     actions: [
-      "Wait on the upstream data plane before opening matching implementation tasks.",
+      "Wait on the upstream data plane before opening matching implementation work items.",
       "Preserve this workstream as a dependency marker, not an active build branch.",
     ],
     tasks: [],
   },
   {
     id: "phase-4",
-    title: "Portfolio Agent",
+    title: "Portfolio Automation",
     subtitle: "MIM-310 · Phase 4",
     stage: "Blocked",
     stageVariant: "danger",
@@ -148,7 +148,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     assignee: "CTO",
     daysActive: 0,
     lastActivityDate: "5h ago",
-    latestSignal: "Portfolio automation is still waiting on the same upstream delivery chain and has not opened its daily-scan tasks yet.",
+    latestSignal: "Portfolio automation is still waiting on the same upstream delivery chain and has not opened its daily-scan work items yet.",
     nextAction: "Hold until the platform dependencies move out of blocked status.",
     tags: ["daily scans", "digests", "blocked"],
     totalTasks: 0,
@@ -160,7 +160,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     ],
     actions: [
       "Keep the workstream blocked until the shared integrations are available.",
-      "Open the daily-digest tasks only after the upstream agents can write live data.",
+      "Open the daily-digest work items only after the upstream automations can write live data.",
     ],
     tasks: [],
   },
@@ -175,7 +175,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     assignee: "CTO",
     daysActive: 0,
     lastActivityDate: "Just now",
-    latestSignal: "1 task is active and 4 downstream review or QA tasks are queued. The live data layer is partially shipped and the remaining work is concentrated in the pipeline, matching, and sourcing routes.",
+    latestSignal: "1 work item is active and 4 downstream review or QA work items are queued. The live data layer is partially shipped and the remaining work is concentrated in the pipeline, matching, and sourcing routes.",
     nextAction: "Finish the remaining live route conversions and hand the branch to review.",
     tags: ["live data", "polling", "1 active", "4 queued"],
     totalTasks: 5,
@@ -190,7 +190,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     actions: [
       "Finish the remaining live route conversions on MIM-318.",
       "Queue MIM-319 once the implementation branch is stable.",
-      "Keep QA and design review tasks gated behind the live data merge.",
+      "Keep QA and design review work items gated behind the live data merge.",
     ],
     tasks: [
       {
@@ -330,7 +330,7 @@ function getHealth(workstream: WorkItem, descendants: WorkItem[]): HealthStatus 
 
 function buildLatestSignal(workstream: WorkItem, descendants: WorkItem[]): string {
   if (descendants.length === 0) {
-    return `${workstream.identifier} is ${STATUS_LABELS[workstream.status].toLowerCase()} with no child tasks started yet.`;
+    return `${workstream.identifier} is ${STATUS_LABELS[workstream.status].toLowerCase()} with no linked work items started yet.`;
   }
 
   const activeTasks = descendants.filter((item) => item.status === "in_progress").length;
@@ -422,7 +422,7 @@ function buildActions(workstream: WorkItem, descendants: WorkItem[]): string[] {
     actions.push(`Clear the current blocker on ${workstream.identifier}.`);
   }
   if (actions.length === 0) {
-    actions.push(`No open child tasks. Monitor ${workstream.identifier} for new follow-up work.`);
+    actions.push(`No open linked work items. Monitor ${workstream.identifier} for new follow-up work.`);
   }
 
   return [...new Set(actions)].slice(0, 3);
@@ -578,14 +578,15 @@ export default async function PipelinePage() {
     <div className="space-y-6">
       <AutoRefresh intervalMs={30_000} />
       <Header
-        title="Projects"
-        description="Live SSG delivery workstreams and nested task pipeline from Paperclip"
+        title="Pipeline"
+        description="Live SSG delivery workstreams and nested work-item flow."
+        eyebrow="Delivery Pipeline"
       />
 
       <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold">Live Paperclip status</p>
+            <p className="text-sm font-semibold">Live delivery status</p>
             <p className="text-sm text-[var(--muted-foreground)]">
               Pipeline now reflects the real SSG workstream hierarchy instead of the static portfolio examples.
             </p>

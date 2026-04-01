@@ -62,12 +62,12 @@ export function getRuntimeSections(): RuntimeSection[] {
   return [
     {
       title: "Control Plane",
-      description: "Paperclip access needed for the live dashboard routes.",
+      description: "Control-plane access needed for the live dashboard routes.",
       checks: [
         buildCheck(
           "paperclip",
-          "Paperclip API",
-          "Required for Overview, Pipeline, Agents, Analytics, and the live task hierarchy.",
+          "Operations API",
+          "Required for Overview, Pipeline, Team, Activity, and the live work-item hierarchy.",
           ["PAPERCLIP_API_URL", "PAPERCLIP_API_KEY", "PAPERCLIP_COMPANY_ID"]
         ),
       ],

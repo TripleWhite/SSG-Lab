@@ -1,6 +1,8 @@
-import { Activity, Bot, Briefcase, Target } from "lucide-react";
+import { Activity, ArrowUpRight, Bot, Briefcase, Target } from "lucide-react";
+import Link from "next/link";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SectionBadge } from "@/components/ui/section-badge";
 import { StatCard } from "@/components/ui/stat-card";
 import { Header } from "@/components/nav/header";
 import { AutoRefresh } from "@/components/dashboard/auto-refresh";
@@ -12,7 +14,6 @@ import {
   getProjects,
 } from "@/lib/paperclip";
 import {
-  formatClockTime,
   formatRelativeTime,
   truncateText,
 } from "@/lib/format";
@@ -73,7 +74,7 @@ const FALLBACK_AGENT_ACTIVITY = [
   {
     time: "2m ago",
     agent: "Frontend Engineer",
-    action: "Syncing Paperclip dashboard data into the Overview page",
+    action: "Syncing live delivery data into the Overview page",
   },
   {
     time: "8m ago",
@@ -130,6 +131,19 @@ const STATUS_LABELS = {
   done: "Done",
   cancelled: "Cancelled",
 } as const;
+
+const STATUS_PRIORITY = {
+  blocked: 0,
+  in_review: 1,
+  in_progress: 2,
+  todo: 3,
+  backlog: 4,
+  done: 5,
+  cancelled: 6,
+} as const;
+
+const CTA_LINK_CLASS =
+  "inline-flex items-center gap-2 border border-[var(--ssg-green)]/24 bg-black/20 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--foreground)] transition-colors hover:border-[var(--ssg-green)]/50 hover:text-[var(--ssg-green)]";
 
 const PHASE_PROGRESS_COLORS = [
   { label: "Backlog", color: "var(--ssg-green)" },
@@ -225,6 +239,22 @@ export default async function OverviewPage({
           updatedAt: item.updatedAt,
         }))
       : FALLBACK_RECENT_WORK;
+  const focusWork = [...recentWork]
+    .sort((left, right) => {
+      const leftPriority =
+        STATUS_PRIORITY[left.status as keyof typeof STATUS_PRIORITY] ?? 99;
+      const rightPriority =
+        STATUS_PRIORITY[right.status as keyof typeof STATUS_PRIORITY] ?? 99;
+
+      if (leftPriority !== rightPriority) {
+        return leftPriority - rightPriority;
+      }
+
+      return (
+        new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime()
+      );
+    })
+    .slice(0, 4);
 
   const phaseProgress = buildPhaseProgress(workItems);
   const phaseProgressMax = Math.max(
@@ -240,6 +270,7 @@ export default async function OverviewPage({
           action: truncateText(run.summary ?? run.status, 96),
         }))
       : [...FALLBACK_AGENT_ACTIVITY];
+  const highlightedActivity = agentActivity.slice(0, 4);
 
   const teamActivity =
     employees.length > 0
@@ -258,7 +289,11 @@ export default async function OverviewPage({
   return (
     <div className="space-y-6">
       <AutoRefresh intervalMs={30_000} />
-      <Header title="Overview" description="SSG Accelerator Agent Dashboard" />
+      <Header
+        title="Overview"
+        description="Live workstreams, automation health, and team visibility for the SSG delivery stack."
+        eyebrow="Portfolio Command"
+      />
 
       {notice === "board_access_required" && (
         <Card className="border-amber-500/20 bg-amber-500/5 p-4">
@@ -281,13 +316,21 @@ export default async function OverviewPage({
       <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm font-semibold">Live Paperclip status</p>
+            <p className="text-sm font-semibold">Live delivery status</p>
             <p className="text-sm text-[var(--muted-foreground)]">
-              Overview now reads current Paperclip projects, heartbeat runs, and
-              team activity.
+              Overview now reads current workstreams, automation runs, and team
+              activity.
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/pipeline" className={CTA_LINK_CLASS}>
+              打开项目进度
+              <ArrowUpRight size={14} />
+            </Link>
+            <Link href="/analytics" className={CTA_LINK_CLASS}>
+              查看自动化
+              <ArrowUpRight size={14} />
+            </Link>
             <Badge variant="info">30s Refresh</Badge>
             {isFallback && <Badge variant="warning">Fallback Active</Badge>}
           </div>
@@ -297,160 +340,258 @@ export default async function OverviewPage({
       {/* Stats row */}
       <div className="animate-fade-in grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Active Projects"
+          label="Active Workstreams"
           value={stats.totalProjects}
-          trend={`${stats.inProgressTasks} tasks in progress`}
+          trend={`${stats.inProgressTasks} work items active`}
           icon={<Briefcase size={20} />}
           animated
         />
         <StatCard
-          label="Open Tasks"
+          label="Open Work Items"
           value={stats.openTasks}
           trend={`${stats.completedTasks} completed overall`}
           icon={<Activity size={20} />}
           animated
         />
         <StatCard
-          label="Agents Online"
+          label="Team Online"
           value={`${stats.agentsOnline}/${stats.agentsTotal}`}
           icon={<Bot size={20} />}
           animated
         />
         <StatCard
-          label="Run Success"
+          label="Automation Success"
           value={`${stats.runSuccessRate}%`}
-          trend="Last 25 heartbeat runs"
+          trend="Last 25 automation runs"
           icon={<Target size={20} />}
           animated
         />
       </div>
 
-      {/* Two-column layout */}
-      <div className="grid gap-6 xl:grid-cols-2">
-        {/* Left column */}
-        <div
-          className="animate-fade-in space-y-6"
-          style={{ animationDelay: "0.1s" }}
-        >
-          {/* Recent Work */}
-          <Card>
-            <CardTitle className="mb-4">Recent Work</CardTitle>
-            <ul className="space-y-3">
-              {recentWork.map((item) => (
-                <li
-                  key={item.identifier}
-                  className="flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--background)] px-4 py-3"
-                >
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">{item.identifier}</p>
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                      {truncateText(item.title, 86)}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-[var(--muted-foreground)]">
-                      {item.assignee}
-                    </span>
-                    <Badge
-                      variant={
-                        STATUS_VARIANTS[
-                          item.status as keyof typeof STATUS_VARIANTS
-                        ] ?? "info"
-                      }
-                    >
-                      {STATUS_LABELS[
-                        item.status as keyof typeof STATUS_LABELS
-                      ] ?? item.status}
-                    </Badge>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Card>
+      <div
+        className="animate-fade-in grid gap-6 xl:grid-cols-[1.15fr_1fr_1fr]"
+        style={{ animationDelay: "0.1s" }}
+      >
+        <Card className="border-[var(--ssg-green)]/20 bg-[linear-gradient(180deg,rgba(19,24,24,0.98),rgba(10,10,15,0.98))]">
+          <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <SectionBadge>Action Queue</SectionBadge>
+              <CardTitle className="mt-4 text-2xl">待处理事项</CardTitle>
+              <p className="mt-2 max-w-lg text-sm leading-6 text-[var(--muted-foreground)]">
+                从聊天流转到界面后的优先动作集中在这里，先推进阻塞项、进行中事项和待确认工作。
+              </p>
+            </div>
+            <Link href="/pipeline" className={CTA_LINK_CLASS}>
+              打开项目进度
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
 
-          {/* Phase Progress */}
-          <Card>
-            <CardTitle className="mb-4">Phase Progress</CardTitle>
-            <ul className="space-y-3">
-              {phaseProgress.map((stage) => (
-                <li key={stage.label} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-[var(--muted-foreground)]">
-                      {stage.label}
-                    </span>
-                    <span className="font-medium">{stage.count}</span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--border)]">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${(stage.count / phaseProgressMax) * 100}%`,
-                        backgroundColor: stage.color,
-                      }}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </div>
+          <ul className="mt-5 space-y-4">
+            {focusWork.map((item) => (
+              <li
+                key={item.identifier}
+                className="border-l border-[var(--ssg-green)]/30 pl-4"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-semibold text-[var(--foreground)]">
+                    {item.identifier}
+                  </p>
+                  <Badge
+                    variant={
+                      STATUS_VARIANTS[item.status as keyof typeof STATUS_VARIANTS] ??
+                      "info"
+                    }
+                  >
+                    {STATUS_LABELS[item.status as keyof typeof STATUS_LABELS] ??
+                      item.status}
+                  </Badge>
+                </div>
+                <p className="mt-2 text-sm text-[var(--foreground)]">
+                  {truncateText(item.title, 88)}
+                </p>
+                <p className="mt-2 text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+                  {item.assignee} · {formatRelativeTime(item.updatedAt)}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Card>
 
-        {/* Right column */}
-        <div
-          className="animate-fade-in space-y-6"
-          style={{ animationDelay: "0.2s" }}
-        >
-          {/* Agent Activity */}
-          <Card>
-            <CardTitle className="mb-4">Agent Activity</CardTitle>
-            <ul className="space-y-4">
-              {agentActivity.map((entry, idx) => (
-                <li key={idx} className="flex items-start gap-3">
-                  <span className="mt-0.5 shrink-0 text-xs text-[var(--muted-foreground)] w-12">
+        <Card>
+          <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <SectionBadge>Delivery Map</SectionBadge>
+              <CardTitle className="mt-4 text-2xl">项目进度</CardTitle>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+                快速查看当前阶段分布，判断工作流是积压、推进中还是等待 Review。
+              </p>
+            </div>
+            <Link href="/pipeline" className={CTA_LINK_CLASS}>
+              查看全部阶段
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          <ul className="mt-5 space-y-4">
+            {phaseProgress.map((stage) => (
+              <li key={stage.label} className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-[var(--muted-foreground)]">
+                    {stage.label}
+                  </span>
+                  <span className="font-medium text-[var(--foreground)]">
+                    {stage.count}
+                  </span>
+                </div>
+                <div className="h-2 w-full overflow-hidden bg-[var(--border)]">
+                  <div
+                    className="h-full transition-all duration-500"
+                    style={{
+                      width: `${(stage.count / phaseProgressMax) * 100}%`,
+                      backgroundColor: stage.color,
+                    }}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        <Card>
+          <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <SectionBadge>Automation Feed</SectionBadge>
+              <CardTitle className="mt-4 text-2xl">最近自动化活动</CardTitle>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+                保留最近的自动化执行轨迹，方便快速确认聊天里提到的动作是否已经落地。
+              </p>
+            </div>
+            <Link href="/analytics" className={CTA_LINK_CLASS}>
+              打开 Activity
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          <ul className="mt-5 space-y-4">
+            {highlightedActivity.map((entry, idx) => (
+              <li key={idx} className="border-l border-[var(--border)] pl-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs uppercase tracking-[0.16em] text-[var(--muted-foreground)]">
                     {entry.time}
                   </span>
-                  <div className="flex items-start gap-2">
-                    <Badge variant="info">{entry.agent}</Badge>
-                    <span className="text-sm text-[var(--muted-foreground)]">
-                      {entry.action}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Card>
+                  <Badge variant="info">{entry.agent}</Badge>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-[var(--foreground)]">
+                  {entry.action}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </div>
 
-          {/* Team Activity */}
-          <Card>
-            <CardTitle className="mb-4">Team Activity</CardTitle>
-            <ul className="space-y-4">
-              {teamActivity.map((member) => (
-                <li key={member.name} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{member.name}</span>
-                    <span className="text-[var(--muted-foreground)]">
-                      {member.inputs} runs
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
-                    <span>{member.projectsOwned} owned workstreams</span>
-                    <span>{formatClockTime(new Date().toISOString())}</span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--border)]">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        width: `${(member.inputs / teamMax) * 100}%`,
-                        background:
-                          "linear-gradient(to right, var(--ssg-green), var(--ssg-yellow))",
-                      }}
-                    />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </div>
+      <div
+        className="animate-fade-in grid gap-6 xl:grid-cols-[1fr_0.85fr]"
+        style={{ animationDelay: "0.2s" }}
+      >
+        <Card>
+          <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <SectionBadge>Team Pulse</SectionBadge>
+              <CardTitle className="mt-4 text-2xl">团队负载</CardTitle>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+                查看谁在持续处理自动化输入，谁在承担更多工作流推进责任。
+              </p>
+            </div>
+            <Link href="/agents" className={CTA_LINK_CLASS}>
+              打开 Team
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          <ul className="mt-5 space-y-4">
+            {teamActivity.map((member) => (
+              <li key={member.name} className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-[var(--foreground)]">
+                    {member.name}
+                  </span>
+                  <span className="text-[var(--muted-foreground)]">
+                    {member.inputs} runs
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
+                  <span>{member.projectsOwned} owned workstreams</span>
+                  <span>Live capacity</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden bg-[var(--border)]">
+                  <div
+                    className="h-full transition-all duration-500"
+                    style={{
+                      width: `${(member.inputs / teamMax) * 100}%`,
+                      background:
+                        "linear-gradient(to right, var(--ssg-green), var(--ssg-yellow))",
+                    }}
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        <Card className="border-[var(--ssg-green)]/20 bg-[linear-gradient(160deg,rgba(100,254,186,0.08),rgba(10,10,15,0.98)_70%)]">
+          <SectionBadge>Chat Handoff</SectionBadge>
+          <CardTitle className="mt-4 text-2xl">下一步入口</CardTitle>
+          <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+            常见的聊天到 GUI 跳转路径已经收敛到这三类：推进项目、核对自动化、查看团队状态。
+          </p>
+
+          <div className="mt-6 grid gap-3">
+            <Link
+              href="/pipeline"
+              className="flex items-center justify-between border border-[var(--border)] bg-black/20 px-4 py-3 transition-colors hover:border-[var(--ssg-green)]/40 hover:bg-[var(--card-hover)]"
+            >
+              <div>
+                <p className="text-sm font-semibold text-[var(--foreground)]">
+                  打开项目进度
+                </p>
+                <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+                  查看推进事项与阶段阻塞
+                </p>
+              </div>
+              <ArrowUpRight size={16} className="text-[var(--ssg-green)]" />
+            </Link>
+            <Link
+              href="/analytics"
+              className="flex items-center justify-between border border-[var(--border)] bg-black/20 px-4 py-3 transition-colors hover:border-[var(--ssg-green)]/40 hover:bg-[var(--card-hover)]"
+            >
+              <div>
+                <p className="text-sm font-semibold text-[var(--foreground)]">
+                  查看自动化
+                </p>
+                <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+                  核对自动化成功率与系统成本
+                </p>
+              </div>
+              <ArrowUpRight size={16} className="text-[var(--ssg-green)]" />
+            </Link>
+            <Link
+              href="/agents"
+              className="flex items-center justify-between border border-[var(--border)] bg-black/20 px-4 py-3 transition-colors hover:border-[var(--ssg-green)]/40 hover:bg-[var(--card-hover)]"
+            >
+              <div>
+                <p className="text-sm font-semibold text-[var(--foreground)]">
+                  打开 Team
+                </p>
+                <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[var(--muted-foreground)]">
+                  查看谁在执行、谁在排队、谁需要介入
+                </p>
+              </div>
+              <ArrowUpRight size={16} className="text-[var(--ssg-green)]" />
+            </Link>
+          </div>
+        </Card>
       </div>
     </div>
   );

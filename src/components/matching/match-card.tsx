@@ -88,7 +88,7 @@ export function MatchCard({
         <div className="flex gap-2">
           {onCreateTask && (
             <Button variant="outline" onClick={onCreateTask}>
-              Create Task
+              Create Work Item
             </Button>
           )}
           {onDismiss && (

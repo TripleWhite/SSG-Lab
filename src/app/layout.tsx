@@ -16,7 +16,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "SSG Accelerator Dashboard",
-  description: "Agent-powered accelerator management",
+  description: "Investment operations dashboard for SSG Accelerator",
 };
 
 export default function RootLayout({

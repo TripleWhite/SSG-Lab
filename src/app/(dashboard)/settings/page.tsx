@@ -27,6 +27,7 @@ export default async function SettingsPage() {
       <Header
         title="Settings"
         description="Runtime readiness for live data, auth, and deployment prerequisites"
+        eyebrow="Runtime Checks"
       />
 
       <Card className="border-[var(--ssg-green)]/20 bg-[var(--ssg-green)]/5 p-5">
