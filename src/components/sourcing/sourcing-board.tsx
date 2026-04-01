@@ -25,10 +25,10 @@ export function SourcingBoard({ candidates }: SourcingBoardProps) {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+            className={`border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] transition-all ${
               activeFilter === filter
-                ? "bg-[var(--ssg-green)]/10 text-[var(--ssg-green)] ring-1 ring-[var(--ssg-green)]/40"
-                : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--card-hover)] ring-1 ring-[var(--border)]"
+                ? "border-[var(--ssg-green)]/40 bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]"
+                : "border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--ssg-green)]/30 hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
             }`}
           >
             {filter}

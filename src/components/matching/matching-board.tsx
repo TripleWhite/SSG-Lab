@@ -47,10 +47,10 @@ export function MatchingBoard({ matches }: MatchingBoardProps) {
             <button
               key={filter.value}
               onClick={() => setActiveType(filter.value)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors ${
                 activeType === filter.value
-                  ? "bg-[var(--ssg-green)] text-[var(--primary-foreground)]"
-                  : "text-[var(--muted-foreground)] hover:bg-[var(--border)] hover:text-[var(--foreground)]"
+                  ? "border-[var(--ssg-green)] bg-[var(--ssg-green)] text-[var(--primary-foreground)]"
+                  : "border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--ssg-green)]/30 hover:bg-[var(--border)] hover:text-[var(--foreground)]"
               }`}
             >
               {filter.label}
@@ -63,10 +63,10 @@ export function MatchingBoard({ matches }: MatchingBoardProps) {
             <button
               key={filter.value}
               onClick={() => setActiveStatus(filter.value)}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              className={`border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors ${
                 activeStatus === filter.value
-                  ? "bg-[var(--ssg-green)]/10 text-[var(--ssg-green)] ring-1 ring-[var(--ssg-green)]/40"
-                  : "text-[var(--muted-foreground)] hover:text-[var(--foreground)] ring-1 ring-[var(--border)]"
+                  ? "border-[var(--ssg-green)]/40 bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]"
+                  : "border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--ssg-green)]/30 hover:text-[var(--foreground)]"
               }`}
             >
               {filter.label}
