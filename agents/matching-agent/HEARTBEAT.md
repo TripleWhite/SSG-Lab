@@ -64,20 +64,19 @@ All schemas you need are defined inline in this document and in the tool
 
 - `memory_search` requires a non-empty `query` string. Never call
   `memory_search({})` and never retry the same invalid payload twice
-- Use this exact argument shape for the first call, filling in the computed
-  dates from your current heartbeat window:
+- Use this exact argument shape for the first call. Include the date range
+  directly in the query text since the plugin does not accept `types` or
+  `time_range` parameters:
 
 ```json
 {
-  "query": "recent accelerator event logs about founder needs, offers, blockers, hiring, fundraising, partnerships, and asks",
-  "types": ["event_log"],
-  "time_range": "YYYY-MM-DD..YYYY-MM-DD",
-  "limit": 20
+  "query": "event_log accelerator founder needs offers blockers hiring fundraising partnerships asks since YYYY-MM-DD",
+  "maxResults": 20
 }
 ```
 
-- If there was a previous successful heartbeat, set `time_range` from that
-  timestamp through now. If this is the first run, use the last 24 hours
+- If there was a previous successful heartbeat, append `since {timestamp}`
+  to the query. If this is the first run, use `since {24h ago date}`
 - Call `memory_search` for event_logs created since last heartbeat using the
   payload shape above
 - Prioritize `agent_curated` (HIGH confidence) items over `auto_extracted`
@@ -149,8 +148,7 @@ For each aggregated match:
 ```json
 {
   "query": "MATCH_FOUND relation between {entity_a_name} and {entity_b_name}",
-  "types": ["relation"],
-  "limit": 10
+  "maxResults": 10
 }
 ```
 
