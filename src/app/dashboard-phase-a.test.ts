@@ -9,6 +9,7 @@ const {
   mockUseRouter,
   mockGetDashboardStats,
   mockGetProjects,
+  mockGetBusinessProjects,
   mockGetHeartbeatRuns,
   mockGetEmployees,
   mockGetProjectWorkItems,
@@ -26,6 +27,7 @@ const {
   mockUseRouter: vi.fn(),
   mockGetDashboardStats: vi.fn(),
   mockGetProjects: vi.fn(),
+  mockGetBusinessProjects: vi.fn(),
   mockGetHeartbeatRuns: vi.fn(),
   mockGetEmployees: vi.fn(),
   mockGetProjectWorkItems: vi.fn(),
@@ -85,6 +87,7 @@ vi.mock("@/lib/auth", () => ({
 vi.mock("@/lib/paperclip", () => ({
   getDashboardStats: mockGetDashboardStats,
   getProjects: mockGetProjects,
+  getBusinessProjects: mockGetBusinessProjects,
   getHeartbeatRuns: mockGetHeartbeatRuns,
   getEmployees: mockGetEmployees,
   getProjectWorkItems: mockGetProjectWorkItems,
@@ -152,6 +155,24 @@ describe("dashboard phase A coverage", () => {
       {
         id: "project-1",
         title: "SSG Lab",
+      },
+    ]);
+    mockGetBusinessProjects.mockResolvedValue([
+      {
+        id: "business-project-1",
+        title: "Signal Forge",
+        description: "Seed-stage workflow automation for revenue teams.",
+        status: "diligence",
+        priority: "high",
+        assigneeEmployee: "Operator",
+        founderName: "Avery Chen",
+        companyName: "Signal Forge",
+        stage: "Seed",
+        daysInStage: 6,
+        healthStatus: "on-track",
+        lastActivity: "2026-04-01T08:30:00.000Z",
+        nextFollowUp: "2026-04-03T08:30:00.000Z",
+        tags: ["Workflow", "Revenue"],
       },
     ]);
     mockGetHeartbeatRuns.mockResolvedValue([
@@ -251,15 +272,19 @@ describe("dashboard phase A coverage", () => {
     mockHasSupabaseCredentials.mockReturnValue(true);
   });
 
-  it("renders the overview page with work-item and automation terminology", async () => {
+  it("renders the overview page with business pipeline data", async () => {
     const html = await renderAsyncPage(() => import("./(dashboard)/page"), {
       searchParams: Promise.resolve({}),
     });
 
     expect(html).toContain("Portfolio Command");
-    expect(html).toContain("Live workstreams, automation health, and team visibility");
-    expect(html).toContain("work items");
-    expect(html).toContain("Ship section badge rollout");
+    expect(html).toContain(
+      "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
+    );
+    expect(html).toContain("Signal Forge");
+    expect(html).toContain("Avery Chen");
+    expect(html).toContain("Project Atlas");
+    expect(html).not.toContain("Ship section badge rollout");
   });
 
   it("renders the team page with the renamed automation timeline", async () => {
@@ -432,6 +457,23 @@ describe("dashboard phase A coverage", () => {
     expect(html).toContain("Awaiting first sync");
     expect(html).not.toContain("Supabase");
     expect(html).not.toContain("synthetic");
+  });
+
+  it("keeps internal dev placeholders out of the overview empty state", async () => {
+    mockHasSupabaseCredentials.mockReturnValue(false);
+    mockGetBusinessProjects.mockResolvedValue([]);
+    mockGetSourcingResults.mockResolvedValue([]);
+    mockGetMatches.mockResolvedValue([]);
+
+    const html = await renderAsyncPage(() => import("./(dashboard)/page"), {
+      searchParams: Promise.resolve({}),
+    });
+
+    expect(html).toContain("Awaiting First Sync");
+    expect(html).toContain("No sourcing results yet");
+    expect(html).not.toContain("Frontend Engineer");
+    expect(html).not.toContain("SSG-101");
+    expect(html).not.toContain("Dashboard API client");
   });
 
   it("keeps placeholder resource names out of the rendered resources page", async () => {
