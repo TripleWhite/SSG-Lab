@@ -48,14 +48,14 @@ export function Sidebar({ userName, role }: SidebarProps) {
         <BrandLockup compact title="Founder Ops" />
       </div>
 
-      <nav className="-mx-1 mt-4 flex gap-1 overflow-x-auto px-1 pb-2 md:mx-0 md:mt-0 md:flex-1 md:flex-col md:gap-1 md:overflow-visible md:px-0 md:pb-0">
+      <nav className="-mx-1 mt-4 grid grid-cols-2 gap-2 px-1 pb-2 sm:grid-cols-3 md:mx-0 md:mt-0 md:flex md:flex-1 md:flex-col md:gap-1 md:px-0 md:pb-0">
         {visibleItems.map((item, idx) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`animate-fade-in flex flex-none items-center gap-3 border-l-2 px-3 py-2.5 text-sm font-medium transition-[border-color,background-color,color,transform] duration-200 md:w-full ${
+              className={`animate-fade-in flex min-h-11 items-center gap-3 border border-[var(--border)]/60 border-l-2 bg-black/10 px-3 py-2.5 text-sm font-medium transition-[border-color,background-color,color,transform] duration-200 md:w-full md:border-x-0 md:border-y-0 md:bg-transparent ${
                 isActive
                   ? "border-[var(--ssg-green)] bg-[var(--ssg-green)]/10 text-[var(--ssg-green)]"
                   : "border-transparent text-[var(--muted-foreground)] hover:translate-x-[2px] hover:bg-[var(--card-hover)] hover:text-[var(--foreground)]"
@@ -82,7 +82,7 @@ export function Sidebar({ userName, role }: SidebarProps) {
         <form action="/api/auth/logout" method="post" className="md:mt-3">
           <button
             type="submit"
-            className="inline-flex items-center px-1 text-xs uppercase tracking-[0.16em] text-[var(--ssg-green)] transition-colors hover:text-[var(--ssg-yellow)]"
+            className="inline-flex min-h-11 items-center px-3 text-xs uppercase tracking-[0.16em] text-[var(--ssg-green)] transition-colors hover:text-[var(--ssg-yellow)] md:min-h-0 md:px-1"
           >
             Sign out
           </button>
