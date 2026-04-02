@@ -66,7 +66,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
     actions: [
       "Resolve the EC2-B deployment blocker before downstream verification can begin.",
       "Re-sequence the queued review and docs work items once infra is reachable.",
-      "Keep the cancelled Mimir server branch out of the active rollout path.",
+      "Keep the cancelled SSG Lab server branch out of the active rollout path.",
     ],
     tasks: [
       {
@@ -80,7 +80,7 @@ const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
       {
         id: "phase-1-task-2",
         identifier: "SSG-314",
-        title: "Phase 1 E2E Verification — Feishu → Mimir pipeline",
+        title: "Phase 1 E2E Verification — Feishu → SSG Lab pipeline",
         status: "backlog",
         assignee: "QA Engineer",
         updatedAtLabel: "1d ago",

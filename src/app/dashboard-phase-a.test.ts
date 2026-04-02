@@ -279,7 +279,7 @@ describe("dashboard phase A coverage", () => {
     expect(html).toContain("Activity");
     expect(html).toContain("Automation Success Rate");
     expect(html).toContain("Work Items In Progress");
-    expect(html).toContain("Operational numbers with no placeholder smoothing");
+    expect(html).toContain("Operational numbers shown as reported");
   });
 
   it("renders live matching suggestions without Paperclip terminology", async () => {
@@ -303,6 +303,7 @@ describe("dashboard phase A coverage", () => {
     expect(html).toContain("Pipeline");
     expect(html).toContain("Dashboard Integration");
     expect(html).toContain("Latest Signal");
+    expect(html).not.toContain("Mimir");
   });
 
   it("renders the pipeline page from live work-item hierarchy data", async () => {

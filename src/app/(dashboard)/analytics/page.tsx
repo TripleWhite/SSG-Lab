@@ -195,13 +195,12 @@ export default async function AnalyticsPage() {
             </div>
             <div>
               <p className="text-base font-semibold text-[var(--foreground)]">
-                Operational numbers with no placeholder smoothing
+                Operational numbers shown as reported
               </p>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
                 These cards and charts reflect automation success, work-item
                 throughput, and team cost data directly. If a feed drops, the
-                page says so instead of silently inventing smoother-looking
-                numbers.
+                page calls it out instead of masking the gap with estimates.
               </p>
             </div>
           </div>
