@@ -29,7 +29,7 @@
 - Casual greetings and routine acknowledgements.
 - Repeated information that is already stored.
 - System configuration discussions.
-- Ambiguous fragments with no recoverable context.
+- Ambiguous fragments that remain unresolvable after context recovery (the bot searches recent Mimir event history from the same peer before discarding).
 
 ## Files And Attachments
 

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-04-03
+
+### Fixed
+
+- Feishu bot private chat no longer responds with "?" to follow-up messages. When intent is ambiguous or a message references prior context (pronouns, implicit subjects, reply-to fragments), the bot now searches Mimir `event_log` for recent activity from the same channel or peer within the last 30 minutes and uses that context to re-classify intent before giving up. If context is found, the bot asks a clarifying question that references it rather than returning an unhelpful fallback.
+
+## 2026-04-02
+
+### Added
+
+- You can now wire Sourcing and Matching dashboard pages to a Supabase business data layer by setting `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Operational data (agents, heartbeat runs) continues to come from the Paperclip API.
+
+### Fixed
+
+- Sourcing, Matching, and Resources pages no longer leak internal developer text or credential error messages. Empty states now show user-friendly copy ("No sourcing data available yet", "No matching results yet") and the Resources page no longer references "Mimir" or placeholder strings directly.
+- Dashboard pages no longer display Paperclip dev-internal placeholder data (issue identifiers such as SSG-103, internal team-pulse entries). The sourcing, matching, and analytics views now show honest empty states when no SSG Lab business data exists.
+- Feishu bot no longer crashes with `Cannot read properties of undefined (reading 'properties')` when users @mention it in a group. The Anthropic SDK MCP helper `inputSchema` guard (originally patched in MIM-520) is now applied permanently at bootstrap time — no per-deploy manual patch required.
+
 ## 2026-03-31
 
 ### Added
