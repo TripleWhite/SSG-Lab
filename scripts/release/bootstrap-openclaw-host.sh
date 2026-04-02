@@ -319,6 +319,9 @@ write_openclaw_config() {
                   tools: true,
                   displayName: "SSG Accelerator"
                 }
+              },
+              "matching-agent-tools": {
+                enabled: true
               }
             },
             slots: {
@@ -327,7 +330,12 @@ write_openclaw_config() {
           }
         else
           {
-            enabled: true
+            enabled: true,
+            entries: {
+              "matching-agent-tools": {
+                enabled: true
+              }
+            }
           }
         end
       )
