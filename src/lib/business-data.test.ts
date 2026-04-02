@@ -32,7 +32,9 @@ function createSupabaseClient(resolvers: {
 }) {
   return {
     from(table: string) {
-      const resolver = resolvers[table as keyof typeof resolvers];
+      const resolver = resolvers[table as keyof typeof resolvers] as
+        | ((operation: string, value?: unknown) => Promise<unknown>)
+        | undefined;
       if (!resolver) {
         throw new Error(`Unexpected table: ${table}`);
       }

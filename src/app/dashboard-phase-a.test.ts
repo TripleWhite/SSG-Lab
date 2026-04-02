@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -57,7 +58,7 @@ vi.mock("next/link", async () => {
           href: typeof href === "string" ? href : href.pathname ?? "#",
           ...props,
         },
-        children,
+        children as ReactNode,
       ),
   };
 });
@@ -106,12 +107,13 @@ vi.mock("@/lib/supabase", () => ({
 }));
 
 async function renderAsyncPage(
-  loader: () => Promise<{ default: (props?: unknown) => unknown }>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  loader: () => Promise<{ default: (props?: any) => unknown }>,
   props?: unknown,
 ) {
   const { default: Page } = await loader();
   const page = await Page(props);
-  return renderToStaticMarkup(page);
+  return renderToStaticMarkup(page as ReactNode);
 }
 
 describe("dashboard phase A coverage", () => {

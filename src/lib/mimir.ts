@@ -69,16 +69,35 @@ function toResourceItem(name: string, tags: string[]): ResourceItem {
   };
 }
 
+interface SeedEmployee {
+  name: string;
+  connections: string[];
+}
+
+interface SeedLpInvestor {
+  name: string;
+  focus_sectors: string[];
+}
+
+interface SeedMentor {
+  name: string;
+  expertise: string[];
+}
+
 function getSeedGraph(): ResourceGraph {
+  const employees = resourceSeed.employees as SeedEmployee[];
+  const lpInvestors = resourceSeed.lp_investors as SeedLpInvestor[];
+  const mentors = resourceSeed.mentors as SeedMentor[];
+
   return {
     source: "seed",
-    connections: resourceSeed.employees.map((employee) =>
+    connections: employees.map((employee) =>
       toResourceItem(employee.name, employee.connections)
     ),
-    investors: resourceSeed.lp_investors.map((investor) =>
+    investors: lpInvestors.map((investor) =>
       toResourceItem(investor.name, investor.focus_sectors)
     ),
-    mentors: resourceSeed.mentors.map((mentor) =>
+    mentors: mentors.map((mentor) =>
       toResourceItem(mentor.name, mentor.expertise)
     ),
     programs: resourceSeed.partner_programs.map((program) =>

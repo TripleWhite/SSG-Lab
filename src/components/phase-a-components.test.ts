@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -22,18 +22,17 @@ vi.mock("next/link", async () => {
       ReactModule.createElement(
         "a",
         {
-          href: typeof href === "string" ? href : href.pathname ?? "#",
+          href: typeof href === "string" ? href : (href.pathname ?? "#"),
           ...props,
         },
-        children,
+        children as ReactNode,
       ),
   };
 });
 
 vi.mock("next/navigation", async () => {
-  const actual = await vi.importActual<typeof import("next/navigation")>(
-    "next/navigation",
-  );
+  const actual =
+    await vi.importActual<typeof import("next/navigation")>("next/navigation");
 
   return {
     ...actual,
@@ -45,7 +44,10 @@ vi.mock("next/navigation", async () => {
 import { BrandLockup } from "@/components/nav/brand-lockup";
 import { Sidebar } from "@/components/nav/sidebar";
 import { MatchCard } from "@/components/matching/match-card";
-import { ProjectDetail, type ProjectDetailData } from "@/components/pipeline/project-detail";
+import {
+  ProjectDetail,
+  type ProjectDetailData,
+} from "@/components/pipeline/project-detail";
 
 function render(component: React.ReactElement) {
   return renderToStaticMarkup(component);
@@ -62,7 +64,8 @@ const sampleProject: ProjectDetailData = {
   assignee: "Frontend Engineer",
   daysActive: 2,
   lastActivityDate: "Just now",
-  latestSignal: "Section badges and terminology updates shipped to the dashboard shell.",
+  latestSignal:
+    "Section badges and terminology updates shipped to the dashboard shell.",
   nextAction: "Hand the branch to review once coverage is restored.",
   tags: ["live data", "section badges"],
   totalTasks: 2,

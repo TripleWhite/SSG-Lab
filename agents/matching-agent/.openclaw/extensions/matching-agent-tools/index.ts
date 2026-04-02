@@ -790,7 +790,7 @@ export function buildFeishuCard(params: SendFeishuCardParams): Record<string, un
         },
       };
     })
-    .filter((button): button is Record<string, unknown> => Boolean(button));
+    .filter((button): button is NonNullable<typeof button> => Boolean(button));
 
   if (buttonElements.length > 0) {
     elements.push({

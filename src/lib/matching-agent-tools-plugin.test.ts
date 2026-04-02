@@ -19,7 +19,7 @@ function jsonResponse(body: unknown, status = 200): Response {
 
 async function importPluginModule() {
   vi.resetModules();
-  return import("../../agents/matching-agent/.openclaw/extensions/matching-agent-tools/index.ts");
+  return import("../../agents/matching-agent/.openclaw/extensions/matching-agent-tools/index");
 }
 
 async function registerTools() {

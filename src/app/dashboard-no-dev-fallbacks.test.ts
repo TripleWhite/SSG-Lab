@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -42,7 +43,7 @@ async function renderPage(
 ) {
   const { default: Page } = await loader();
   const page = await Page(props);
-  return renderToStaticMarkup(page);
+  return renderToStaticMarkup(page as ReactNode);
 }
 
 describe("dashboard routes do not leak internal fallback content", () => {
