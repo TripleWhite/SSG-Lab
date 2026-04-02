@@ -6,7 +6,7 @@ type AgentToolResult = {
 type ToolDefinition = {
   name: string;
   description: string;
-  parameters: Record<string, unknown>;
+  inputSchema: Record<string, unknown>;
   execute: (
     toolCallId: string,
     params: Record<string, unknown>,
@@ -1107,7 +1107,7 @@ const matchingAgentToolsPlugin = {
       name: "graph_traverse",
       description:
         "Filtered graph traversal via Mimir /api/v1/graph/traverse. Starts from an entity and follows relations of specified types, filtering by entity type. Used for all 6 match type analyses.",
-      parameters: GRAPH_TRAVERSE_SCHEMA,
+      inputSchema: GRAPH_TRAVERSE_SCHEMA,
       execute: executeGraphTraverse,
     });
 
@@ -1115,7 +1115,7 @@ const matchingAgentToolsPlugin = {
       name: "store_match",
       description:
         "Persist a MATCH_FOUND relation in Mimir. Dashboard-facing Paperclip result issues are written separately under PAPERCLIP_MATCHING_PARENT_ISSUE_ID after this tool succeeds.",
-      parameters: STORE_MATCH_SCHEMA,
+      inputSchema: STORE_MATCH_SCHEMA,
       execute: executeStoreMatch,
     });
 
@@ -1123,7 +1123,7 @@ const matchingAgentToolsPlugin = {
       name: "send_feishu_card",
       description:
         "Send an interactive card to the SSG Feishu group chat. Payload must conform to contracts/feishu-notify.schema.json. Used for HIGH-confidence immediate notifications only.",
-      parameters: SEND_FEISHU_CARD_SCHEMA,
+      inputSchema: SEND_FEISHU_CARD_SCHEMA,
       execute: executeSendFeishuCard,
     });
   },
