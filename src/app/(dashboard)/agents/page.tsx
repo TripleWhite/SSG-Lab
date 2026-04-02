@@ -2,7 +2,7 @@ import { AgentCard } from "@/components/agents/agent-card";
 import { HeartbeatTimeline } from "@/components/agents/heartbeat-timeline";
 import { Header } from "@/components/nav/header";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { AutoRefresh } from "@/components/dashboard/auto-refresh";
 import {
   formatClockTime,
@@ -12,6 +12,8 @@ import {
   truncateText,
 } from "@/lib/format";
 import { getAgents, getHeartbeatRuns } from "@/lib/paperclip";
+import { ArrowUpRight, Bot, Clock3, ShieldAlert } from "lucide-react";
+import Link from "next/link";
 
 export const revalidate = 15;
 
@@ -89,9 +91,44 @@ export default async function AgentsPage() {
             agentName: run.agentName,
             status: mapTimelineStatus(run.status),
             tokens: run.tokenUsage,
-            summary: truncateText(run.summary ?? run.status, 120),
-          }))
+          summary: truncateText(run.summary ?? run.status, 120),
+        }))
       : [];
+  const teamEmptyState = isFallback
+    ? {
+        title: "Team feed unavailable",
+        body: "We could not load live agent heartbeat data right now. The shell stays customer-safe until the team feed responds again.",
+        eyebrow: "Refresh pending",
+        note: "Re-open pipeline status while the team feed reconnects.",
+        tone: "danger" as const,
+        href: "/pipeline",
+        action: "Open pipeline",
+        icon: ShieldAlert,
+      }
+    : {
+        title: "No team activity yet",
+        body: "This workspace has no live agent heartbeat data yet, so the team board stays focused on the shell instead of placeholder operators.",
+        eyebrow: "Awaiting first heartbeat",
+        note: "Agent status cards will appear here automatically after the first live run.",
+        tone: "warning" as const,
+        href: "/pipeline",
+        action: "Open pipeline",
+        icon: Bot,
+      };
+  const timelineEmptyState = isFallback
+    ? {
+        title: "Timeline refresh pending",
+        body: "The run timeline will repopulate after the next successful team heartbeat sync.",
+        eyebrow: "Awaiting telemetry",
+        tone: "danger" as const,
+      }
+    : {
+        title: "No automation runs recorded yet",
+        body: "Daily heartbeat and token activity will appear here once the first live team run lands in this workspace.",
+        eyebrow: "Awaiting first run",
+        tone: "warning" as const,
+      };
+  const TeamEmptyStateIcon = teamEmptyState.icon;
 
   return (
     <div className="space-y-8">
@@ -116,15 +153,35 @@ export default async function AgentsPage() {
         {agentCards.length > 0 ? (
           agentCards.map((agent) => <AgentCard key={agent.name} {...agent} />)
         ) : (
-          <Card className="border-dashed border-[var(--border)]/80 bg-black/10 lg:col-span-3">
-            <p className="text-base font-semibold text-[var(--foreground)]">
-              No agent activity yet
-            </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
-              This workspace does not have live agent heartbeat data yet. The
-              team view stays empty instead of showing internal delivery
-              operators.
-            </p>
+          <Card className="overflow-hidden border-dashed border-[var(--border)]/80 bg-[linear-gradient(180deg,rgba(19,24,24,0.94),rgba(10,10,15,0.98))] p-0 lg:col-span-3">
+            <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[auto,1fr,auto] lg:items-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-sm border border-[var(--border)] bg-black/20 text-[var(--ssg-green)]">
+                <TeamEmptyStateIcon size={24} />
+              </div>
+              <div className="space-y-3">
+                <Badge variant={teamEmptyState.tone}>
+                  {teamEmptyState.eyebrow}
+                </Badge>
+                <div>
+                  <CardTitle className="mb-2 text-2xl">
+                    {teamEmptyState.title}
+                  </CardTitle>
+                  <p className="max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
+                    {teamEmptyState.body}
+                  </p>
+                </div>
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
+                  {teamEmptyState.note}
+                </p>
+              </div>
+              <Link
+                href={teamEmptyState.href}
+                className="inline-flex items-center justify-center gap-2 rounded-sm border border-[var(--border)] bg-black/20 px-4 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:border-[var(--ssg-green)]/40 hover:bg-[var(--card-hover)]"
+              >
+                {teamEmptyState.action}
+                <ArrowUpRight size={16} />
+              </Link>
+            </div>
           </Card>
         )}
       </div>
@@ -132,14 +189,25 @@ export default async function AgentsPage() {
       {heartbeatEntries.length > 0 ? (
         <HeartbeatTimeline entries={heartbeatEntries} />
       ) : (
-        <Card className="border-dashed border-[var(--border)]/80 bg-black/10">
-          <p className="text-base font-semibold text-[var(--foreground)]">
-            No automation runs recorded today
-          </p>
-          <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
-            Daily heartbeat and token activity will appear here once the live
-            team feed starts reporting for this workspace.
-          </p>
+        <Card className="overflow-hidden border-dashed border-[var(--border)]/80 bg-[linear-gradient(180deg,rgba(19,24,24,0.94),rgba(10,10,15,0.98))] p-0">
+          <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[auto,1fr] lg:items-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-sm border border-[var(--border)] bg-black/20 text-[var(--ssg-green)]">
+              <Clock3 size={24} />
+            </div>
+            <div className="space-y-3">
+              <Badge variant={timelineEmptyState.tone}>
+                {timelineEmptyState.eyebrow}
+              </Badge>
+              <div>
+                <CardTitle className="mb-2 text-2xl">
+                  {timelineEmptyState.title}
+                </CardTitle>
+                <p className="max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
+                  {timelineEmptyState.body}
+                </p>
+              </div>
+            </div>
+          </div>
         </Card>
       )}
     </div>
