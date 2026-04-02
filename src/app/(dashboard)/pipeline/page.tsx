@@ -39,184 +39,6 @@ const STATUS_VARIANTS: Record<WorkItem["status"], StageVariant> = {
   cancelled: "danger",
 };
 
-const FALLBACK_WORKSTREAMS: ProjectDetailData[] = [
-  {
-    id: "phase-1",
-    title: "Data Pipeline",
-    subtitle: "SSG-307 · Phase 1",
-    stage: "In Progress",
-    stageVariant: "success",
-    health: "at-risk",
-    status: "in_progress",
-    assignee: "CTO",
-    daysActive: 1,
-    lastActivityDate: "22m ago",
-    latestSignal: "1 blocked infra work item, 2 queued follow-ups, and 1 cancelled backend branch. Progress is waiting on upstream credentials.",
-    nextAction: "Resolve the EC2-B and Feishu blockers before verification work can start.",
-    tags: ["EC2-B", "Feishu", "1 blocked", "2 queued"],
-    totalTasks: 4,
-    activeTasks: 0,
-    blockedTasks: 1,
-    doneTasks: 0,
-    timeline: [
-      { date: "Mar 28", event: "SSG-307 workstream started", actor: "CTO" },
-      { date: "Mar 28", event: "SSG-312 updated · Blocked", actor: "Release Engineer" },
-      { date: "Mar 28", event: "SSG-315 queued for review", actor: "Security Reviewer" },
-    ],
-    actions: [
-      "Resolve the EC2-B deployment blocker before downstream verification can begin.",
-      "Re-sequence the queued review and docs work items once infra is reachable.",
-      "Keep the cancelled SSG Lab server branch out of the active rollout path.",
-    ],
-    tasks: [
-      {
-        id: "phase-1-task-1",
-        identifier: "SSG-312",
-        title: "Provision EC2-B + Deploy control plane + OpenClaw + Caddy + Feishu",
-        status: "blocked",
-        assignee: "Release Engineer",
-        updatedAtLabel: "22m ago",
-      },
-      {
-        id: "phase-1-task-2",
-        identifier: "SSG-314",
-        title: "Phase 1 E2E Verification — Feishu → SSG Lab pipeline",
-        status: "backlog",
-        assignee: "QA Engineer",
-        updatedAtLabel: "1d ago",
-      },
-    ],
-  },
-  {
-    id: "phase-2",
-    title: "Sourcing Automation",
-    subtitle: "SSG-308 · Phase 2",
-    stage: "Blocked",
-    stageVariant: "danger",
-    health: "at-risk",
-    status: "blocked",
-    assignee: "CTO",
-    daysActive: 0,
-    lastActivityDate: "4h ago",
-    latestSignal: "This workstream is still blocked behind Phase 1 system readiness and has no linked work items started yet.",
-    nextAction: "Wait for the shared infrastructure dependencies to clear before opening implementation work items.",
-    tags: ["parallel search", "7 platforms", "blocked"],
-    totalTasks: 0,
-    activeTasks: 0,
-    blockedTasks: 0,
-    doneTasks: 0,
-    timeline: [
-      { date: "Mar 29", event: "SSG-308 status set to Blocked", actor: "CTO" },
-    ],
-    actions: [
-      "Keep this workstream parked until the shared platform and Feishu dependencies are live.",
-      "Do not create downstream sourcing work items before the infra dependency is removed.",
-    ],
-    tasks: [],
-  },
-  {
-    id: "phase-3",
-    title: "Matching Automation",
-    subtitle: "SSG-309 · Phase 3",
-    stage: "Blocked",
-    stageVariant: "danger",
-    health: "at-risk",
-    status: "blocked",
-    assignee: "CTO",
-    daysActive: 0,
-    lastActivityDate: "5h ago",
-    latestSignal: "Matching remains blocked on the same live data and notification plumbing required by the sourcing and portfolio phases.",
-    nextAction: "Keep the workstream dormant until the control-plane and memory prerequisites are complete.",
-    tags: ["matching", "notifications", "blocked"],
-    totalTasks: 0,
-    activeTasks: 0,
-    blockedTasks: 0,
-    doneTasks: 0,
-    timeline: [
-      { date: "Mar 28", event: "SSG-309 status set to Blocked", actor: "CTO" },
-    ],
-    actions: [
-      "Wait on the upstream data plane before opening matching implementation work items.",
-      "Preserve this workstream as a dependency marker, not an active build branch.",
-    ],
-    tasks: [],
-  },
-  {
-    id: "phase-4",
-    title: "Portfolio Automation",
-    subtitle: "SSG-310 · Phase 4",
-    stage: "Blocked",
-    stageVariant: "danger",
-    health: "at-risk",
-    status: "blocked",
-    assignee: "CTO",
-    daysActive: 0,
-    lastActivityDate: "5h ago",
-    latestSignal: "Portfolio automation is still waiting on the same upstream delivery chain and has not opened its daily-scan work items yet.",
-    nextAction: "Hold until the platform dependencies move out of blocked status.",
-    tags: ["daily scans", "digests", "blocked"],
-    totalTasks: 0,
-    activeTasks: 0,
-    blockedTasks: 0,
-    doneTasks: 0,
-    timeline: [
-      { date: "Mar 28", event: "SSG-310 status set to Blocked", actor: "CTO" },
-    ],
-    actions: [
-      "Keep the workstream blocked until the shared integrations are available.",
-      "Open the daily-digest work items only after the upstream automations can write live data.",
-    ],
-    tasks: [],
-  },
-  {
-    id: "phase-5",
-    title: "Dashboard Integration",
-    subtitle: "SSG-311 · Phase 5",
-    stage: "In Progress",
-    stageVariant: "success",
-    health: "on-track",
-    status: "in_progress",
-    assignee: "CTO",
-    daysActive: 0,
-    lastActivityDate: "Just now",
-    latestSignal: "1 work item is active and 4 downstream review or QA work items are queued. The live data layer is partially shipped and the remaining work is concentrated in the pipeline, matching, and sourcing routes.",
-    nextAction: "Finish the remaining live route conversions and hand the branch to review.",
-    tags: ["live data", "polling", "1 active", "4 queued"],
-    totalTasks: 5,
-    activeTasks: 1,
-    blockedTasks: 0,
-    doneTasks: 0,
-    timeline: [
-      { date: "Mar 29", event: "SSG-311 workstream started", actor: "CTO" },
-      { date: "Mar 29", event: "SSG-318 updated · In Progress", actor: "Frontend Engineer" },
-      { date: "Mar 29", event: "SSG-319 queued for code review", actor: "Security Reviewer" },
-    ],
-    actions: [
-      "Finish the remaining live route conversions on SSG-318.",
-      "Queue SSG-319 once the implementation branch is stable.",
-      "Keep QA and design review work items gated behind the live data merge.",
-    ],
-    tasks: [
-      {
-        id: "phase-5-task-1",
-        identifier: "SSG-318",
-        title: "Implement Phase 5 Dashboard Integration — API clients, live data, polling",
-        status: "in_progress",
-        assignee: "Frontend Engineer",
-        updatedAtLabel: "Just now",
-      },
-      {
-        id: "phase-5-task-2",
-        identifier: "SSG-319",
-        title: "Review Phase 5 Dashboard Integration code",
-        status: "backlog",
-        assignee: "Security Reviewer",
-        updatedAtLabel: "5h ago",
-      },
-    ],
-  },
-];
-
 interface PhaseMeta {
   phaseLabel: string;
   phaseNumber: number;
@@ -575,7 +397,7 @@ export default async function PipelinePage() {
     }
   } catch {
     isFallback = true;
-    workstreams = FALLBACK_WORKSTREAMS;
+    workstreams = [];
   }
 
   return (
@@ -592,7 +414,9 @@ export default async function PipelinePage() {
           <div>
             <p className="text-sm font-semibold">Live delivery status</p>
             <p className="text-sm text-[var(--muted-foreground)]">
-              Pipeline now reflects the real SSG workstream hierarchy instead of the static portfolio examples.
+              {workstreams.length > 0
+                ? "Pipeline now reflects the real SSG workstream hierarchy instead of the static portfolio examples."
+                : "No live workstreams yet. Dashboard Integration Latest Signal will appear here after the SSG project and child work items sync."}
             </p>
           </div>
           {isFallback && <Badge variant="warning">Snapshot View</Badge>}

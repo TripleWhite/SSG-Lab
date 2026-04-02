@@ -11,32 +11,11 @@ import {
   getHeartbeatRuns,
 } from "@/lib/paperclip";
 
-const FALLBACK_STATS = {
-  runSuccessRate: 92,
-  inProgressTasks: 4,
-  completedTasks: 28,
+const EMPTY_STATS = {
+  runSuccessRate: 0,
+  inProgressTasks: 0,
+  completedTasks: 0,
 } as const;
-
-const FALLBACK_WEEKLY_DATA = {
-  runVolume: [
-    { week: "Mar 4", value: 12 },
-    { week: "Mar 11", value: 18 },
-    { week: "Mar 18", value: 23 },
-    { week: "Mar 25", value: 31 },
-  ],
-  successRate: [
-    { week: "Mar 4", value: 78 },
-    { week: "Mar 11", value: 83 },
-    { week: "Mar 18", value: 89 },
-    { week: "Mar 25", value: 92 },
-  ],
-} as const;
-
-const FALLBACK_COST_BREAKDOWN = [
-  { agent: "Frontend Engineer", cost: "$8.21/mo", tokens: "514k tokens" },
-  { agent: "QA Engineer", cost: "$8.51/mo", tokens: "306k tokens" },
-  { agent: "CTO", cost: "$286.84/mo", tokens: "1.8M tokens" },
-] as const;
 
 interface BarChartProps {
   title: string;
@@ -57,39 +36,45 @@ function BarChart({
     <Card>
       <SectionBadge>Weekly View</SectionBadge>
       <CardTitle className="mb-4 mt-4">{title}</CardTitle>
-      <div
-        className={`flex h-32 items-end gap-3 ${isSinglePoint ? "justify-center" : ""}`}
-      >
-        {data.map(({ week, value }) => {
-          const heightPct = Math.round((value / maxValue) * 100);
-          return (
-            <div
-              key={week}
-              className={`flex h-full flex-col items-center gap-1 ${
-                isSinglePoint ? "w-full max-w-[12rem]" : "flex-1"
-              }`}
-            >
-              <span className="text-xs font-medium text-[var(--foreground)]">
-                {value}
-                {valueSuffix}
-              </span>
-              <div className="relative w-full flex-1 flex items-end">
-                <div
-                  className="w-full rounded-sm"
-                  style={{
-                    height: `${heightPct}%`,
-                    background:
-                      "linear-gradient(to top, var(--ssg-green), var(--ssg-yellow))",
-                  }}
-                />
+      {data.length === 0 ? (
+        <div className="flex h-32 items-center justify-center border border-dashed border-[var(--border)]/80 bg-black/10 px-4 text-center text-sm text-[var(--muted-foreground)]">
+          Waiting for live activity data.
+        </div>
+      ) : (
+        <div
+          className={`flex h-32 items-end gap-3 ${isSinglePoint ? "justify-center" : ""}`}
+        >
+          {data.map(({ week, value }) => {
+            const heightPct = Math.round((value / maxValue) * 100);
+            return (
+              <div
+                key={week}
+                className={`flex h-full flex-col items-center gap-1 ${
+                  isSinglePoint ? "w-full max-w-[12rem]" : "flex-1"
+                }`}
+              >
+                <span className="text-xs font-medium text-[var(--foreground)]">
+                  {value}
+                  {valueSuffix}
+                </span>
+                <div className="relative w-full flex-1 flex items-end">
+                  <div
+                    className="w-full rounded-sm"
+                    style={{
+                      height: `${heightPct}%`,
+                      background:
+                        "linear-gradient(to top, var(--ssg-green), var(--ssg-yellow))",
+                    }}
+                  />
+                </div>
+                <span className="text-xs text-[var(--muted-foreground)]">
+                  {week}
+                </span>
               </div>
-              <span className="text-xs text-[var(--muted-foreground)]">
-                {week}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </Card>
   );
 }
@@ -150,20 +135,14 @@ export default async function AnalyticsPage() {
     statsResult.status === "rejected" ||
     runsResult.status === "rejected" ||
     costsResult.status === "rejected";
-
   const stats =
-    statsResult.status === "fulfilled" ? statsResult.value : FALLBACK_STATS;
+    statsResult.status === "fulfilled" ? statsResult.value : EMPTY_STATS;
   const runs = runsResult.status === "fulfilled" ? runsResult.value : [];
   const costs = costsResult.status === "fulfilled" ? costsResult.value : [];
+  const hasLiveActivity = runs.length > 0 || costs.length > 0;
 
-  const weeklyRunVolume =
-    runs.length > 0
-      ? buildWeeklyRunVolume(runs)
-      : [...FALLBACK_WEEKLY_DATA.runVolume];
-  const weeklySuccessRate =
-    runs.length > 0
-      ? buildWeeklySuccessRate(runs)
-      : [...FALLBACK_WEEKLY_DATA.successRate];
+  const weeklyRunVolume = runs.length > 0 ? buildWeeklyRunVolume(runs) : [];
+  const weeklySuccessRate = runs.length > 0 ? buildWeeklySuccessRate(runs) : [];
   const costBreakdown =
     costs.length > 0
       ? costs
@@ -174,7 +153,7 @@ export default async function AnalyticsPage() {
             cost: `$${(entry.costCents / 100).toFixed(2)}/mo`,
             tokens: `${formatCompactNumber(entry.totalTokens)} tokens`,
           }))
-      : [...FALLBACK_COST_BREAKDOWN];
+      : [];
 
   return (
     <div className="space-y-8">
@@ -195,12 +174,14 @@ export default async function AnalyticsPage() {
             </div>
             <div>
               <p className="text-base font-semibold text-[var(--foreground)]">
-                Operational numbers shown as reported
+                {hasLiveActivity
+                  ? "Operational numbers shown as reported"
+                  : "Waiting for live activity data"}
               </p>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--muted-foreground)]">
-                These cards and charts reflect automation success, work-item
-                throughput, and team cost data directly. If a feed drops, the
-                page calls it out instead of masking the gap with estimates.
+                {hasLiveActivity
+                  ? "These cards and charts reflect automation success, work-item throughput, and team cost data directly. If a feed drops, the page calls it out instead of masking the gap with estimates."
+                  : "No live automation runs or cost entries are available in this workspace yet. The page stays empty instead of showing internal delivery placeholders."}
               </p>
             </div>
           </div>
@@ -242,24 +223,30 @@ export default async function AnalyticsPage() {
       <Card>
         <SectionBadge>Budget View</SectionBadge>
         <CardTitle className="mb-4 mt-4">Team Cost Breakdown</CardTitle>
-        <div className="divide-y divide-[var(--border)]">
-          {costBreakdown.map(({ agent, cost, tokens }) => (
-            <div
-              key={agent}
-              className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
-            >
-              <span className="font-medium">{agent}</span>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-[var(--muted-foreground)]">
-                  {tokens}
-                </span>
-                <span className="text-sm font-semibold text-[var(--ssg-green)]">
-                  {cost}
-                </span>
+        {costBreakdown.length === 0 ? (
+          <div className="border border-dashed border-[var(--border)]/80 bg-black/10 px-4 py-8 text-sm text-[var(--muted-foreground)]">
+            No live agent cost entries yet.
+          </div>
+        ) : (
+          <div className="divide-y divide-[var(--border)]">
+            {costBreakdown.map(({ agent, cost, tokens }) => (
+              <div
+                key={agent}
+                className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+              >
+                <span className="font-medium">{agent}</span>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-[var(--muted-foreground)]">
+                    {tokens}
+                  </span>
+                  <span className="text-sm font-semibold text-[var(--ssg-green)]">
+                    {cost}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </Card>
     </div>
   );

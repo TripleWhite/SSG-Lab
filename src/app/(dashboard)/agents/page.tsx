@@ -15,111 +15,6 @@ import { getAgents, getHeartbeatRuns } from "@/lib/paperclip";
 
 export const revalidate = 15;
 
-const FALLBACK_AGENTS = [
-  {
-    name: "Frontend Engineer",
-    status: "running" as const,
-    lastHeartbeat: "2 min ago",
-    nextHeartbeat: "In 8 min",
-    todayRuns: 6,
-    tokenUsage: "18.4k tokens",
-    recentActions: [
-      {
-        time: "09:47",
-        description: "Mapped automation runs into the Overview page",
-      },
-      {
-        time: "09:35",
-        description: "Replaced overview stats with live operations totals",
-      },
-      {
-        time: "09:20",
-        description: "Added fallback handling for unreachable APIs",
-      },
-      {
-        time: "09:10",
-        description: "Prepared analytics cost breakdown wiring",
-      },
-    ],
-  },
-  {
-    name: "QA Engineer",
-    status: "idle" as const,
-    lastHeartbeat: "18 min ago",
-    nextHeartbeat: "In 2 min",
-    todayRuns: 6,
-    tokenUsage: "12.1k tokens",
-    recentActions: [
-      { time: "09:31", description: "Prepared live-data regression checklist" },
-      {
-        time: "09:15",
-        description: "Queued dashboard verification after review",
-      },
-      {
-        time: "08:50",
-        description: "Synced issue coverage with the Phase 5 plan",
-      },
-      {
-        time: "08:30",
-        description: "Reviewed empty-state handling for dashboard routes",
-      },
-    ],
-  },
-  {
-    name: "CTO",
-    status: "error" as const,
-    lastHeartbeat: "35 min ago",
-    nextHeartbeat: "Queued",
-    todayRuns: 9,
-    tokenUsage: "22.7k tokens",
-    recentActions: [
-      { time: "09:44", description: "Coordinated the Phase 5 review chain" },
-      {
-        time: "09:32",
-        description: "Escalated upstream blockers on credentials",
-      },
-      {
-        time: "09:18",
-        description: "Assigned QA and documentation follow-up work items",
-      },
-      { time: "09:05", description: "Reviewed the implementation wave plan" },
-    ],
-  },
-];
-
-const FALLBACK_HEARTBEAT_ENTRIES = [
-  {
-    time: "09:47",
-    agentName: "Frontend Engineer",
-    status: "ok" as const,
-    tokens: 3210,
-    summary: "Completed live dashboard sync for the Overview route",
-  },
-  {
-    time: "09:44",
-    agentName: "CTO",
-    status: "ok" as const,
-    tokens: 2870,
-    summary: "Reviewed the Phase 5 implementation sequence and review handoff",
-  },
-  {
-    time: "09:35",
-    agentName: "QA Engineer",
-    status: "ok" as const,
-    tokens: 4100,
-    summary:
-      "Prepared dashboard verification cases for live and fallback states",
-  },
-  {
-    time: "09:32",
-    agentName: "Frontend Engineer",
-    status: "slow" as const,
-    tokens: 5640,
-    summary:
-      "Client polling work deferred while live server-rendered data is landed first",
-  },
-];
-
 function mapAgentStatus(status: string): "running" | "idle" | "error" {
   if (status === "running") {
     return "running";
@@ -180,12 +75,14 @@ export default async function AgentsPage() {
             })),
           };
         })
-      : FALLBACK_AGENTS;
+      : [];
 
   const heartbeatEntries =
     liveRuns.length > 0
-      ? liveRuns
-          .filter((run) => isSameDay(run.activityAt))
+      ? (liveRuns.filter((run) => isSameDay(run.activityAt)).length > 0
+          ? liveRuns.filter((run) => isSameDay(run.activityAt))
+          : liveRuns
+        )
           .slice(0, 12)
           .map((run) => ({
             time: formatClockTime(run.activityAt),
@@ -194,7 +91,7 @@ export default async function AgentsPage() {
             tokens: run.tokenUsage,
             summary: truncateText(run.summary ?? run.status, 120),
           }))
-      : FALLBACK_HEARTBEAT_ENTRIES;
+      : [];
 
   return (
     <div className="space-y-8">
@@ -216,12 +113,35 @@ export default async function AgentsPage() {
       </Card>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        {agentCards.map((agent) => (
-          <AgentCard key={agent.name} {...agent} />
-        ))}
+        {agentCards.length > 0 ? (
+          agentCards.map((agent) => <AgentCard key={agent.name} {...agent} />)
+        ) : (
+          <Card className="border-dashed border-[var(--border)]/80 bg-black/10 lg:col-span-3">
+            <p className="text-base font-semibold text-[var(--foreground)]">
+              No agent activity yet
+            </p>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+              This workspace does not have live agent heartbeat data yet. The
+              team view stays empty instead of showing internal delivery
+              operators.
+            </p>
+          </Card>
+        )}
       </div>
 
-      <HeartbeatTimeline entries={heartbeatEntries} />
+      {heartbeatEntries.length > 0 ? (
+        <HeartbeatTimeline entries={heartbeatEntries} />
+      ) : (
+        <Card className="border-dashed border-[var(--border)]/80 bg-black/10">
+          <p className="text-base font-semibold text-[var(--foreground)]">
+            No automation runs recorded today
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+            Daily heartbeat and token activity will appear here once the live
+            team feed starts reporting for this workspace.
+          </p>
+        </Card>
+      )}
     </div>
   );
 }
