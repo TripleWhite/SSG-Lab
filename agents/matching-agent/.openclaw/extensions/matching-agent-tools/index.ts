@@ -107,7 +107,7 @@ const MATCHING_AGENT_PLUGIN_ID = "matching-agent-tools";
 const DEFAULT_MIMIR_URL = "https://api.allinmimir.com";
 const DEFAULT_MIMIR_USER_ID = "system";
 const DEFAULT_INGEST_POLL_INTERVAL_MS = 250;
-const DEFAULT_INGEST_POLL_TIMEOUT_MS = 10_000;
+const DEFAULT_INGEST_POLL_TIMEOUT_MS = 30_000;
 
 const GRAPH_TRAVERSE_SCHEMA = {
   type: "object",
@@ -126,7 +126,8 @@ const GRAPH_TRAVERSE_SCHEMA = {
     entity_types: {
       type: "array",
       items: { type: "string" },
-      description: "Filter target entities by type (e.g. company, person, program, project)",
+      description:
+        "Filter target entities by type (e.g. company, person, program, project)",
     },
     max_depth: {
       type: "integer",
@@ -150,11 +151,19 @@ const STORE_MATCH_SCHEMA = {
   properties: {
     match_id: {
       type: "string",
-      description: "Unique ID for dedup tracking (format: {entity_a_id}:{entity_b_id}:{match_type})",
+      description:
+        "Unique ID for dedup tracking (format: {entity_a_id}:{entity_b_id}:{match_type})",
     },
     match_type: {
       type: "string",
-      enum: ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"],
+      enum: [
+        "supply-demand",
+        "resource",
+        "talent",
+        "investor",
+        "cross-project",
+        "mentor",
+      ],
     },
     entity_a: {
       type: "object",
@@ -227,7 +236,8 @@ const SEND_FEISHU_CARD_SCHEMA = {
     card_type: {
       type: "string",
       enum: ["immediate", "digest"],
-      description: "immediate = single HIGH match card; digest = batched MEDIUM matches",
+      description:
+        "immediate = single HIGH match card; digest = batched MEDIUM matches",
     },
     chat_id: {
       type: "string",
@@ -258,7 +268,14 @@ const SEND_FEISHU_CARD_SCHEMA = {
         properties: {
           match_type: {
             type: "string",
-            enum: ["supply-demand", "resource", "talent", "investor", "cross-project", "mentor"],
+            enum: [
+              "supply-demand",
+              "resource",
+              "talent",
+              "investor",
+              "cross-project",
+              "mentor",
+            ],
           },
           entity_a: {
             type: "object",
@@ -297,10 +314,17 @@ const SEND_FEISHU_CARD_SCHEMA = {
           source_evidence: {
             type: "array",
             items: { type: "string" },
-            description: "References to event_logs or entities that led to this match",
+            description:
+              "References to event_logs or entities that led to this match",
           },
         },
-        required: ["match_type", "entity_a", "entity_b", "confidence", "suggested_action"],
+        required: [
+          "match_type",
+          "entity_a",
+          "entity_b",
+          "confidence",
+          "suggested_action",
+        ],
       },
     },
     buttons: {
@@ -364,7 +388,12 @@ function normalizeStringArray(value: unknown): string[] | undefined {
   return normalized.length > 0 ? normalized : undefined;
 }
 
-function clampInteger(value: unknown, min: number, max: number, fallback: number): number {
+function clampInteger(
+  value: unknown,
+  min: number,
+  max: number,
+  fallback: number,
+): number {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return fallback;
   }
@@ -377,7 +406,9 @@ function trimTrailingSlash(value: string): string {
 
 function resolveMimirBaseUrl(): string {
   return trimTrailingSlash(
-    process.env.MIMIR_URL?.trim() || process.env.MIMIR_API_URL?.trim() || DEFAULT_MIMIR_URL,
+    process.env.MIMIR_URL?.trim() ||
+      process.env.MIMIR_API_URL?.trim() ||
+      DEFAULT_MIMIR_URL,
   );
 }
 
@@ -491,7 +522,9 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function waitForIngestJob(jobId: string): Promise<Record<string, unknown>> {
+async function waitForIngestJob(
+  jobId: string,
+): Promise<Record<string, unknown>> {
   const startedAt = Date.now();
   const timeoutMs = resolveIngestPollTimeoutMs();
   const intervalMs = resolveIngestPollIntervalMs();
@@ -523,12 +556,16 @@ async function waitForIngestJob(jobId: string): Promise<Record<string, unknown>>
     await sleep(intervalMs);
   }
 
-  throw new Error(`store_match ingest job ${jobId} timed out after ${timeoutMs}ms`);
+  throw new Error(
+    `store_match ingest job ${jobId} timed out after ${timeoutMs}ms`,
+  );
 }
 
 function readRelationCount(result: Record<string, unknown>): number {
   const nestedResult =
-    result.result && typeof result.result === "object" && !Array.isArray(result.result)
+    result.result &&
+    typeof result.result === "object" &&
+    !Array.isArray(result.result)
       ? (result.result as Record<string, unknown>)
       : null;
 
@@ -569,16 +606,24 @@ export function buildMatchNoteContent(params: StoreMatchParams): string {
   ];
 
   if (entityA.source_employee) {
-    lines.push(`Source employee for ${entityA.name}: ${entityA.source_employee}.`);
+    lines.push(
+      `Source employee for ${entityA.name}: ${entityA.source_employee}.`,
+    );
   }
   if (entityB.source_employee) {
-    lines.push(`Source employee for ${entityB.name}: ${entityB.source_employee}.`);
+    lines.push(
+      `Source employee for ${entityB.name}: ${entityB.source_employee}.`,
+    );
   }
   if (entityA.source_event_log_id) {
-    lines.push(`Source event log for ${entityA.name}: ${entityA.source_event_log_id}.`);
+    lines.push(
+      `Source event log for ${entityA.name}: ${entityA.source_event_log_id}.`,
+    );
   }
   if (entityB.source_event_log_id) {
-    lines.push(`Source event log for ${entityB.name}: ${entityB.source_event_log_id}.`);
+    lines.push(
+      `Source event log for ${entityB.name}: ${entityB.source_event_log_id}.`,
+    );
   }
 
   const scoreSummary = [
@@ -598,9 +643,13 @@ export function buildMatchNoteContent(params: StoreMatchParams): string {
   return lines.join("\n");
 }
 
-function maybeReadPaperclipIssueUrl(issue: Record<string, unknown>): string | undefined {
+function maybeReadPaperclipIssueUrl(
+  issue: Record<string, unknown>,
+): string | undefined {
   const identifier =
-    typeof issue.identifier === "string" && issue.identifier.includes("-") ? issue.identifier : null;
+    typeof issue.identifier === "string" && issue.identifier.includes("-")
+      ? issue.identifier
+      : null;
   if (!identifier) {
     return undefined;
   }
@@ -697,7 +746,9 @@ async function maybeCreateFollowUpTask(
   }
 }
 
-export function buildFeishuCard(params: SendFeishuCardParams): Record<string, unknown> {
+export function buildFeishuCard(
+  params: SendFeishuCardParams,
+): Record<string, unknown> {
   const header = requireRecord(params.header, "header");
   const rawMatches = Array.isArray(params.matches) ? params.matches : [];
   if (rawMatches.length === 0) {
@@ -764,7 +815,9 @@ export function buildFeishuCard(params: SendFeishuCardParams): Record<string, un
         return null;
       }
       const payload =
-        button.payload && typeof button.payload === "object" && !Array.isArray(button.payload)
+        button.payload &&
+        typeof button.payload === "object" &&
+        !Array.isArray(button.payload)
           ? (button.payload as Record<string, unknown>)
           : {};
       const url =
@@ -873,13 +926,17 @@ async function executeStoreMatch(
   const input = params as StoreMatchParams;
   const matchId = requireNonEmptyString("match_id", input.match_id);
   const matchType = requireNonEmptyString("match_type", input.match_type);
-  const confidenceLevel = requireNonEmptyString("confidence_level", input.confidence_level) as
-    | "HIGH"
-    | "MEDIUM";
+  const confidenceLevel = requireNonEmptyString(
+    "confidence_level",
+    input.confidence_level,
+  ) as "HIGH" | "MEDIUM";
   const entityA = requireMatchSide(input.entity_a, "entity_a");
   const entityB = requireMatchSide(input.entity_b, "entity_b");
 
-  if (typeof input.confidence !== "number" || !Number.isFinite(input.confidence)) {
+  if (
+    typeof input.confidence !== "number" ||
+    !Number.isFinite(input.confidence)
+  ) {
     throw new Error("confidence is required");
   }
   requireNonEmptyString("summary", input.summary);
@@ -939,7 +996,10 @@ async function executeStoreMatch(
 }
 
 async function getFeishuTenantAccessToken(): Promise<string> {
-  const appId = requireNonEmptyString("FEISHU_APP_ID", process.env.FEISHU_APP_ID);
+  const appId = requireNonEmptyString(
+    "FEISHU_APP_ID",
+    process.env.FEISHU_APP_ID,
+  );
   const appSecret = requireNonEmptyString(
     "FEISHU_APP_SECRET",
     process.env.FEISHU_APP_SECRET,
@@ -963,7 +1023,10 @@ async function getFeishuTenantAccessToken(): Promise<string> {
     "send_feishu_card token result",
   );
 
-  const token = typeof payload.tenant_access_token === "string" ? payload.tenant_access_token : "";
+  const token =
+    typeof payload.tenant_access_token === "string"
+      ? payload.tenant_access_token
+      : "";
   if ((typeof payload.code === "number" && payload.code !== 0) || !token) {
     throw new Error(
       `send_feishu_card token request returned no tenant_access_token${typeof payload.msg === "string" ? `: ${payload.msg}` : ""}`,
@@ -1009,10 +1072,15 @@ async function executeSendFeishuCard(
   );
 
   const data =
-    sendResult.data && typeof sendResult.data === "object" && !Array.isArray(sendResult.data)
+    sendResult.data &&
+    typeof sendResult.data === "object" &&
+    !Array.isArray(sendResult.data)
       ? (sendResult.data as Record<string, unknown>)
       : null;
-  if ((typeof sendResult.code === "number" && sendResult.code !== 0) || !data?.message_id) {
+  if (
+    (typeof sendResult.code === "number" && sendResult.code !== 0) ||
+    !data?.message_id
+  ) {
     throw new Error(
       `send_feishu_card send failed${typeof sendResult.msg === "string" ? `: ${sendResult.msg}` : ""}`,
     );
@@ -1022,7 +1090,8 @@ async function executeSendFeishuCard(
     ok: true,
     card_type: cardType,
     chat_id: chatId,
-    message_id: typeof data?.message_id === "string" ? data.message_id : undefined,
+    message_id:
+      typeof data?.message_id === "string" ? data.message_id : undefined,
     rendered_matches: Array.isArray(input.matches) ? input.matches.length : 0,
     card,
   });
@@ -1031,7 +1100,8 @@ async function executeSendFeishuCard(
 const matchingAgentToolsPlugin = {
   id: MATCHING_AGENT_PLUGIN_ID,
   name: "Matching Agent Tools",
-  description: "Workspace-local matching-agent tools for Mimir graph traversal, match storage, and Feishu cards",
+  description:
+    "Workspace-local matching-agent tools for Mimir graph traversal, match storage, and Feishu cards",
   register(api: OpenClawPluginApi) {
     api.registerTool({
       name: "graph_traverse",
