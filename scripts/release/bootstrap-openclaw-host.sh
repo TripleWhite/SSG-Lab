@@ -453,6 +453,12 @@ fi
 write_state_env
 sync_agent_assets
 install_openclaw_source
+
+# Patch Anthropic SDK MCP helper to guard missing inputSchema (MIM-520/MIM-534).
+# OpenClaw injects built-in tools (read, write, edit, exec) that may lack inputSchema,
+# causing mcpTool() to crash with "Cannot read properties of undefined".
+OPENCLAW_SRC_DIR="$OPENCLAW_SRC_DIR" "${SCRIPT_DIR}/hotfix-openclaw-missing-input-schema.sh"
+
 build_memory_plugin
 write_openclaw_config
 
