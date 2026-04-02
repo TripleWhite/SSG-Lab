@@ -315,4 +315,319 @@ describe("matching-agent workspace plugin", () => {
     );
     expect(result.details?.message_id).toBe("msg-1");
   });
+
+  it("falls back graph traversal inputs when optional params are invalid or omitted", async () => {
+    process.env = {
+      ...originalEnv,
+      MIMIR_API_URL: "https://fallback.example.com/",
+      MIMIR_API_KEY: "mimir-key",
+      MIMIR_USER_ID: "fallback-user",
+    };
+
+    const fetchMock = vi.fn().mockResolvedValueOnce(
+      jsonResponse({
+        status: "ok",
+        result: {
+          Entities: [],
+          Relations: [],
+        },
+      }),
+    );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { tools } = await registerTools();
+    const tool = tools.get("graph_traverse");
+
+    await tool?.execute("tool-4", {
+      start_entity: "DesignAI",
+      relation_types: "invalid",
+      entity_types: undefined,
+      max_depth: Number.NaN,
+      max_results: Number.POSITIVE_INFINITY,
+    });
+
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    const body = JSON.parse(String(init.body)) as Record<string, unknown>;
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      "https://fallback.example.com/api/v1/graph/traverse",
+    );
+    expect(body).toEqual({
+      entity_names: ["DesignAI"],
+      group_id: "fallback-user",
+      hops: 2,
+      max_results: 50,
+    });
+  });
+
+  it("builds note content with source event logs and renders digest cards with href buttons", async () => {
+    const { buildFeishuCard, buildMatchNoteContent } = await importPluginModule();
+
+    const note = buildMatchNoteContent({
+      match_id: "designai:megacorp:supply-demand",
+      match_type: "supply-demand",
+      entity_a: {
+        id: "entity-a",
+        name: "DesignAI",
+        source_event_log_id: "evt-a",
+      },
+      entity_b: {
+        id: "entity-b",
+        name: "MegaCorp",
+        source_event_log_id: "evt-b",
+      },
+      confidence: 88,
+      confidence_level: "HIGH",
+      scoring: {
+        specificity: 22,
+        actionability: 21,
+      },
+      summary: "DesignAI needs enterprise design teams.",
+      suggested_action: "Introduce founders.",
+    });
+
+    expect(note).toContain("Source event log for DesignAI: evt-a.");
+    expect(note).toContain("Source event log for MegaCorp: evt-b.");
+    expect(note).toContain("Scoring: specificity=22, actionability=21.");
+
+    const card = buildFeishuCard({
+      card_type: "digest",
+      chat_id: "oc_test_chat",
+      header: {
+        title: "Daily Digest",
+      },
+      matches: [
+        {
+          match_type: "mentor",
+          entity_a: {
+            name: "DesignAI",
+            description: "AI design tool",
+            source_employee: "Alice",
+          },
+          entity_b: {
+            name: "MegaCorp",
+            description: "Enterprise buyer",
+            source_employee: "Bob",
+          },
+          confidence: 78,
+          suggested_action: "Share context.",
+        },
+      ],
+      buttons: [
+        {
+          text: "Open Digest",
+          action: "review_on_dashboard",
+          payload: {
+            href: "https://dashboard.example.com/digest",
+          },
+        },
+        {
+          text: "Dismiss",
+          action: "dismiss",
+        },
+        null as unknown as Record<string, unknown>,
+      ],
+    }) as {
+      header?: { template?: string };
+      body?: { elements?: Array<Record<string, unknown>> };
+    };
+
+    expect(card.header?.template).toBe("blue");
+    expect(card.body?.elements?.[0]).toEqual({
+      tag: "markdown",
+      content: "1. DesignAI ↔ MegaCorp - mentor - 78%",
+    });
+
+    const actionElement = card.body?.elements?.find((element) => element.tag === "action") as
+      | { actions?: Array<{ multi_url?: { url?: string } }> }
+      | undefined;
+
+    expect(actionElement?.actions).toHaveLength(1);
+    expect(actionElement?.actions?.[0]?.multi_url?.url).toBe(
+      "https://dashboard.example.com/digest",
+    );
+  });
+
+  it("creates a Paperclip follow-up task when store_match requests one", async () => {
+    process.env = {
+      ...originalEnv,
+      MIMIR_URL: "https://mimir.example.com",
+      MIMIR_API_KEY: "mimir-key",
+      MIMIR_USER_ID: "system",
+      MIMIR_GROUP_ID: "group-1",
+      PAPERCLIP_API_URL: "https://paperclip.example.com/",
+      PAPERCLIP_API_KEY: "paperclip-key",
+      PAPERCLIP_COMPANY_ID: "company-1",
+      PAPERCLIP_MATCHING_PARENT_ISSUE_ID: "parent-1",
+      PAPERCLIP_RUN_ID: "run-1",
+      FEISHU_APP_ID: "app-id",
+      FEISHU_APP_SECRET: "app-secret",
+    };
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          status: "ok",
+          result: {
+            relation_count: 2,
+          },
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          id: "parent-1",
+          goalId: "goal-1",
+          projectId: "project-1",
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          id: "issue-1",
+          identifier: "MIM-900",
+          title: "Follow-up: DesignAI ↔ MegaCorp",
+        }),
+      );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { tools } = await registerTools();
+    const tool = tools.get("store_match");
+    const result = (await tool?.execute("tool-5", {
+      match_id: "designai:megacorp:supply-demand",
+      match_type: "supply-demand",
+      entity_a: {
+        id: "entity-a",
+        name: "DesignAI",
+      },
+      entity_b: {
+        id: "entity-b",
+        name: "MegaCorp",
+      },
+      confidence: 92,
+      confidence_level: "HIGH",
+      summary: "DesignAI needs enterprise customers.",
+      suggested_action: "Introduce founders.",
+      create_task: true,
+    })) as { details?: Record<string, unknown> };
+
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      "https://paperclip.example.com/api/issues/parent-1",
+    );
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      "https://paperclip.example.com/api/companies/company-1/issues",
+    );
+
+    const createInit = fetchMock.mock.calls[2]?.[1] as RequestInit;
+    const createBody = JSON.parse(String(createInit.body)) as Record<string, unknown>;
+
+    expect(createInit.headers).toMatchObject({
+      Authorization: "Bearer paperclip-key",
+      "Content-Type": "application/json",
+      "X-Paperclip-Run-Id": "run-1",
+    });
+    expect(createBody).toMatchObject({
+      parentId: "parent-1",
+      goalId: "goal-1",
+      projectId: "project-1",
+      status: "in_review",
+      priority: "high",
+    });
+    expect(result.details?.follow_up_task).toEqual({
+      created: true,
+      id: "issue-1",
+      identifier: "MIM-900",
+      title: "Follow-up: DesignAI ↔ MegaCorp",
+      url: "/MIM/issues/MIM-900",
+    });
+  });
+
+  it("fails store_match when ingest confirms no MATCH_FOUND relation", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(
+      jsonResponse({
+        status: "ok",
+        result: {
+          relation_count: 0,
+        },
+      }),
+    );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { tools } = await registerTools();
+    const tool = tools.get("store_match");
+
+    await expect(
+      tool?.execute("tool-6", {
+        match_id: "designai:megacorp:supply-demand",
+        match_type: "supply-demand",
+        entity_a: {
+          id: "entity-a",
+          name: "DesignAI",
+        },
+        entity_b: {
+          id: "entity-b",
+          name: "MegaCorp",
+        },
+        confidence: 92,
+        confidence_level: "HIGH",
+        summary: "DesignAI needs enterprise customers.",
+        suggested_action: "Introduce founders.",
+      }),
+    ).rejects.toThrow(
+      "store_match failed: no MATCH_FOUND relation was confirmed for DesignAI and MegaCorp",
+    );
+  });
+
+  it("surfaces Feishu API errors when the send call does not return a message id", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          code: 0,
+          tenant_access_token: "tenant-token",
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          code: 999,
+          msg: "chat not found",
+          data: null,
+        }),
+      );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { tools } = await registerTools();
+    const tool = tools.get("send_feishu_card");
+
+    await expect(
+      tool?.execute("tool-7", {
+        card_type: "immediate",
+        chat_id: "oc_missing_chat",
+        header: {
+          title: "Match Found - supply-demand",
+        },
+        matches: [
+          {
+            match_type: "supply-demand",
+            entity_a: {
+              name: "DesignAI",
+              description: "AI design tool",
+              source_employee: "Alice",
+            },
+            entity_b: {
+              name: "MegaCorp",
+              description: "Enterprise buyer",
+              source_employee: "Bob",
+            },
+            confidence: 92,
+            suggested_action: "Introduce founders.",
+          },
+        ],
+      }),
+    ).rejects.toThrow("send_feishu_card send failed: chat not found");
+  });
 });
