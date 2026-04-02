@@ -64,19 +64,23 @@ All schemas you need are defined inline in this document and in the tool
 
 - `memory_search` requires a non-empty `query` string. Never call
   `memory_search({})` and never retry the same invalid payload twice
+- The live OpenClaw contract only accepts `query`, `maxResults`, and
+  `minScore`. Do not send legacy fields such as `types`, `time_range`, or
+  `limit`
 - Use this exact argument shape for the first call. Include the date range
-  directly in the query text since the plugin does not accept `types` or
-  `time_range` parameters:
+  directly in the query text:
 
 ```json
 {
-  "query": "event_log accelerator founder needs offers blockers hiring fundraising partnerships asks since YYYY-MM-DD",
-  "maxResults": 20
+  "query": "Accelerator event logs from START_ISO to END_ISO about founder needs, offers, blockers, hiring, fundraising, partnerships, and asks",
+  "maxResults": 20,
+  "minScore": 0.35
 }
 ```
 
-- If there was a previous successful heartbeat, append `since {timestamp}`
-  to the query. If this is the first run, use `since {24h ago date}`
+- If there was a previous successful heartbeat, encode that timestamp window as
+  `from START_ISO to END_ISO` in the query text. If this is the first run, use
+  the last 24 hours
 - Call `memory_search` for event_logs created since last heartbeat using the
   payload shape above
 - Prioritize `agent_curated` (HIGH confidence) items over `auto_extracted`
@@ -148,7 +152,8 @@ For each aggregated match:
 ```json
 {
   "query": "MATCH_FOUND relation between {entity_a_name} and {entity_b_name}",
-  "maxResults": 10
+  "maxResults": 10,
+  "minScore": 0.2
 }
 ```
 

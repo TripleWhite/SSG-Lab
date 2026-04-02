@@ -25,13 +25,23 @@ function readFile(filePath: string): string {
 }
 
 describe("matching-agent HEARTBEAT.md", () => {
-  it("documents the required memory_search query payload for the first tool call", () => {
+  it("documents the live memory_search payload contract for the first tool call", () => {
     const heartbeat = readFile(matchingHeartbeatPath);
 
     expect(heartbeat).toMatch(/Never call\s+`memory_search\(\{\}\)`/);
-    expect(heartbeat).toContain("\"query\": \"recent accelerator event logs");
-    expect(heartbeat).toContain("\"types\": [\"event_log\"]");
-    expect(heartbeat).toContain("\"time_range\": \"YYYY-MM-DD..YYYY-MM-DD\"");
+    expect(heartbeat).toContain("only accepts `query`, `maxResults`, and");
+    expect(heartbeat).toContain("`minScore`");
+    expect(heartbeat).toContain(
+      "\"query\": \"Accelerator event logs from START_ISO to END_ISO",
+    );
+    expect(heartbeat).toContain("\"maxResults\": 20");
+    expect(heartbeat).toContain("\"minScore\": 0.35");
+    expect(heartbeat).not.toContain("\"types\": [\"event_log\"]");
+    expect(heartbeat).not.toContain("\"time_range\": \"YYYY-MM-DD..YYYY-MM-DD\"");
+    expect(heartbeat).not.toContain("\"limit\": 20");
+    expect(heartbeat).toContain("\"query\": \"MATCH_FOUND relation between");
+    expect(heartbeat).toContain("\"maxResults\": 10");
+    expect(heartbeat).toContain("\"minScore\": 0.2");
   });
 
   it("documents top-level Paperclip match result writes", () => {
