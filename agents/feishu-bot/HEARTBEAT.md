@@ -9,6 +9,11 @@ On every incoming Feishu event:
 1. **Parse event** — Distinguish plain message, attachment, or interactive card callback.
 2. **Group chat filter** — In group chats, only process plain messages if @mentioned.
 3. **Intent classification** — Determine: capture, search, task creation, conversation, or callback routing.
+3b. **Context recovery** — If intent classification is ambiguous or the message
+    appears to reference prior context ("it", "that", "this", pronouns, implicit
+    subjects, reply-to follow-ups), search Mimir `event_log` for recent entries
+    from the same channel/peer from the last 30 minutes. Use the recovered
+    context to re-classify intent before giving up.
 4. **Search before store** — If capturing, search Mimir first to check for existing entities.
 5. **Execute action** — Store memory, search memory, create Paperclip task, route callback intent, or reply.
 6. **Acknowledge** — Send concise confirmation back to Feishu.
@@ -44,4 +49,6 @@ When a callback comes from a `portfolio_update` card:
 - Mimir API timeout (>5s): Reply "Memory system is slow, retrying..." and retry once.
 - Mimir API error: Reply "Could not save to memory: [error]. Please try again."
 - Paperclip API error: Reply "Could not create task: [error]. Please try again."
-- Unknown intent: Reply with guidance on available actions.
+- Unknown intent: If context recovery found recent activity, ask a clarifying
+  question that references that context. Otherwise, reply with guidance on
+  available actions.

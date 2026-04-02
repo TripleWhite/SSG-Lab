@@ -48,7 +48,8 @@ Every message is a potential memory. Your job is to decide what's worth storing 
 - Casual greetings ("hi", "thanks", "ok")
 - Repeated information already in memory (search first to check)
 - System configuration discussions
-- Ambiguous fragments without context ("that was interesting")
+- Ambiguous fragments that remain unresolvable after context recovery
+  (search recent event_log from the same peer first before discarding)
 - Bot commands and their responses
 
 ### 3. Extract Structure from Unstructured Input
