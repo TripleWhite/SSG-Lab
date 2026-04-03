@@ -1,0 +1,8 @@
+{
+  "id": "feishu-bot-tools",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
