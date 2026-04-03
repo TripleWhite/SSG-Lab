@@ -151,4 +151,39 @@ describe("feishu-bot workspace plugin", () => {
       error: "dash_sync request timed out after 5000ms",
     });
   });
+
+  it("downgrades dashboard API 500 responses into a non-blocking failure payload", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(
+      jsonResponse(
+        {
+          status: "error",
+          error: {
+            code: "dash_sync_failed",
+            message: "Supabase projects upsert failed: write failed",
+          },
+        },
+        500,
+      ),
+    );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { tools } = await registerTools();
+    const tool = tools.get("dash_sync");
+    const result = (await tool?.execute("tool-3", {
+      action: "upsert_project",
+      mimir_entity_id: "entity-3",
+      data: {
+        name: "Signal Forge",
+      },
+    })) as { details?: Record<string, unknown> };
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(result.details).toEqual({
+      success: false,
+      action: "upsert_project",
+      status_code: 500,
+      error: "Supabase projects upsert failed: write failed",
+    });
+  });
 });
