@@ -18,6 +18,14 @@
 - The Feishu app config must set homepage URL `https://dash.ssgaccelerator.com` and redirect URL `https://dash.ssgaccelerator.com/api/auth/feishu`.
 - `BOARD_FEISHU_OPEN_IDS` is optional. When it is unset, authenticated users still sign in, but `/analytics` and `/settings` stay hidden behind the `employee` role.
 
+## Dash Sync Dual-Write Runtime
+
+- `POST /api/dash-sync` runs on the Vercel-hosted dashboard deployment at `https://dash.ssgaccelerator.com/api/dash-sync`.
+- Vercel production must set `DASH_SYNC_API_KEY` alongside the existing Supabase service-role variables so the route can authorize the feishu-bot mirror calls.
+- The EC2-B feishu-bot runtime must set `SSGLAB_API_URL=https://dash.ssgaccelerator.com` and the same `DASH_SYNC_API_KEY` in `/home/ubuntu/.openclaw/.env`.
+- On the live EC2-B host verified on `2026-04-03`, the feishu-bot workspace lives under `/home/ubuntu/.openclaw/agents/feishu-bot/` and the workspace-local plugin directory is `/home/ubuntu/.openclaw/agents/feishu-bot/.openclaw/extensions/feishu-bot-tools/`.
+- Because `dash_sync` adds a new tool schema to feishu-bot, reset `agent:feishu-bot:main` after deployment so cached sessions do not keep the pre-tool workspace snapshot.
+
 ## Bootstrap Order
 
 1. Provision EC2-B with [`scripts/release/provision-ec2b.sh`](../scripts/release/provision-ec2b.sh).
@@ -59,6 +67,8 @@ If you need a reproducible rollout, export `OPENCLAW_REPO_REF` as a tag or commi
 - `caddy.service` must report `User=caddy` and `Group=caddy`.
 - Public ingress on the EC2-B security group should be limited to `22` and `443`.
 - `bootstrap-openclaw-host.sh` accepts branch names, tags, and commit SHAs through `OPENCLAW_REPO_REF`.
+- `DASH_SYNC_API_KEY` must match between Vercel and the EC2-B feishu-bot runtime.
+- `SSGLAB_API_URL` on EC2-B must point at the deployed dashboard origin, not `board.ssgaccelerator.com`.
 - Each OpenClaw-backed Paperclip agent needs an explicit session key:
   - `feishu-bot` -> `agent:feishu-bot:main`
   - `sourcing-agent` -> `agent:sourcing-agent:main`
@@ -80,6 +90,12 @@ curl -fsS http://127.0.0.1:18789/openclaw/
 curl -I https://dash.ssgaccelerator.com
 curl -fsS https://dash.ssgaccelerator.com/login | grep -o 'href="/api/auth/feishu"'
 curl -sS -D - -o /dev/null https://dash.ssgaccelerator.com/api/auth/feishu
+curl -sS -D - -o /dev/null -X POST https://dash.ssgaccelerator.com/api/dash-sync \
+  -H 'Content-Type: application/json' \
+  -d '{"action":"upsert_project","mimir_entity_id":"probe","data":{"name":"Probe"}}'
+grep -E '^(SSGLAB_API_URL|DASH_SYNC_API_KEY)=' /home/ubuntu/.openclaw/.env
+ls -la /home/ubuntu/.openclaw/agents/feishu-bot/.openclaw/extensions/feishu-bot-tools
+gateway call sessions.reset agent:feishu-bot:main
 jq '.agents.list[] | select(.id == "matching-agent") | {workspace, agentDir}' /home/ec2-user/.openclaw/openclaw.json
 ls -l /home/ec2-user/openclaw-agents/matching-agent/AGENTS.md /home/ec2-user/openclaw-agents/matching-agent/SOUL.md /home/ec2-user/openclaw-agents/matching-agent/HEARTBEAT.md
 systemctl status paperclip --no-pager
@@ -97,6 +113,9 @@ Expected results:
 - `https://dash.ssgaccelerator.com` returns `307` from `/` to `/login`.
 - `/login` includes a sign-in link to `/api/auth/feishu`.
 - `GET https://dash.ssgaccelerator.com/api/auth/feishu` returns `307` to Feishu authorize and sets the `ssg_oauth_state` cookie.
+- `POST https://dash.ssgaccelerator.com/api/dash-sync` returns `401` without the bearer token, which proves the route is live and protected.
+- `/home/ubuntu/.openclaw/.env` contains both `SSGLAB_API_URL` and `DASH_SYNC_API_KEY`.
+- `/home/ubuntu/.openclaw/agents/feishu-bot/.openclaw/extensions/feishu-bot-tools` exists before the board rerun.
 - `openclaw.json` reports `matching-agent.workspace` under `/home/ec2-user/openclaw-agents/matching-agent` and keeps `agentDir` under `.openclaw/agents/...`.
 - The matching-agent workspace contains the expected bootstrap files before any QA rerun.
 - `systemctl show caddy` reports `User=caddy` and `Group=caddy`.

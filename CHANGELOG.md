@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-04-03
+
+### Added
+
+- You can now mirror Company, sourcing, and match records into the dashboard's Supabase tables through `POST /api/dash-sync`.
+- You can now call the workspace-local `dash_sync` tool from `feishu-bot` so Mimir captures can flow into Dash without a manual backfill step.
+
+### Changed
+
+- You can now keep project upserts idempotent across `upsert_project`, `upsert_sourcing`, and `upsert_match` by reusing an existing project id when the same project name already exists.
+- You can now rely on the release assets to document the shared `DASH_SYNC_API_KEY` and `SSGLAB_API_URL` runtime requirements for Vercel and EC2-B.
+
 ## 2026-03-31
 
 ### Added

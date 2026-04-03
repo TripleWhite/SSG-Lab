@@ -39,6 +39,8 @@
 - `PAPERCLIP_API_URL`, `PAPERCLIP_API_KEY`, and `PAPERCLIP_COMPANY_ID` power the live Paperclip-backed routes.
 - `MIMIR_API_URL`, `MIMIR_API_KEY`, and `MIMIR_USER_ID` power the resource graph and future memory-backed views.
 - `FEISHU_APP_ID`, `FEISHU_APP_SECRET`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL` are required for the working sign-in flow.
+- `DASH_SYNC_API_KEY` secures `POST /api/dash-sync` on the dashboard deployment and must match the value used by the feishu-bot runtime.
+- `SSGLAB_API_URL` is required on the EC2-B feishu-bot/OpenClaw runtime so the workspace-local `dash_sync` tool can call the deployed dashboard origin.
 - `NEXTAUTH_URL` should point at the deployed dashboard origin, for example `https://dash.ssgaccelerator.com`.
 - In the Feishu app config, set the homepage URL to `https://dash.ssgaccelerator.com` and the redirect URL to `https://dash.ssgaccelerator.com/api/auth/feishu`.
 
