@@ -354,6 +354,20 @@ async function resolveProjectId(
   return { projectId: autoCreatedProjectId, autoCreated: true };
 }
 
+async function resolveProjectUpsertId(
+  supabase: SupabaseClient,
+  defaultProjectId: string,
+  data: Record<string, unknown>,
+): Promise<string> {
+  const projectName = asString(data.name);
+  if (!projectName) {
+    return defaultProjectId;
+  }
+
+  const existingProjectId = await findProjectIdByName(supabase, projectName);
+  return existingProjectId ?? defaultProjectId;
+}
+
 function parseRequestBody(body: unknown): DashSyncRequest {
   const payload = asRecord(body, "body");
   const action = requireString("action", payload.action);
@@ -435,14 +449,15 @@ async function handleDashSync(
 
   switch (payload.action) {
     case "upsert_project": {
-      const projectPayload = buildProjectPayload(id, payload.data);
+      const projectId = await resolveProjectUpsertId(supabase, id, payload.data);
+      const projectPayload = buildProjectPayload(projectId, payload.data);
       await upsertRow(supabase, "projects", projectPayload);
 
       return {
         action: payload.action,
         table: "projects",
-        id,
-        project_id: id,
+        id: projectId,
+        project_id: projectId,
         auto_created_project: false,
       };
     }

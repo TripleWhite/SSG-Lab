@@ -526,4 +526,146 @@ describe("POST /api/dash-sync", () => {
       },
     });
   });
+
+  it("reuses an auto-created project when the company upsert arrives later", async () => {
+    const projectIdsByName = new Map<string, string>();
+    const upsertSpy = vi.fn().mockImplementation(async ({ table, values }) => {
+      if (table === "projects") {
+        const row = values as { id: string; name: string };
+        projectIdsByName.set(row.name, row.id);
+      }
+
+      return { error: null };
+    });
+
+    mockCreateClient.mockReturnValue(
+      createSupabaseClient({
+        projectLookup: async (projectName) => {
+          const existingId = projectIdsByName.get(projectName);
+          return {
+            data: existingId ? [{ id: existingId }] : [],
+            error: null,
+          };
+        },
+        upsert: upsertSpy,
+      }),
+    );
+
+    const {
+      POST,
+      DEFAULT_DASH_SYNC_UUID_NAMESPACE,
+      createDeterministicUuid,
+    } = await importRouteModule();
+
+    const sourcingResponse = await POST(
+      new Request("https://dash.example.com/api/dash-sync", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer dash-secret",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "upsert_sourcing",
+          mimir_entity_id: "entity-source-canonical-1",
+          data: {
+            project_name: "Signal Forge",
+            platform: "LinkedIn",
+            title: "Founder intro",
+            summary: "Warm founder lead",
+          },
+        }),
+      }),
+    );
+
+    const projectResponse = await POST(
+      new Request("https://dash.example.com/api/dash-sync", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer dash-secret",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "upsert_project",
+          mimir_entity_id: "entity-project-canonical-1",
+          data: {
+            name: "Signal Forge",
+            industry: "Dev Tools",
+            stage: "Seed",
+          },
+        }),
+      }),
+    );
+
+    const autoProjectId = createDeterministicUuid(
+      DEFAULT_DASH_SYNC_UUID_NAMESPACE,
+      "project:signal forge",
+    );
+    const projectEntityId = createDeterministicUuid(
+      DEFAULT_DASH_SYNC_UUID_NAMESPACE,
+      "entity-project-canonical-1",
+    );
+
+    expect(autoProjectId).not.toBe(projectEntityId);
+    expect(upsertSpy).toHaveBeenNthCalledWith(1, {
+      table: "projects",
+      values: {
+        id: autoProjectId,
+        name: "Signal Forge",
+        industry: null,
+        stage: null,
+        status: "active",
+        founder_name: null,
+        founder_contact: null,
+        description: "Warm founder lead",
+        source: "dash_sync:auto_create",
+        metadata: {
+          auto_created: true,
+          created_from_action: "upsert_sourcing",
+        },
+      },
+      options: { onConflict: "id" },
+    });
+    expect(upsertSpy).toHaveBeenNthCalledWith(3, {
+      table: "projects",
+      values: {
+        id: autoProjectId,
+        name: "Signal Forge",
+        industry: "Dev Tools",
+        stage: "Seed",
+        status: "active",
+        founder_name: null,
+        founder_contact: null,
+        description: null,
+        source: "dash_sync",
+        metadata: {},
+      },
+      options: { onConflict: "id" },
+    });
+
+    expect(sourcingResponse.status).toBe(200);
+    expect(await readJson(sourcingResponse)).toEqual({
+      status: "ok",
+      result: {
+        action: "upsert_sourcing",
+        table: "sourcing_results",
+        id: createDeterministicUuid(
+          DEFAULT_DASH_SYNC_UUID_NAMESPACE,
+          "entity-source-canonical-1",
+        ),
+        project_id: autoProjectId,
+        auto_created_project: true,
+      },
+    });
+    expect(projectResponse.status).toBe(200);
+    expect(await readJson(projectResponse)).toEqual({
+      status: "ok",
+      result: {
+        action: "upsert_project",
+        table: "projects",
+        id: autoProjectId,
+        project_id: autoProjectId,
+        auto_created_project: false,
+      },
+    });
+  });
 });
