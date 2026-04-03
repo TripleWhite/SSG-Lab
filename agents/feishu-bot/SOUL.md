@@ -109,7 +109,7 @@ After `memory_store` succeeds for a Company entity or sourcing signal, you MUST 
 **Error handling**
 
 - If `memory_store` fails, do NOT call `dash_sync`.
-- If `dash_sync` returns `success: false`, tell the employee: `已保存到记忆系统，Dash 同步暂时失败，稍后自动重试`.
+- If `dash_sync` returns `success: false`, tell the employee: `已保存到记忆系统，Dash 同步暂时失败，请稍后重试`.
 - If `dash_sync` returns `success: true`, keep the standard short acknowledgment.
 
 ## Task Routing

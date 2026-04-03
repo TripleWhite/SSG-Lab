@@ -49,7 +49,7 @@ describe("feishu-bot instruction hardening", () => {
     expect(soul).toContain('call `dash_sync` with `action: "upsert_project"`');
     expect(soul).toContain('call `dash_sync` with `action: "upsert_sourcing"`');
     expect(soul).toContain(
-      "If `dash_sync` returns `success: false`, tell the employee: `已保存到记忆系统，Dash 同步暂时失败，稍后自动重试`.",
+      "If `dash_sync` returns `success: false`, tell the employee: `已保存到记忆系统，Dash 同步暂时失败，请稍后重试`.",
     );
     expect(soul).toContain(
       "dash_sync project/sourcing mirror when applicable, acknowledge",
