@@ -96,24 +96,24 @@ Search memories with optional filters.
   "input_schema": {
     "type": "object",
     "properties": {
-      "query": { "type": "string", "description": "Natural language search query." },
-      "types": {
-        "type": "array",
-        "items": { "type": "string", "enum": ["event_log", "entity", "relation", "episode", "foresight"] },
-        "description": "Filter by memory type. Omit to search all."
-      },
-      "time_range": {
+      "query": {
         "type": "string",
-        "description": "Time filter: 'today', 'this_week', 'this_month', or 'YYYY-MM-DD..YYYY-MM-DD'."
+        "description": "Natural language search query. Embed type hints (e.g. 'event_log', 'entity') and date ranges directly in the query text — the plugin does not accept separate type or time_range filters."
       },
-      "limit": { "type": "number", "default": 10 }
+      "maxResults": { "type": "number", "default": 10 },
+      "minScore": {
+        "type": "number",
+        "description": "Minimum similarity score (0.0–1.0). Omit to use the server default threshold."
+      }
     },
     "required": ["query"]
   }
 }
 ```
 
-Implementation: POST /api/v1/search with retrieve_method=full, apply filters.
+Implementation: POST /api/v1/search with retrieve_method=full.
+
+> **Note (fixed 2026-04-02, MIM-553/MIM-598):** The live `memory-mimir` v4.0.0-rc.1 plugin does **not** support `types`, `time_range`, or `limit` parameters. Earlier versions of this doc listed those fields incorrectly. Use `maxResults` instead of `limit`; embed type and date constraints in the `query` string.
 
 ### memory_graph
 

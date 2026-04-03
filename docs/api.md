@@ -85,6 +85,32 @@ Current live-feed behavior:
 - `getMatches()` resolves the `SSG Lab` project, finds the `Matching Results` parent issue, and maps each child issue's `result` document into the `Match` dashboard type.
 - If the `SSG Lab` project, the parent issue, or the `result` document is missing, `/sourcing` and `/matching` intentionally preserve the honest empty state instead of showing fallback demo records.
 
+Empty-state behavior (confirmed 2026-04-02, MIM-535):
+
+- Dashboard pages show an honest "no data yet" state when the Paperclip company contains no business data under `SSG Lab`.
+- Dev and Paperclip-internal placeholder data (issue identifiers like `SSG-103`, internal team names) is no longer surfaced to dashboard users.
+- The `/sourcing` and `/matching` pages show empty tables — not demo records — until real sourcing or matching results are written under the `SSG Lab` project's `Sourcing Results` / `Matching Results` parent issues.
+
+### Supabase Business Data Layer
+
+- Base URL: `NEXT_PUBLIC_SUPABASE_URL`
+- Auth: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Required env:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+Purpose and behavior:
+
+- Provides the business data source for `/sourcing` and `/matching` dashboard pages.
+- Operational data (agents, heartbeat runs, costs) still comes from the Paperclip API — Supabase is not a replacement for Paperclip.
+- If `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_ANON_KEY` is missing, the Sourcing and Matching pages show empty states with user-friendly copy ("No sourcing data available yet" / "No matching results yet") — not internal error messages or credential hints.
+
+User-facing empty state text (confirmed after MIM-527 developer text leak fixes):
+
+- Sourcing page: "No sourcing data available yet" (previously leaked "Supabase credentials missing")
+- Matching page: "No matching results yet" (previously leaked raw credential error text)
+- Resources page: generic fallback text without "Mimir" references or placeholder strings
+
 ### Mimir API
 
 - Base URL: `MIMIR_API_URL` or `https://api.allinmimir.com`
@@ -105,6 +131,22 @@ Operational Mimir paths used by the deployed OpenClaw + `memory-mimir` runtime:
 - `POST /api/v1/search`
 - `POST /api/v1/graph/traverse`
 - `POST /api/v1/files/upload`
+
+#### POST /api/v1/search — Parameter Contract (memory-mimir plugin)
+
+The `memory-mimir` v4.0.0-rc.1 plugin calls this endpoint with the following body:
+
+```json
+{
+  "query": "string (required) — natural language query; embed type hints and date ranges in text",
+  "maxResults": "number (optional, default 10)",
+  "minScore": "number (optional) — minimum similarity score 0.0–1.0"
+}
+```
+
+> **Not supported by the live plugin:** `types`, `time_range`, `limit`. These parameters appear in older docs but are not accepted by the deployed runtime (confirmed MIM-553/MIM-598). Bake type and date constraints into the `query` string instead.
+
+The dashboard uses a separate `GET /api/v1/search` path with query parameters (`user_id`, `query`, `method`, `limit`) — that is a distinct call surface from the agent-side POST above.
 
 Runtime behavior:
 

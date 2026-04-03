@@ -440,6 +440,37 @@ The feishu-bot agent files were updated to add follow-up context recovery. The f
 
 No config changes (env or `openclaw.json`) were required for this fix.
 
+## Feishu-Bot memory_search Session Reset (EC2-B, MIM-593, 2026-04-03)
+
+**Host**: `i-04401d9241a5213f6`
+**Resolved**: 2026-04-03
+
+### Root Cause
+
+Stale tool-schema context persisted in the feishu-bot OpenClaw session. The session cached an outdated schema with a non-existent `type` field, causing `memory_search` parameter validation failures. The live `memory-mimir` plugin contract was correct.
+
+### Fix
+
+Session reset on EC2-B (`gateway call sessions.reset agent:feishu-bot:main`). No source-code changes were required.
+
+### What Was NOT Changed
+
+- No `agents/feishu-bot/settings.json` was committed — confirmed not needed for this fix.
+- No `openclaw.json` or `.env` changes were required.
+
+### Verification (post-reset)
+
+- `memory_search`: 30+ results returned for production queries.
+- `memory_store` roundtrip: synthetic ingest → search verified.
+- No parameter errors in `openclaw-gateway` logs during QA window.
+- QA health score: **A (92/100)** ([MIM-597](/MIM/issues/MIM-597)).
+
+### If memory_search Fails Again
+
+1. Check whether the session is using a stale cached schema: `gateway call sessions.reset agent:feishu-bot:main`.
+2. Confirm the live plugin version with `gateway call tools.catalog` — look for `memory_search` with `maxResults`/`minScore` params (not `types`/`time_range`/`limit`).
+3. If the schema mismatch recurs, review `memory-mimir` extension version at `/home/ubuntu/.openclaw/extensions/memory-mimir/`.
+
 ## Known Follow-Up Items
 
 - Completed 2026-03-29: EC2-B public ingress is limited to `22` and `443`; `3000` and `18789` are no longer internet-reachable.
