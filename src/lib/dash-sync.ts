@@ -4,7 +4,11 @@ import type { Json } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
-type DashSyncAction = "upsert_project" | "upsert_sourcing" | "upsert_match";
+type DashSyncAction =
+  | "upsert_project"
+  | "upsert_sourcing"
+  | "upsert_match"
+  | "record_reactive_telemetry";
 type JsonRecord = Record<string, Json | undefined>;
 
 interface DashSyncRequest {
@@ -45,6 +49,16 @@ interface MatchPayload {
   rationale: string | null;
   matched_with: string | null;
   status: string;
+  metadata: JsonRecord;
+}
+
+interface ReactiveTelemetryPayload {
+  id: string;
+  project_id: null;
+  status: string;
+  next_followup_at: null;
+  last_activity: string;
+  notes: null;
   metadata: JsonRecord;
 }
 
@@ -247,6 +261,13 @@ function createDashSyncId(mimirEntityId: string): string {
   return createDeterministicUuid(getUuidNamespace(), mimirEntityId);
 }
 
+export function createReactiveTelemetryId(agentUrlKey: string): string {
+  return createDeterministicUuid(
+    getUuidNamespace(),
+    `reactive-agent:${agentUrlKey.trim().toLowerCase()}`,
+  );
+}
+
 function createAutoProjectId(projectName: string): string {
   return createDeterministicUuid(
     getUuidNamespace(),
@@ -277,8 +298,12 @@ function createServiceRoleClient(): SupabaseClient {
 
 async function upsertRow(
   supabase: SupabaseClient,
-  table: "projects" | "sourcing_results" | "matches",
-  payload: ProjectPayload | SourcingPayload | MatchPayload,
+  table: "projects" | "sourcing_results" | "matches" | "portfolio_items",
+  payload:
+    | ProjectPayload
+    | SourcingPayload
+    | MatchPayload
+    | ReactiveTelemetryPayload,
 ) {
   const { error } = await supabase.from(table).upsert(payload, {
     onConflict: "id",
@@ -375,9 +400,12 @@ function parseRequestBody(body: unknown): DashSyncRequest {
   if (
     action !== "upsert_project" &&
     action !== "upsert_sourcing" &&
-    action !== "upsert_match"
+    action !== "upsert_match" &&
+    action !== "record_reactive_telemetry"
   ) {
-    throw new Error("action must be one of upsert_project, upsert_sourcing, upsert_match.");
+    throw new Error(
+      "action must be one of upsert_project, upsert_sourcing, upsert_match, record_reactive_telemetry.",
+    );
   }
 
   return {
@@ -441,6 +469,33 @@ function buildMatchPayload(
   };
 }
 
+function buildReactiveTelemetryPayload(
+  data: Record<string, unknown>,
+): ReactiveTelemetryPayload {
+  const agentUrlKey = requireString(
+    "data.agent_url_key",
+    data.agent_url_key,
+  ).toLowerCase();
+  const recordedAt = asIsoTimestamp(data.occurred_at) ?? new Date().toISOString();
+
+  return {
+    id: createReactiveTelemetryId(agentUrlKey),
+    project_id: null,
+    status: "active",
+    next_followup_at: null,
+    last_activity: recordedAt,
+    notes: null,
+    metadata: {
+      kind: "agent_reactive_telemetry",
+      agent_url_key: agentUrlKey,
+      channel: asString(data.channel) ?? null,
+      conversation_id: asString(data.conversation_id) ?? null,
+      event_type: asString(data.event_type) ?? "message_received",
+      source: asString(data.source) ?? "dash_sync",
+    },
+  };
+}
+
 async function handleDashSync(
   supabase: SupabaseClient,
   payload: DashSyncRequest,
@@ -499,6 +554,20 @@ async function handleDashSync(
         id,
         project_id: projectId,
         auto_created_project: autoCreated,
+      };
+    }
+
+    case "record_reactive_telemetry": {
+      const telemetryPayload = buildReactiveTelemetryPayload(payload.data);
+      await upsertRow(supabase, "portfolio_items", telemetryPayload);
+
+      return {
+        action: payload.action,
+        table: "portfolio_items",
+        id: telemetryPayload.id,
+        project_id: null,
+        agent_url_key: telemetryPayload.metadata.agent_url_key,
+        recorded_at: telemetryPayload.last_activity,
       };
     }
   }

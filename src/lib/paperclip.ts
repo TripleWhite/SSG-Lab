@@ -12,6 +12,7 @@ import {
   getMatches as getSupabaseMatches,
   getSourcingResults as getSupabaseSourcingResults,
 } from "./business-data";
+import { createReactiveTelemetryId } from "./dash-sync";
 import {
   compareHeartbeatRunsDesc,
   getHeartbeatRunActivityAt,
@@ -20,6 +21,11 @@ import {
   mapHeartbeatRunStatus,
   type RawHeartbeatRunStatus,
 } from "./heartbeat-runs";
+import {
+  getSupabaseClient,
+  hasSupabaseCredentials,
+  type PortfolioItemRow,
+} from "./supabase";
 
 const API_URL = process.env.PAPERCLIP_API_URL || "http://localhost:3000";
 const API_KEY = process.env.PAPERCLIP_API_KEY || "";
@@ -54,6 +60,7 @@ interface PaperclipCompanyDashboard {
 interface PaperclipAgent {
   id: string;
   name: string;
+  urlKey?: string;
   role: string;
   status: Agent["status"];
   title?: string | null;
@@ -119,6 +126,12 @@ interface PaperclipCostByAgent {
   subscriptionRunCount: number;
 }
 
+interface ReactiveAgentTelemetry {
+  agentUrlKey: string;
+  lastActivityAt: string;
+  channel?: string;
+}
+
 async function fetchPaperclip<T>(
   path: string,
   options: FetchPaperclipOptions = {}
@@ -149,6 +162,102 @@ function isCursorPage<T>(value: unknown): value is CursorPage<T> {
       "data" in value &&
       Array.isArray((value as CursorPage<T>).data)
   );
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function asNonEmptyString(value: unknown): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function getAgentUrlKey(agent: Pick<PaperclipAgent, "name" | "id" | "urlKey">): string {
+  const explicit = asNonEmptyString(agent.urlKey);
+  if (explicit) {
+    return explicit;
+  }
+
+  const normalized = agent.name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return normalized || agent.id;
+}
+
+function pickLatestIsoTimestamp(...values: Array<string | null | undefined>): string | undefined {
+  let latest: string | undefined;
+  let latestMs = Number.NEGATIVE_INFINITY;
+
+  for (const value of values) {
+    if (!value) {
+      continue;
+    }
+
+    const timestamp = new Date(value).getTime();
+    if (!Number.isFinite(timestamp) || timestamp <= latestMs) {
+      continue;
+    }
+
+    latest = value;
+    latestMs = timestamp;
+  }
+
+  return latest;
+}
+
+function mapReactiveTelemetrySummary(telemetry: ReactiveAgentTelemetry): string {
+  const channelLabel = telemetry.channel ? telemetry.channel.toUpperCase() : "reactive";
+  return `${channelLabel} message received`;
+}
+
+async function getReactiveAgentTelemetry(
+  agents: Array<Pick<PaperclipAgent, "id" | "name" | "urlKey">>
+): Promise<Map<string, ReactiveAgentTelemetry>> {
+  if (!hasSupabaseCredentials() || agents.length === 0) {
+    return new Map();
+  }
+
+  const telemetryIds = agents.map((agent) => createReactiveTelemetryId(getAgentUrlKey(agent)));
+  const { data, error } = await getSupabaseClient()
+    .from("portfolio_items")
+    .select("*")
+    .in("id", telemetryIds);
+
+  if (error) {
+    throw new Error(`Supabase reactive telemetry query failed: ${error.message}`);
+  }
+
+  const telemetry = new Map<string, ReactiveAgentTelemetry>();
+  for (const row of (data ?? []) as PortfolioItemRow[]) {
+    const metadata = asRecord(row.metadata);
+    if (metadata?.kind !== "agent_reactive_telemetry") {
+      continue;
+    }
+
+    const agentUrlKey = asNonEmptyString(metadata.agent_url_key);
+    const lastActivityAt = asNonEmptyString(row.last_activity);
+    if (!agentUrlKey || !lastActivityAt) {
+      continue;
+    }
+
+    telemetry.set(agentUrlKey, {
+      agentUrlKey,
+      lastActivityAt,
+      channel: asNonEmptyString(metadata.channel),
+    });
+  }
+
+  return telemetry;
 }
 
 export async function fetchPaperclipPaginated<T>(
@@ -313,9 +422,30 @@ export async function getHeartbeatRuns(
     ),
     getRawAgents(revalidateSeconds),
   ]);
+  const reactiveTelemetry = await getReactiveAgentTelemetry(agents);
   const agentNames = new Map(agents.map((agent) => [agent.id, agent.name]));
+  const reactiveRuns = agents.flatMap((agent) => {
+    const telemetry = reactiveTelemetry.get(getAgentUrlKey(agent));
+    if (!telemetry) {
+      return [];
+    }
 
-  return runs
+    return [
+      {
+        id: createReactiveTelemetryId(getAgentUrlKey(agent)),
+        agentId: agent.id,
+        agentName: agent.name,
+        status: "succeeded" as const,
+        startedAt: undefined,
+        activityAt: telemetry.lastActivityAt,
+        completedAt: undefined,
+        summary: mapReactiveTelemetrySummary(telemetry),
+        tokenUsage: 0,
+      },
+    ];
+  });
+
+  return [...runs
     .map((run) => ({
       id: run.id,
       agentId: run.agentId,
@@ -327,6 +457,7 @@ export async function getHeartbeatRuns(
       summary: formatRunSummary(run),
       tokenUsage: getRunTokenUsage(run),
     }))
+    , ...reactiveRuns]
     .sort(compareHeartbeatRunsDesc);
 }
 
@@ -351,10 +482,11 @@ export async function getAgentCosts(
 export async function getAgents(
   revalidateSeconds = DEFAULT_REVALIDATE_SECONDS
 ): Promise<Agent[]> {
-  const [agents, runs, costs] = await Promise.all([
-    getRawAgents(revalidateSeconds),
+  const agents = await getRawAgents(revalidateSeconds);
+  const [runs, costs, reactiveTelemetry] = await Promise.all([
     getHeartbeatRuns(DEFAULT_HEARTBEAT_RUN_LIMIT, revalidateSeconds),
     getAgentCosts(revalidateSeconds),
+    getReactiveAgentTelemetry(agents),
   ]);
   const costByAgent = new Map(costs.map((entry) => [entry.agentId, entry]));
   const now = new Date();
@@ -380,6 +512,8 @@ export async function getAgents(
         latestStartedRun?.startedAt && intervalSec
           ? new Date(new Date(latestStartedRun.startedAt).getTime() + intervalSec * 1000).toISOString()
           : undefined;
+      const lastReactiveActivityAt =
+        reactiveTelemetry.get(getAgentUrlKey(agent))?.lastActivityAt;
 
       return {
         id: agent.id,
@@ -387,7 +521,11 @@ export async function getAgents(
         role: agent.role,
         status: agent.status,
         adapterType: agent.title ?? agent.role,
-        lastHeartbeat: latestStartedRun?.startedAt ?? agent.lastHeartbeatAt ?? undefined,
+        lastHeartbeat: pickLatestIsoTimestamp(
+          latestStartedRun?.startedAt,
+          agent.lastHeartbeatAt ?? undefined,
+          lastReactiveActivityAt,
+        ),
         nextHeartbeat,
         todayRuns: todayRuns.length,
         tokenUsageToday: todayRuns.reduce((sum, run) => sum + run.tokenUsage, 0),

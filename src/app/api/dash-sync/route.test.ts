@@ -126,10 +126,79 @@ describe("POST /api/dash-sync", () => {
       error: {
         code: "invalid_request",
         message:
-          "action must be one of upsert_project, upsert_sourcing, upsert_match.",
+          "action must be one of upsert_project, upsert_sourcing, upsert_match, record_reactive_telemetry.",
       },
     });
     expect(mockCreateClient).not.toHaveBeenCalled();
+  });
+
+  it("records reactive agent telemetry in portfolio_items with a stable row id", async () => {
+    const upsertSpy = vi.fn().mockResolvedValue({ error: null });
+    mockCreateClient.mockReturnValue(
+      createSupabaseClient({
+        upsert: upsertSpy,
+      }),
+    );
+
+    const { POST, createReactiveTelemetryId } = await importRouteModule();
+
+    const response = await POST(
+      new Request("https://dash.example.com/api/dash-sync", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer dash-secret",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "record_reactive_telemetry",
+          mimir_entity_id: "reactive-agent:feishu-bot",
+          data: {
+            agent_url_key: "feishu-bot",
+            channel: "feishu",
+            conversation_id: "chat-1",
+            event_type: "message_received",
+            occurred_at: "2026-04-03T10:00:00.000Z",
+            source: "openclaw_message_received_hook",
+          },
+        }),
+      }),
+    );
+
+    const telemetryId = createReactiveTelemetryId("feishu-bot");
+
+    expect(upsertSpy).toHaveBeenCalledWith({
+      table: "portfolio_items",
+      values: {
+        id: telemetryId,
+        project_id: null,
+        status: "active",
+        next_followup_at: null,
+        last_activity: "2026-04-03T10:00:00.000Z",
+        notes: null,
+        metadata: {
+          kind: "agent_reactive_telemetry",
+          agent_url_key: "feishu-bot",
+          channel: "feishu",
+          conversation_id: "chat-1",
+          event_type: "message_received",
+          source: "openclaw_message_received_hook",
+        },
+      },
+      options: { onConflict: "id" },
+    });
+
+    expect(response.status).toBe(200);
+    expect(await readJson(response)).toEqual({
+      status: "ok",
+      result: {
+        action: "record_reactive_telemetry",
+        table: "portfolio_items",
+        id: telemetryId,
+        project_id: null,
+        agent_url_key: "feishu-bot",
+        recorded_at: "2026-04-03T10:00:00.000Z",
+      },
+    });
   });
 
   it("upserts projects with deterministic ids and service-role credentials", async () => {

@@ -1,5 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const { mockGetSupabaseClient, mockHasSupabaseCredentials } = vi.hoisted(() => ({
+  mockGetSupabaseClient: vi.fn(),
+  mockHasSupabaseCredentials: vi.fn(),
+}));
+
+vi.mock("./supabase", async () => {
+  const actual = await vi.importActual<typeof import("./supabase")>("./supabase");
+
+  return {
+    ...actual,
+    getSupabaseClient: mockGetSupabaseClient,
+    hasSupabaseCredentials: mockHasSupabaseCredentials,
+  };
+});
+
 const ORIGINAL_ENV = process.env;
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -14,6 +29,31 @@ async function importPaperclipModule() {
   return import("./paperclip");
 }
 
+function createSupabaseClient(options?: {
+  portfolioItems?: () => Promise<{ data: unknown; error: { message: string } | null }>;
+}) {
+  return {
+    from(table: string) {
+      return {
+        select() {
+          return {
+            in() {
+              if (table !== "portfolio_items") {
+                throw new Error(`Unexpected Supabase table: ${table}`);
+              }
+
+              return options?.portfolioItems?.() ?? Promise.resolve({
+                data: [],
+                error: null,
+              });
+            },
+          };
+        },
+      };
+    },
+  };
+}
+
 describe("paperclip live result feeds", () => {
   beforeEach(() => {
     process.env = {
@@ -22,6 +62,8 @@ describe("paperclip live result feeds", () => {
       PAPERCLIP_API_KEY: "test-key",
       PAPERCLIP_COMPANY_ID: "company-1",
     };
+    mockHasSupabaseCredentials.mockReturnValue(false);
+    mockGetSupabaseClient.mockReset();
   });
 
   afterEach(() => {
@@ -449,6 +491,114 @@ describe("paperclip live result feeds", () => {
       name: "QA Engineer",
       status: "idle",
       monthlyRunCount: 4,
+    });
+  });
+
+  it("surfaces reactive telemetry for reactive agents on both freshness and activity feeds", async () => {
+    mockHasSupabaseCredentials.mockReturnValue(true);
+    mockGetSupabaseClient.mockReturnValue(
+      createSupabaseClient({
+        portfolioItems: async () => ({
+          data: [
+            {
+              id: "telemetry-1",
+              project_id: null,
+              status: "active",
+              next_followup_at: null,
+              last_activity: "2026-04-03T10:00:00.000Z",
+              notes: null,
+              metadata: {
+                kind: "agent_reactive_telemetry",
+                agent_url_key: "feishu-bot",
+                channel: "feishu",
+              },
+              created_at: "2026-04-03T10:00:00.000Z",
+              updated_at: "2026-04-03T10:00:00.000Z",
+            },
+          ],
+          error: null,
+        }),
+      }),
+    );
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            id: "agent-1",
+            name: "feishu-bot",
+            urlKey: "feishu-bot",
+            role: "gateway",
+            title: "Feishu Bot",
+            status: "idle",
+            lastHeartbeatAt: null,
+          },
+        ])
+      )
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            id: "agent-1",
+            name: "feishu-bot",
+            urlKey: "feishu-bot",
+            role: "gateway",
+            status: "idle",
+          },
+        ])
+      )
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            agentId: "agent-1",
+            agentName: "feishu-bot",
+            agentStatus: "idle",
+            costCents: 0,
+            inputTokens: 0,
+            outputTokens: 0,
+            subscriptionRunCount: 0,
+          },
+        ])
+      )
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            id: "agent-1",
+            name: "feishu-bot",
+            urlKey: "feishu-bot",
+            role: "gateway",
+            status: "idle",
+          },
+        ])
+      );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { getAgents, getHeartbeatRuns } = await importPaperclipModule();
+    const agents = await getAgents();
+    const runs = await getHeartbeatRuns(10);
+
+    expect(agents).toMatchObject([
+      {
+        id: "agent-1",
+        name: "feishu-bot",
+        lastHeartbeat: "2026-04-03T10:00:00.000Z",
+        todayRuns: 0,
+        tokenUsageToday: 0,
+      },
+    ]);
+    expect(runs[0]).toEqual({
+      id: expect.any(String),
+      agentId: "agent-1",
+      agentName: "feishu-bot",
+      status: "succeeded",
+      startedAt: undefined,
+      activityAt: "2026-04-03T10:00:00.000Z",
+      completedAt: undefined,
+      summary: "FEISHU message received",
+      tokenUsage: 0,
     });
   });
 });

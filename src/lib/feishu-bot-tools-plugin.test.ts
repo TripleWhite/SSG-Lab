@@ -28,14 +28,24 @@ async function registerTools() {
     string,
     { execute: (id: string, params: Record<string, unknown>) => Promise<unknown> }
   >();
+  const hooks = new Map<
+    string,
+    (
+      event: { timestamp?: number },
+      ctx: { channelId: string; conversationId?: string },
+    ) => Promise<void> | void
+  >();
 
   module.default.register({
     registerTool(tool) {
       tools.set(tool.name, tool);
     },
+    on(hookName, handler) {
+      hooks.set(hookName, handler);
+    },
   });
 
-  return { tools };
+  return { tools, hooks };
 }
 
 describe("feishu-bot workspace plugin", () => {
@@ -54,12 +64,13 @@ describe("feishu-bot workspace plugin", () => {
     vi.unstubAllGlobals();
   });
 
-  it("ships an auto-discoverable manifest and registers dash_sync", async () => {
+  it("ships an auto-discoverable manifest, dash_sync, and the reactive telemetry hook", async () => {
     const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as { id?: string };
-    const { tools } = await registerTools();
+    const { tools, hooks } = await registerTools();
 
     expect(manifest.id).toBe("feishu-bot-tools");
     expect(Array.from(tools.keys())).toEqual(["dash_sync"]);
+    expect(Array.from(hooks.keys())).toEqual(["message_received"]);
   });
 
   it("posts dash sync requests to the dashboard API", async () => {
@@ -184,6 +195,65 @@ describe("feishu-bot workspace plugin", () => {
       action: "upsert_project",
       status_code: 500,
       error: "Supabase projects upsert failed: write failed",
+    });
+  });
+
+  it("debounces reactive telemetry pings to at most once per minute", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ status: "ok", result: { id: "telemetry-1" } }));
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { hooks } = await registerTools();
+    const hook = hooks.get("message_received");
+
+    await hook?.(
+      { timestamp: Date.parse("2026-04-03T10:00:00.000Z") },
+      { channelId: "feishu", conversationId: "chat-1" },
+    );
+    await hook?.(
+      { timestamp: Date.parse("2026-04-03T10:00:30.000Z") },
+      { channelId: "feishu", conversationId: "chat-1" },
+    );
+    await hook?.(
+      { timestamp: Date.parse("2026-04-03T10:01:01.000Z") },
+      { channelId: "feishu", conversationId: "chat-1" },
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("https://dash.example.com/api/dash-sync");
+
+    const firstBody = JSON.parse(
+      String((fetchMock.mock.calls[0]?.[1] as RequestInit).body),
+    ) as Record<string, unknown>;
+    const secondBody = JSON.parse(
+      String((fetchMock.mock.calls[1]?.[1] as RequestInit).body),
+    ) as Record<string, unknown>;
+
+    expect(firstBody).toEqual({
+      action: "record_reactive_telemetry",
+      mimir_entity_id: "reactive-agent:feishu-bot",
+      data: {
+        agent_url_key: "feishu-bot",
+        channel: "feishu",
+        conversation_id: "chat-1",
+        event_type: "message_received",
+        occurred_at: "2026-04-03T10:00:00.000Z",
+        source: "openclaw_message_received_hook",
+      },
+    });
+    expect(secondBody).toEqual({
+      action: "record_reactive_telemetry",
+      mimir_entity_id: "reactive-agent:feishu-bot",
+      data: {
+        agent_url_key: "feishu-bot",
+        channel: "feishu",
+        conversation_id: "chat-1",
+        event_type: "message_received",
+        occurred_at: "2026-04-03T10:01:01.000Z",
+        source: "openclaw_message_received_hook",
+      },
     });
   });
 });
