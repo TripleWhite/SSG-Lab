@@ -494,7 +494,7 @@ describe("paperclip live result feeds", () => {
     });
   });
 
-  it("surfaces reactive telemetry for reactive agents on both freshness and activity feeds", async () => {
+  it("keeps reactive telemetry out of heartbeat analytics while surfacing it on the team feed", async () => {
     mockHasSupabaseCredentials.mockReturnValue(true);
     mockGetSupabaseClient.mockReturnValue(
       createSupabaseClient({
@@ -572,13 +572,38 @@ describe("paperclip live result feeds", () => {
             status: "idle",
           },
         ])
+      )
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            id: "agent-1",
+            name: "feishu-bot",
+            urlKey: "feishu-bot",
+            role: "gateway",
+            status: "idle",
+          },
+        ])
+      )
+      .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            id: "agent-1",
+            name: "feishu-bot",
+            urlKey: "feishu-bot",
+            role: "gateway",
+            status: "idle",
+          },
+        ])
       );
 
     vi.stubGlobal("fetch", fetchMock);
 
-    const { getAgents, getHeartbeatRuns } = await importPaperclipModule();
+    const { getAgents, getHeartbeatRuns, getTeamActivityRuns } = await importPaperclipModule();
     const agents = await getAgents();
-    const runs = await getHeartbeatRuns(10);
+    const heartbeatRuns = await getHeartbeatRuns(10);
+    const teamRuns = await getTeamActivityRuns(10);
 
     expect(agents).toMatchObject([
       {
@@ -589,7 +614,8 @@ describe("paperclip live result feeds", () => {
         tokenUsageToday: 0,
       },
     ]);
-    expect(runs[0]).toEqual({
+    expect(heartbeatRuns).toEqual([]);
+    expect(teamRuns[0]).toEqual({
       id: expect.any(String),
       agentId: "agent-1",
       agentName: "feishu-bot",
@@ -600,5 +626,86 @@ describe("paperclip live result feeds", () => {
       summary: "FEISHU message received",
       tokenUsage: 0,
     });
+  });
+
+  it("fails open to Paperclip data when reactive telemetry lookup errors", async () => {
+    mockHasSupabaseCredentials.mockReturnValue(true);
+    mockGetSupabaseClient.mockReturnValue(
+      createSupabaseClient({
+        portfolioItems: async () => ({
+          data: [],
+          error: { message: "supabase down" },
+        }),
+      }),
+    );
+
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const actualRun = {
+      id: "run-1",
+      agentId: "agent-1",
+      status: "succeeded",
+      startedAt: "2026-04-03T09:00:00.000Z",
+      finishedAt: "2026-04-03T09:02:00.000Z",
+      usageJson: { inputTokens: 10, outputTokens: 5 },
+    };
+    const actualAgent = {
+      id: "agent-1",
+      name: "feishu-bot",
+      urlKey: "feishu-bot",
+      role: "gateway",
+      title: "Feishu Bot",
+      status: "idle",
+      lastHeartbeatAt: "2026-04-03T09:00:00.000Z",
+    };
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse([actualAgent]))
+      .mockResolvedValueOnce(jsonResponse([actualRun]))
+      .mockResolvedValueOnce(jsonResponse([actualAgent]))
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            agentId: "agent-1",
+            agentName: "feishu-bot",
+            agentStatus: "idle",
+            costCents: 0,
+            inputTokens: 0,
+            outputTokens: 0,
+            subscriptionRunCount: 1,
+          },
+        ]),
+      )
+      .mockResolvedValueOnce(jsonResponse([actualAgent]))
+      .mockResolvedValueOnce(jsonResponse([actualRun]))
+      .mockResolvedValueOnce(jsonResponse([actualAgent]));
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { getAgents, getTeamActivityRuns } = await importPaperclipModule();
+
+    await expect(getAgents()).resolves.toMatchObject([
+      {
+        id: "agent-1",
+        lastHeartbeat: "2026-04-03T09:00:00.000Z",
+        todayRuns: 1,
+      },
+    ]);
+    await expect(getTeamActivityRuns(10)).resolves.toEqual([
+      {
+        id: "run-1",
+        agentId: "agent-1",
+        agentName: "feishu-bot",
+        status: "succeeded",
+        startedAt: "2026-04-03T09:00:00.000Z",
+        activityAt: "2026-04-03T09:00:00.000Z",
+        completedAt: "2026-04-03T09:02:00.000Z",
+        summary: "succeeded",
+        tokenUsage: 15,
+      },
+    ]);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Supabase reactive telemetry query failed: supabase down",
+    );
   });
 });

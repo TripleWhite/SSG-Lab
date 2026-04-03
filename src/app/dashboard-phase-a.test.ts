@@ -12,6 +12,7 @@ const {
   mockGetProjects,
   mockGetBusinessProjects,
   mockGetHeartbeatRuns,
+  mockGetTeamActivityRuns,
   mockGetEmployees,
   mockGetProjectWorkItems,
   mockGetAgents,
@@ -30,6 +31,7 @@ const {
   mockGetProjects: vi.fn(),
   mockGetBusinessProjects: vi.fn(),
   mockGetHeartbeatRuns: vi.fn(),
+  mockGetTeamActivityRuns: vi.fn(),
   mockGetEmployees: vi.fn(),
   mockGetProjectWorkItems: vi.fn(),
   mockGetAgents: vi.fn(),
@@ -90,6 +92,7 @@ vi.mock("@/lib/paperclip", () => ({
   getProjects: mockGetProjects,
   getBusinessProjects: mockGetBusinessProjects,
   getHeartbeatRuns: mockGetHeartbeatRuns,
+  getTeamActivityRuns: mockGetTeamActivityRuns,
   getEmployees: mockGetEmployees,
   getProjectWorkItems: mockGetProjectWorkItems,
   getAgents: mockGetAgents,
@@ -178,6 +181,15 @@ describe("dashboard phase A coverage", () => {
       },
     ]);
     mockGetHeartbeatRuns.mockResolvedValue([
+      {
+        activityAt: "2026-04-01T08:00:00.000Z",
+        agentName: "Frontend Engineer",
+        summary: "Synced section badge rollout",
+        status: "succeeded",
+        tokenUsage: 3210,
+      },
+    ]);
+    mockGetTeamActivityRuns.mockResolvedValue([
       {
         activityAt: "2026-04-01T08:00:00.000Z",
         agentName: "Frontend Engineer",

@@ -234,7 +234,8 @@ async function getReactiveAgentTelemetry(
     .in("id", telemetryIds);
 
   if (error) {
-    throw new Error(`Supabase reactive telemetry query failed: ${error.message}`);
+    console.warn(`Supabase reactive telemetry query failed: ${error.message}`);
+    return new Map();
   }
 
   const telemetry = new Map<string, ReactiveAgentTelemetry>();
@@ -422,8 +423,33 @@ export async function getHeartbeatRuns(
     ),
     getRawAgents(revalidateSeconds),
   ]);
-  const reactiveTelemetry = await getReactiveAgentTelemetry(agents);
   const agentNames = new Map(agents.map((agent) => [agent.id, agent.name]));
+
+  return runs
+    .map((run) => ({
+      id: run.id,
+      agentId: run.agentId,
+      agentName: agentNames.get(run.agentId) ?? "Unknown Agent",
+      status: mapHeartbeatRunStatus(run.status),
+      startedAt: run.startedAt ?? undefined,
+      activityAt: getHeartbeatRunActivityAt(run),
+      completedAt: run.finishedAt ?? undefined,
+      summary: formatRunSummary(run),
+      tokenUsage: getRunTokenUsage(run),
+    }))
+    .sort(compareHeartbeatRunsDesc);
+}
+
+export async function getTeamActivityRuns(
+  limit = DEFAULT_HEARTBEAT_RUN_LIMIT,
+  revalidateSeconds = DEFAULT_REVALIDATE_SECONDS
+): Promise<HeartbeatRun[]> {
+  const agents = await getRawAgents(revalidateSeconds);
+  const [runs, reactiveTelemetry] = await Promise.all([
+    getHeartbeatRuns(limit, revalidateSeconds),
+    getReactiveAgentTelemetry(agents),
+  ]);
+
   const reactiveRuns = agents.flatMap((agent) => {
     const telemetry = reactiveTelemetry.get(getAgentUrlKey(agent));
     if (!telemetry) {
@@ -445,20 +471,7 @@ export async function getHeartbeatRuns(
     ];
   });
 
-  return [...runs
-    .map((run) => ({
-      id: run.id,
-      agentId: run.agentId,
-      agentName: agentNames.get(run.agentId) ?? "Unknown Agent",
-      status: mapHeartbeatRunStatus(run.status),
-      startedAt: run.startedAt ?? undefined,
-      activityAt: getHeartbeatRunActivityAt(run),
-      completedAt: run.finishedAt ?? undefined,
-      summary: formatRunSummary(run),
-      tokenUsage: getRunTokenUsage(run),
-    }))
-    , ...reactiveRuns]
-    .sort(compareHeartbeatRunsDesc);
+  return [...runs, ...reactiveRuns].sort(compareHeartbeatRunsDesc);
 }
 
 export async function getAgentCosts(

@@ -6,6 +6,7 @@ const {
   mockRequireBoard,
   mockGetDashboardStats,
   mockGetHeartbeatRuns,
+  mockGetTeamActivityRuns,
   mockGetAgentCosts,
   mockGetAgents,
   mockGetProjects,
@@ -14,6 +15,7 @@ const {
   mockRequireBoard: vi.fn(),
   mockGetDashboardStats: vi.fn(),
   mockGetHeartbeatRuns: vi.fn(),
+  mockGetTeamActivityRuns: vi.fn(),
   mockGetAgentCosts: vi.fn(),
   mockGetAgents: vi.fn(),
   mockGetProjects: vi.fn(),
@@ -31,6 +33,7 @@ vi.mock("@/lib/auth", () => ({
 vi.mock("@/lib/paperclip", () => ({
   getDashboardStats: mockGetDashboardStats,
   getHeartbeatRuns: mockGetHeartbeatRuns,
+  getTeamActivityRuns: mockGetTeamActivityRuns,
   getAgentCosts: mockGetAgentCosts,
   getAgents: mockGetAgents,
   getProjects: mockGetProjects,
@@ -52,6 +55,7 @@ describe("dashboard routes do not leak internal fallback content", () => {
     mockRequireBoard.mockResolvedValue(undefined);
     mockGetDashboardStats.mockRejectedValue(new Error("stats unavailable"));
     mockGetHeartbeatRuns.mockRejectedValue(new Error("runs unavailable"));
+    mockGetTeamActivityRuns.mockRejectedValue(new Error("runs unavailable"));
     mockGetAgentCosts.mockRejectedValue(new Error("costs unavailable"));
     mockGetAgents.mockRejectedValue(new Error("agents unavailable"));
     mockGetProjects.mockRejectedValue(new Error("projects unavailable"));

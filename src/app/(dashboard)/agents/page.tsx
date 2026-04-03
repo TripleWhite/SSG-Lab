@@ -11,7 +11,7 @@ import {
   isSameDay,
   truncateText,
 } from "@/lib/format";
-import { getAgents, getHeartbeatRuns } from "@/lib/paperclip";
+import { getAgents, getTeamActivityRuns } from "@/lib/paperclip";
 
 export const revalidate = 15;
 
@@ -38,7 +38,7 @@ function mapTimelineStatus(status: string): "ok" | "slow" | "missed" {
 export default async function AgentsPage() {
   const [agentsResult, runsResult] = await Promise.allSettled([
     getAgents(15),
-    getHeartbeatRuns(40, 15),
+    getTeamActivityRuns(40, 15),
   ]);
   const isFallback =
     agentsResult.status === "rejected" || runsResult.status === "rejected";
