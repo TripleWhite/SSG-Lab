@@ -215,6 +215,141 @@ describe("POST /api/dash-sync", () => {
     });
   });
 
+  it("reuses the same deterministic id when the same mimir_entity_id is sent twice", async () => {
+    const upsertSpy = vi.fn().mockResolvedValue({ error: null });
+    mockCreateClient.mockReturnValue(
+      createSupabaseClient({
+        upsert: upsertSpy,
+      }),
+    );
+
+    const {
+      POST,
+      DEFAULT_DASH_SYNC_UUID_NAMESPACE,
+      createDeterministicUuid,
+    } = await importRouteModule();
+
+    const request = () =>
+      POST(
+        new Request("https://dash.example.com/api/dash-sync", {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer dash-secret",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "upsert_project",
+            mimir_entity_id: "entity-project-repeat-1",
+            data: {
+              name: "Signal Forge",
+              industry: "Dev Tools",
+            },
+          }),
+        }),
+      );
+
+    const firstResponse = await request();
+    const secondResponse = await request();
+    const deterministicId = createDeterministicUuid(
+      DEFAULT_DASH_SYNC_UUID_NAMESPACE,
+      "entity-project-repeat-1",
+    );
+
+    expect(upsertSpy).toHaveBeenNthCalledWith(1, {
+      table: "projects",
+      values: {
+        id: deterministicId,
+        name: "Signal Forge",
+        industry: "Dev Tools",
+        stage: null,
+        status: "active",
+        founder_name: null,
+        founder_contact: null,
+        description: null,
+        source: "dash_sync",
+        metadata: {},
+      },
+      options: { onConflict: "id" },
+    });
+    expect(upsertSpy).toHaveBeenNthCalledWith(2, {
+      table: "projects",
+      values: {
+        id: deterministicId,
+        name: "Signal Forge",
+        industry: "Dev Tools",
+        stage: null,
+        status: "active",
+        founder_name: null,
+        founder_contact: null,
+        description: null,
+        source: "dash_sync",
+        metadata: {},
+      },
+      options: { onConflict: "id" },
+    });
+    expect(firstResponse.status).toBe(200);
+    expect(secondResponse.status).toBe(200);
+    expect(await readJson(firstResponse)).toEqual({
+      status: "ok",
+      result: {
+        action: "upsert_project",
+        table: "projects",
+        id: deterministicId,
+        project_id: deterministicId,
+        auto_created_project: false,
+      },
+    });
+    expect(await readJson(secondResponse)).toEqual({
+      status: "ok",
+      result: {
+        action: "upsert_project",
+        table: "projects",
+        id: deterministicId,
+        project_id: deterministicId,
+        auto_created_project: false,
+      },
+    });
+  });
+
+  it("returns dash_sync_failed when Supabase upsert fails", async () => {
+    mockCreateClient.mockReturnValue(
+      createSupabaseClient({
+        upsert: async () => ({
+          error: {
+            message: "write failed",
+          },
+        }),
+      }),
+    );
+
+    const { POST } = await importRouteModule();
+    const response = await POST(
+      new Request("https://dash.example.com/api/dash-sync", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer dash-secret",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "upsert_project",
+          mimir_entity_id: "entity-project-error-1",
+          data: {
+            name: "Signal Forge",
+          },
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(500);
+    expect(await readJson(response)).toEqual({
+      status: "error",
+      error: {
+        code: "dash_sync_failed",
+        message: "Supabase projects upsert failed: write failed",
+      },
+    });
+  });
+
   it("auto-creates a project when sourcing sync references a new project name", async () => {
     const upsertSpy = vi.fn().mockResolvedValue({ error: null });
     mockCreateClient.mockReturnValue(
