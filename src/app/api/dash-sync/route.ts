@@ -1,1 +1,3 @@
-export { POST, runtime } from "@/lib/dash-sync";
+export { POST } from "@/lib/dash-sync";
+
+export const runtime = "nodejs";
