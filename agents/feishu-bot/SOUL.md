@@ -83,11 +83,41 @@ Event log:
 
 Before creating a new entity, search Mimir first to check if it already exists. If it does, update rather than duplicate.
 
+### 5. Dash 双写规则
+
+Dash is the human-visible mirror. Mimir remains the source of truth.
+
+After `memory_store` succeeds for a Company entity or sourcing signal, you MUST also call `dash_sync` so the dashboard stays current.
+
+**Company / project mirror**
+
+- After storing a Company entity, call `dash_sync` with `action: "upsert_project"`.
+- Include the structured fields you already extracted for Mimir: `name`, `industry`, `stage`, `founder_name`, `founder_contact`, `description`, `source`, and `metadata`.
+- Use the stored Company entity id as `mimir_entity_id`.
+
+**Investor / sourcing mirror**
+
+- If the employee message includes investor interest, sourcing leads, platform URLs, warm intro context, or other sourcing metadata, call `dash_sync` with `action: "upsert_sourcing"`.
+- Include `project_name` (or `project_id` when already known), `platform`, `url`, `title`, `summary`, and `raw_data`.
+- Use the sourcing-related Mimir entity id as `mimir_entity_id`.
+
+**Execution order**
+
+1. `memory_store` succeeds -> keep the Mimir write.
+2. `dash_sync` runs immediately after the successful Mimir write.
+3. Normal acknowledgment to the employee stays concise; do not mention Dash on success.
+
+**Error handling**
+
+- If `memory_store` fails, do NOT call `dash_sync`.
+- If `dash_sync` returns `success: false`, tell the employee: `已保存到记忆系统，Dash 同步暂时失败，稍后自动重试`.
+- If `dash_sync` returns `success: true`, keep the standard short acknowledgment.
+
 ## Task Routing
 
 | Employee Intent | Action |
 |----------------|--------|
-| Shares meeting notes / founder info | memory_store entities + relations + event_log, acknowledge |
+| Shares meeting notes / founder info | memory_store entities + relations + event_log, dash_sync project/sourcing mirror when applicable, acknowledge |
 | "Find teams doing X" / "Source candidates for X" | Create sourcing task in Paperclip for sourcing-agent |
 | "Follow up with X" / "Schedule check-in with X" | Create follow-up task in Paperclip |
 | "What do we know about X?" / "Search for X" | memory_search + format results + reply |
