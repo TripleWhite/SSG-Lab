@@ -4,6 +4,18 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_PATH="${SCRIPT_DIR}/bootstrap-openclaw-host.sh"
 
+assert_default_remote_user() {
+  if ! grep -Fq 'REMOTE_USER="${REMOTE_USER:-ubuntu}"' "$SCRIPT_PATH"; then
+    echo "expected bootstrap-openclaw-host.sh to default REMOTE_USER to ubuntu" >&2
+    exit 1
+  fi
+
+  if ! grep -Fq 'REMOTE_HOME="${REMOTE_HOME:-/home/${REMOTE_USER}}"' "$SCRIPT_PATH"; then
+    echo "expected bootstrap-openclaw-host.sh to derive REMOTE_HOME from REMOTE_USER" >&2
+    exit 1
+  fi
+}
+
 extract_function() {
   local function_name="$1"
 
@@ -57,7 +69,8 @@ assert_ref_checkout() {
   fi
 }
 
+assert_default_remote_user
 assert_ref_checkout "pinned-branch" "$first_sha"
 assert_ref_checkout "$second_sha" "$second_sha"
 
-echo "ok: install_openclaw_source handles branch and commit SHA refs"
+echo "ok: bootstrap-openclaw-host defaults to ubuntu and install_openclaw_source handles branch and commit SHA refs"

@@ -1,0 +1,19 @@
+{
+  "plugins": ["memory-mimir", "feishu-bot-tools"],
+  "memory-mimir": {
+    "apiUrl": "https://api.allinmimir.com",
+    "apiKey": "<mimir-api-key>",
+    "maxRecallItems": 25,
+    "maxRecallTokens": 2500,
+    "autoCapture": false,
+    "autoRecall": false,
+    "tools": [
+      "memory_store",
+      "memory_search",
+      "memory_graph",
+      "memory_update",
+      "memory_delete"
+    ]
+  },
+  "browser": false
+}

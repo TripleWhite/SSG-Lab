@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REMOTE_USER="${REMOTE_USER:-ec2-user}"
+REMOTE_USER="${REMOTE_USER:-ubuntu}"
 REMOTE_HOME="${REMOTE_HOME:-/home/${REMOTE_USER}}"
 OPENCLAW_REPO_URL="${OPENCLAW_REPO_URL:-https://github.com/openclaw/openclaw.git}"
 OPENCLAW_REPO_REF="${OPENCLAW_REPO_REF:-main}"
@@ -31,6 +31,8 @@ PAPERCLIP_API_KEY="${PAPERCLIP_API_KEY:-}"
 PAPERCLIP_COMPANY_ID="${PAPERCLIP_COMPANY_ID:-}"
 PAPERCLIP_SOURCING_PARENT_ISSUE_ID="${PAPERCLIP_SOURCING_PARENT_ISSUE_ID:-}"
 PAPERCLIP_MATCHING_PARENT_ISSUE_ID="${PAPERCLIP_MATCHING_PARENT_ISSUE_ID:-}"
+SSGLAB_API_URL="${SSGLAB_API_URL:-https://dash.ssgaccelerator.com}"
+DASH_SYNC_API_KEY="${DASH_SYNC_API_KEY:-}"
 
 pkg_install() {
   if command -v dnf >/dev/null 2>&1; then
@@ -150,6 +152,14 @@ write_state_env() {
     if [[ -n "$PAPERCLIP_MATCHING_PARENT_ISSUE_ID" ]]; then
       printf 'PAPERCLIP_MATCHING_PARENT_ISSUE_ID=%s\n' "$PAPERCLIP_MATCHING_PARENT_ISSUE_ID"
     fi
+
+    if [[ -n "$SSGLAB_API_URL" ]]; then
+      printf 'SSGLAB_API_URL=%s\n' "$SSGLAB_API_URL"
+    fi
+
+    if [[ -n "$DASH_SYNC_API_KEY" ]]; then
+      printf 'DASH_SYNC_API_KEY=%s\n' "$DASH_SYNC_API_KEY"
+    fi
   } >"$OPENCLAW_ENV_FILE"
 
   chmod 600 "$OPENCLAW_ENV_FILE"
@@ -166,6 +176,20 @@ sync_agent_assets() {
 
     if [[ -n "$AGENT_SOURCE_ROOT" && -d "${AGENT_SOURCE_ROOT}/${agent_id}" ]]; then
       cp -a "${AGENT_SOURCE_ROOT}/${agent_id}/." "${OPENCLAW_WORKSPACE_ROOT}/${agent_id}/"
+    fi
+  done
+}
+
+fix_plugin_ownership() {
+  # OpenClaw >= 2026.3.28 blocks plugins owned by non-root users.
+  # Extensions installed by the bootstrap user must be chowned to root
+  # so the gateway's plugin loader trusts them.
+  local ext_dir=""
+  for ext_dir in \
+    "${OPENCLAW_STATE_DIR}/extensions/memory-mimir" \
+    "${OPENCLAW_WORKSPACE_ROOT}/feishu-bot/.openclaw/extensions/feishu-bot-tools"; do
+    if [[ -d "$ext_dir" ]]; then
+      sudo chown -R root:root "$ext_dir"
     fi
   done
 }
@@ -238,9 +262,18 @@ write_openclaw_config() {
       },
       agents: {
         defaults: {
-          model: {
-            primary: "kimi-coding/k2p5"
-          },
+          model: (
+            if ($hasMinimax | length) > 0 then
+              {
+                primary: "kimi-coding/k2p5",
+                fallbacks: ["minimax/MiniMax-M2.7"]
+              }
+            else
+              {
+                primary: "kimi-coding/k2p5"
+              }
+            end
+          ),
           models: {
             "kimi-coding/k2p5": {
               alias: "Kimi K2.5"
@@ -322,8 +355,16 @@ write_openclaw_config() {
               },
               "matching-agent-tools": {
                 enabled: true
+              },
+              "feishu-bot-tools": {
+                enabled: true
               }
             },
+            allow: [
+              "memory-mimir",
+              "matching-agent-tools",
+              "feishu-bot-tools"
+            ],
             slots: {
               memory: "memory-mimir"
             }
@@ -334,8 +375,15 @@ write_openclaw_config() {
             entries: {
               "matching-agent-tools": {
                 enabled: true
+              },
+              "feishu-bot-tools": {
+                enabled: true
               }
-            }
+            },
+            allow: [
+              "matching-agent-tools",
+              "feishu-bot-tools"
+            ]
           }
         end
       )
@@ -452,6 +500,7 @@ fi
 
 write_state_env
 sync_agent_assets
+fix_plugin_ownership
 install_openclaw_source
 
 # Patch Anthropic SDK MCP helper to guard missing inputSchema (MIM-520/MIM-534).

@@ -3,7 +3,9 @@ import path from "path";
 import { describe, expect, it } from "vitest";
 
 const repoRoot = path.resolve(__dirname, "../..");
+const feishuAgentsPath = path.join(repoRoot, "agents/feishu-bot/AGENTS.md");
 const feishuHeartbeatPath = path.join(repoRoot, "agents/feishu-bot/HEARTBEAT.md");
+const feishuSettingsPath = path.join(repoRoot, "agents/feishu-bot/settings.json");
 const feishuSoulPath = path.join(repoRoot, "agents/feishu-bot/SOUL.md");
 
 function readFile(filePath: string): string {
@@ -54,5 +56,19 @@ describe("feishu-bot instruction hardening", () => {
     expect(soul).toContain(
       "dash_sync project/sourcing mirror when applicable, acknowledge",
     );
+  });
+
+  it("tracks the feishu-bot workspace contract for Paperclip routing and dash sync", () => {
+    const agents = readFile(feishuAgentsPath);
+    const settings = JSON.parse(readFile(feishuSettingsPath)) as {
+      plugins?: string[];
+      browser?: boolean;
+    };
+
+    expect(agents).toContain("route functional tasks to specialized agents via Paperclip");
+    expect(agents).toContain("Dash Sync API");
+    expect(agents).toContain("Reactive -- triggered by incoming Paperclip tasks");
+    expect(settings.plugins).toEqual(["memory-mimir", "feishu-bot-tools"]);
+    expect(settings.browser).toBe(false);
   });
 });
