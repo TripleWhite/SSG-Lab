@@ -1,6 +1,6 @@
 # portfolio-agent — Heartbeat Procedure
 
-The portfolio-agent runs when the EC2-B daily cron dispatch fires and on manual
+The portfolio-agent runs on its daily Paperclip heartbeat and on manual
 portfolio-analysis tasks. Its job is to scan active projects, assess health,
 and produce actionable recommendations without taking unapproved action on
 behalf of employees.
@@ -12,22 +12,24 @@ behalf of employees.
 - Load `SOUL.md`
 - Load `skills/deal-flow/SKILL.md`
 - Load `skills/resource-map/SKILL.md`
+- Load `runbooks/paperclip-api.sh`
 - Capture the current date for overdue and stall calculations
 
 ### 2. Get Work
 
 - If this run was triggered from a specific project request, prioritize that
   scope first
-- Use shared `task_list` for the daily full sweep of active portfolio projects
+- Use the Paperclip projects/issues APIs for the daily full sweep of active
+  portfolio projects
 - If the run was triggered for a specific project, narrow scope to that
   single project instead of scanning the whole portfolio
 - Group projects by current owner / employee when preparing digests
 
 ### 3. Load Project Context
 
-For each project, collect:
+For each project, collect via the Paperclip API:
 
-- Current issue fields, labels, assignee, and stage markers via `task_get`
+- Current issue fields, labels, assignee, and stage markers
 - Recent comments, subtasks, and due dates
 - Last 30 days of relevant `event_log` context from Mimir
 - New sourcing or matching updates that affect the project
@@ -138,12 +140,13 @@ All entries use `confidence=high`, `source=agent_curated`.
 - Build notify payloads with `contracts/feishu-notify.schema.json`
 - Use `prompts/FEISHU_NOTIFY_PLAYBOOK.md` for daily digests, urgent alerts, and
   Board summaries
-- Use shared `notify` to deliver `type="portfolio_update"` payloads after local
-  schema validation
+- Deliver `type="portfolio_update"` payloads through the Feishu HTTP API after
+  local schema validation
 - Send urgent alerts immediately for overdue or high-risk items, then deliver
   the normal daily digests
-- Include only schema-valid button actions. `feishu-bot` owns callback routing
-  and will convert confirmed button clicks into Paperclip tasks for this agent
+- Include only schema-valid button actions. When an employee confirms a follow
+  up or review action, create the resulting Paperclip task directly from this
+  runtime instead of routing through `feishu-bot`
 - Do not call `schedule_followup` until an employee confirms or the workflow
   explicitly requires automatic task creation
 - Comment on the triggering Paperclip task with a concise summary when needed

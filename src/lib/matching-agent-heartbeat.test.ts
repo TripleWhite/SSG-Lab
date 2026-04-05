@@ -11,6 +11,18 @@ const sourcingHeartbeatPath = path.join(
   repoRoot,
   "agents/sourcing-agent/HEARTBEAT.md"
 );
+const matchingSettingsPath = path.join(
+  repoRoot,
+  "agents/matching-agent/settings.json"
+);
+const portfolioHeartbeatPath = path.join(
+  repoRoot,
+  "agents/portfolio-agent/HEARTBEAT.md"
+);
+const portfolioSettingsPath = path.join(
+  repoRoot,
+  "agents/portfolio-agent/settings.json"
+);
 const bootstrapScriptPath = path.join(
   repoRoot,
   "scripts/release/bootstrap-openclaw-host.sh"
@@ -36,6 +48,9 @@ describe("matching-agent HEARTBEAT.md", () => {
     );
     expect(heartbeat).toContain("\"maxResults\": 20");
     expect(heartbeat).toContain("\"minScore\": 0.35");
+    expect(heartbeat).toContain(
+      "Do NOT\n  exit early on `memory_search` failure",
+    );
     expect(heartbeat).not.toContain("\"types\": [\"event_log\"]");
     expect(heartbeat).not.toContain("\"time_range\": \"YYYY-MM-DD..YYYY-MM-DD\"");
     expect(heartbeat).not.toContain("\"limit\": 20");
@@ -54,6 +69,26 @@ describe("matching-agent HEARTBEAT.md", () => {
     expect(heartbeat).toContain("\"entity\": \"MegaCorp\"");
     expect(heartbeat).toContain("Do not wrap the payload inside `{\"Match\": ...}`");
   });
+
+  it("documents the Paperclip-local runtime instead of the old OpenClaw tool contract", () => {
+    const heartbeat = readFile(matchingHeartbeatPath);
+    const settings = JSON.parse(readFile(matchingSettingsPath)) as {
+      browser?: boolean;
+      tools?: Array<{ name?: string }>;
+      plugins?: string[];
+    };
+
+    expect(heartbeat).not.toContain("DO NOT USE THE `read` TOOL");
+    expect(heartbeat).toContain("Load `SOUL.md` from your workspace");
+    expect(heartbeat).toContain("The live Mimir search contract only accepts");
+    expect(heartbeat).toContain("Feishu HTTP API");
+    expect(heartbeat).not.toContain("send_feishu_card");
+    expect(settings.plugins).toBeUndefined();
+    expect(settings.tools?.map((tool) => tool.name)).toEqual([
+      "graph_traverse",
+      "store_match",
+    ]);
+  });
 });
 
 describe("sourcing-agent HEARTBEAT.md", () => {
@@ -69,6 +104,31 @@ describe("sourcing-agent HEARTBEAT.md", () => {
     expect(heartbeat).toMatch(
       /Do not wrap the result payload inside `\{"SourcingResult": \.\.\.\}`\.\s+The/
     );
+  });
+});
+
+describe("portfolio-agent HEARTBEAT.md", () => {
+  it("documents the daily Paperclip heartbeat runtime instead of cron-era OpenClaw helpers", () => {
+    const heartbeat = readFile(portfolioHeartbeatPath);
+    const settings = JSON.parse(readFile(portfolioSettingsPath)) as {
+      tools?: Array<{ name?: string }>;
+      plugins?: string[];
+    };
+
+    expect(heartbeat).toContain("daily Paperclip heartbeat");
+    expect(heartbeat).toContain("Paperclip projects/issues APIs");
+    expect(heartbeat).toContain("via the Paperclip API");
+    expect(heartbeat).toContain("Feishu HTTP API");
+    expect(heartbeat).not.toContain("EC2-B daily cron dispatch");
+    expect(heartbeat).not.toContain("shared `task_list`");
+    expect(heartbeat).not.toContain("via `task_get`");
+    expect(heartbeat).not.toContain("shared `notify`");
+    expect(settings.plugins).toBeUndefined();
+    expect(settings.tools?.map((tool) => tool.name)).toEqual([
+      "generate_plan",
+      "schedule_followup",
+      "list_resources",
+    ]);
   });
 });
 

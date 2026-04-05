@@ -1,10 +1,3 @@
-# CRITICAL — DO NOT USE THE `read` TOOL
-
-You do NOT have a `read` or `write` file tool. If you see a `read` tool in your
-tool list, DO NOT CALL IT. It will fail. All information you need is already in
-this prompt. There are NO files you need to read. Proceed directly to your
-execution plan below.
-
 # Matching Agent Heartbeat
 
 Run every 30 minutes. Each heartbeat scans for new content in Mimir,
@@ -13,7 +6,7 @@ signals in the parent, scores potential matches, deduplicates, and notifies.
 
 ## Tools Available
 
-**memory-mimir plugin** (standard operations):
+**Mimir HTTP API** (standard operations):
 - `memory_search` — search entities and event_logs by query
 - `memory_graph` — basic entity graph exploration (entities, hops, max_results)
 - `memory_store` — store new entities and notes
@@ -25,20 +18,19 @@ signals in the parent, scores potential matches, deduplicates, and notifies.
   entity_types filters (calls Mimir /api/v1/graph/traverse)
 - `store_match` — persist MATCH_FOUND relation in Mimir; structured Paperclip
   result issues are written separately after the Mimir write succeeds
-- `send_feishu_card` — send interactive card to SSG Feishu group chat
 
-## Contracts (all inline — do NOT attempt to read any files)
+## Contracts
 
-All schemas you need are defined inline in this document and in the tool
-`input_schema` definitions already available in your tool list. Specifically:
+Load the matching workspace files before acting. The critical schemas and
+reference files are:
 
 - **Subagent contract** — the template for per-project subagents is described
   in step 4 of the execution plan below
-- **Tool payload schemas** — `store_match`, `send_feishu_card`, and
-  `graph_traverse` all have their `input_schema` defined in your tool
-  definitions; follow those schemas exactly
-- **Match scoring** — the 6 match types and 4-dimension scoring rubric are
-  in SOUL.md (already injected into your prompt)
+- **Tool payload schemas** — `store_match` and `graph_traverse` have their
+  `input_schema` defined in your tool definitions; follow those schemas exactly
+- **Feishu notify shape** — `contracts/feishu-notify.schema.json`
+- **Match scoring** — the 6 match types and 4-dimension scoring rubric are in
+  `SOUL.md`
 - **Heartbeat exit metrics** — the reporting format is in step 9 below
 
 ## Secret Handling
@@ -54,8 +46,9 @@ All schemas you need are defined inline in this document and in the tool
 
 ### 1. Identity and Context
 
-- All instructions (SOUL.md match types, scoring rubric, dedup rules) are
-  already in your system prompt — do NOT read any files
+- Load `SOUL.md` from your workspace before the first matching decision
+- Load `contracts/SUBAGENT_CONTRACT.md` before dispatching project subagents
+- Load `contracts/feishu-notify.schema.json` before building any Feishu payload
 - **YOUR FIRST TOOL CALL MUST BE `memory_search`** — go directly to step 2
 - If this is the first run, use 24 hours ago as baseline
 - For Paperclip API calls, use the paperclip-api helper script
@@ -64,7 +57,7 @@ All schemas you need are defined inline in this document and in the tool
 
 - `memory_search` requires a non-empty `query` string. Never call
   `memory_search({})` and never retry the same invalid payload twice
-- The live OpenClaw contract only accepts `query`, `maxResults`, and
+- The live Mimir search contract only accepts `query`, `maxResults`, and
   `minScore`. Do not send legacy fields such as `types`, `time_range`, or
   `limit`
 - Use this exact argument shape for the first call. Include the date range
@@ -86,8 +79,14 @@ All schemas you need are defined inline in this document and in the tool
 - Prioritize `agent_curated` (HIGH confidence) items over `auto_extracted`
 - If the tool returns a validation error about missing `query`, correct the
   arguments before retrying. Do not loop on the same invalid payload
-- **Early exit:** If no new content since last heartbeat, log "No new
-  content - skipping scan" and exit. Save tokens on quiet periods.
+- **Resilience:** If `memory_search` fails with a schema or runtime error
+  (e.g. `schema must be object or boolean`), log the error and **continue
+  to step 3** using `graph_traverse` as the primary discovery path. Do NOT
+  exit early on `memory_search` failure — the matching pipeline can operate
+  without it
+- **Early exit:** If `memory_search` succeeds but returns no new content
+  since last heartbeat, log "No new content - skipping scan" and exit.
+  Save tokens on quiet periods.
 
 ### 3. Get Active Projects and Local Context
 
@@ -266,14 +265,14 @@ a time per its `input_schema`.
 
 ### 8. Notify
 
-**HIGH confidence (>80%) only:** Call `send_feishu_card` to send an
-immediate notification to the SSG Feishu group chat.
+**HIGH confidence (>80%) only:** send an immediate notification to the SSG
+Feishu group chat via the Feishu HTTP API.
 
 - Ensure the structured Paperclip result issue already exists before sending
   the Feishu card so the operator can open the same record from the
   notification
 
-Payload must conform to the `send_feishu_card` tool schema. Example:
+Payload must conform to `contracts/feishu-notify.schema.json`. Example:
 
 ```json
 {
@@ -315,7 +314,7 @@ Payload must conform to the `send_feishu_card` tool schema. Example:
 
 **MEDIUM confidence (60-80%):** No individual Feishu notification. MEDIUM
 matches are stored in Mimir (step 7) and surfaced by portfolio-agent in its
-daily digest. Do not call `send_feishu_card` for MEDIUM matches.
+daily digest. Do not send a direct Feishu alert for MEDIUM matches.
 
 ### 9. Exit
 
