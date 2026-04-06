@@ -3,13 +3,13 @@
   "title": "Matching",
   "subtitle": "Resource matching suggestions — AI-ranked connections between portfolio companies, people, and resources.",
   "eyebrow": "Match Engine",
-  "generated_at": "2026-04-06T02:30:00Z",
+  "generated_at": "2026-04-06T07:21:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
         { "label": "Active Matches", "value": 0, "trend": "No pending matches yet", "icon": "target" },
-        { "label": "Portfolio Companies", "value": 1, "trend": "Available for matching", "icon": "briefcase" },
+        { "label": "Portfolio Companies", "value": 14, "trend": "Available for matching", "icon": "briefcase" },
         { "label": "Match Confidence", "value": "—", "trend": "Awaiting first match run", "icon": "zap" },
         { "label": "Resources Indexed", "value": "—", "trend": "Building resource graph", "icon": "globe" }
       ]
@@ -18,7 +18,7 @@
       "type": "alert",
       "severity": "blue",
       "title": "Matching engine warming up",
-      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 1 portfolio company (Regressor) is indexed and available for matching."
+      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 14 portfolio companies (10 invested, 4 Demo Day candidates) are indexed and available for matching across 12 sectors."
     },
     {
       "type": "section",
@@ -32,24 +32,77 @@
     },
     {
       "type": "section",
-      "title": "Available for Matching",
+      "title": "Potential Synergies",
+      "subtitle": "Cross-portfolio connections worth exploring",
       "blocks": [
         {
-          "type": "entity-card",
-          "entity": {
-            "name": "Regressor",
-            "type": "project",
-            "one_liner": "AI Agentic infrastructure for enterprises",
-            "badges": [
-              { "text": "Invested", "variant": "success" },
-              { "text": "Seed Round", "variant": "info" }
-            ],
-            "fields": [
-              { "label": "Sector", "value": "AI Infrastructure" },
-              { "label": "CEO", "value": "Stephen Wang" }
-            ],
-            "href": "/pipeline/regressor"
-          }
+          "type": "card-list",
+          "items": [
+            {
+              "title": "ActionX AI + Nohi",
+              "subtitle": "In-agent advertising meets agent-native commerce",
+              "description": "ActionX's in-agent conversion SDK could power Nohi's merchant discovery with contextual ads. Both operate in the agent transaction layer.",
+              "badges": [
+                { "text": "Commerce Synergy", "variant": "info" }
+              ]
+            },
+            {
+              "title": "Regressor + Napkin Labs",
+              "subtitle": "Enterprise AI infrastructure meets hardware engineering agents",
+              "description": "Regressor's Data Skills platform could provide Napkin Labs agents with enterprise-grade data connectors and multi-modal parsing.",
+              "badges": [
+                { "text": "Infra Synergy", "variant": "info" }
+              ]
+            },
+            {
+              "title": "Fish Audio + Storyverse",
+              "subtitle": "Voice generation meets cinematic production",
+              "description": "Fish Audio's TTS and voice cloning could power Storyverse's AI film crew with hyper-realistic character voices.",
+              "badges": [
+                { "text": "Content Synergy", "variant": "info" }
+              ]
+            },
+            {
+              "title": "ALIV + Linear Game",
+              "subtitle": "Live streaming 3D interactions meets interactive gaming",
+              "description": "ALIV's live internet commerce layer and Linear Game's video-to-gameplay tech share interactive media foundations.",
+              "badges": [
+                { "text": "Media Synergy", "variant": "info" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Available for Matching",
+      "subtitle": "14 companies across 12 sectors",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            { "key": "company", "label": "Company" },
+            { "key": "sector", "label": "Sector" },
+            { "key": "stage", "label": "Stage" },
+            { "key": "ceo", "label": "CEO/Founder" }
+          ],
+          "rows": [
+            { "company": "Regressor", "sector": "AI Infrastructure", "stage": "Invested", "ceo": "Stephen Wang" },
+            { "company": "Fish Audio", "sector": "Audio", "stage": "Invested", "ceo": "Rissa" },
+            { "company": "Linear Game", "sector": "Gaming", "stage": "Invested", "ceo": "Heath Xiao" },
+            { "company": "Ouraca", "sector": "Education", "stage": "Invested", "ceo": "Kejia Li" },
+            { "company": "Napkin Labs", "sector": "Engineering", "stage": "Invested", "ceo": "Alex Fu" },
+            { "company": "Nohi", "sector": "E-commerce", "stage": "Invested", "ceo": "Tony Dai" },
+            { "company": "Virse.art", "sector": "Design", "stage": "Invested", "ceo": "YIFAN" },
+            { "company": "ActionX AI", "sector": "Advertising", "stage": "Invested", "ceo": "Shi Jie" },
+            { "company": "ALIV", "sector": "Streaming/AdTech", "stage": "Invested", "ceo": "Leo Huang" },
+            { "company": "Fuschia", "sector": "Manufacturing", "stage": "Invested", "ceo": "JN" },
+            { "company": "Novix", "sector": "Research", "stage": "Candidate", "ceo": "Yu Shi" },
+            { "company": "SoMe", "sector": "Social/Dating", "stage": "Candidate", "ceo": "Jinrong Qiu" },
+            { "company": "Storyverse", "sector": "Video", "stage": "Candidate", "ceo": "Jesse Z" },
+            { "company": "SYNAPUFF", "sector": "Smart Hardware", "stage": "Candidate", "ceo": "Jemmy LI" }
+          ]
         }
       ]
     }

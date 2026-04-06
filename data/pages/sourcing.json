@@ -3,15 +3,15 @@
   "title": "Sourcing",
   "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
   "eyebrow": "Deal Sourcing",
-  "generated_at": "2026-04-06T02:30:00Z",
+  "generated_at": "2026-04-06T07:21:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Total Leads", "value": 1, "icon": "search" },
+        { "label": "Total Leads", "value": 14, "icon": "search" },
         { "label": "Source Employees", "value": 1, "trend": "韩磊", "icon": "users" },
-        { "label": "Sectors Covered", "value": 1, "trend": "AI Infrastructure", "icon": "globe" },
-        { "label": "Conversion Rate", "value": "100%", "trend": "1 of 1 converted to portfolio", "icon": "target" }
+        { "label": "Sectors Covered", "value": 12, "trend": "AI, Audio, Gaming, Commerce +8", "icon": "globe" },
+        { "label": "Conversion Rate", "value": "71%", "trend": "10 of 14 converted to portfolio", "icon": "target" }
       ]
     },
     {
@@ -23,13 +23,169 @@
           "type": "card-list",
           "items": [
             {
+              "title": "ActionX AI",
+              "subtitle": "AI-native advertising infrastructure for in-agent conversion · Sourced by 韩磊",
+              "description": "Co-founder of RightBrain AI (Shi Jie), ex-MSRA and SenseTime. LLM-powered ad generation inside agent conversations with SDK/MCP integrations.",
+              "meta": "April 6, 2026 · Advertising · Pre-Seed · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Advertising", "variant": "default" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/actionx-ai"
+            },
+            {
+              "title": "ALIV",
+              "subtitle": "Autonomous commercial layer of live internet · Sourced by 韩磊",
+              "description": "Leo Huang building AI-driven 3D interactions for live streaming commerce. Pre-Seed stage.",
+              "meta": "April 6, 2026 · Streaming and AdTech · Pre-Seed · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Streaming/AdTech", "variant": "default" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/aliv"
+            },
+            {
+              "title": "Fish Audio",
+              "subtitle": "Premium AI voice generation platform · Sourced by 韩磊",
+              "description": "Former Meta/Amazon operator (Rissa) and NVIDIA CTO (Lengyue). 10M+ ARR, second-largest AI voice platform globally. OpenAudio S1 with emotional control.",
+              "meta": "April 6, 2026 · Audio · B+ Round · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Audio", "variant": "default" },
+                { "text": "B+", "variant": "info" }
+              ],
+              "href": "/pipeline/fish-audio"
+            },
+            {
+              "title": "Fuschia",
+              "subtitle": "AI-powered failure analysis for advanced manufacturing · Sourced by 韩磊",
+              "description": "JN leads multimodal reasoning for manufacturing quality. Pre-Seed stage.",
+              "meta": "April 6, 2026 · Manufacturing · Pre-Seed · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Manufacturing", "variant": "default" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/fuschia"
+            },
+            {
+              "title": "Linear Game",
+              "subtitle": "AI-native interactive video game platform · Sourced by 韩磊",
+              "description": "Heath Xiao turns video into gameplay. Series A stage — most advanced funding round in the portfolio.",
+              "meta": "April 6, 2026 · Gaming · Series A · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Gaming", "variant": "default" },
+                { "text": "Series A", "variant": "info" }
+              ],
+              "href": "/pipeline/linear-game"
+            },
+            {
+              "title": "Napkin Labs",
+              "subtitle": "AI agent platform for hardware engineering · Sourced by 韩磊",
+              "description": "Alex Fu building AI agents for hardware engineering and manufacturing workflows.",
+              "meta": "April 6, 2026 · Engineering · Seed Round · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Engineering", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/napkin-labs"
+            },
+            {
+              "title": "Nohi",
+              "subtitle": "Agent-native commerce platform · Sourced by 韩磊",
+              "description": "Tony Dai building AI that discovers, evaluates, and buys from merchants. Seed stage.",
+              "meta": "April 6, 2026 · E-commerce · Seed Round · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "E-commerce", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/nohi"
+            },
+            {
+              "title": "Novix",
+              "subtitle": "AI research agent for scientists · Sourced by 韩磊",
+              "description": "Yu Shi building an AI research agent targeting the scientific community. Demo Day candidate.",
+              "meta": "April 6, 2026 · Research · Seed Round · Demo Day candidate",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Research", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/novix"
+            },
+            {
+              "title": "Ouraca",
+              "subtitle": "AI-native lifelong learning platform · Sourced by 韩磊",
+              "description": "Kejia Li building A2A community platform for lifelong learning. Pre-A stage.",
+              "meta": "April 6, 2026 · Education · Pre-A Round · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Education", "variant": "default" },
+                { "text": "Pre-A", "variant": "info" }
+              ],
+              "href": "/pipeline/ouraca"
+            },
+            {
+              "title": "SoMe",
+              "subtitle": "AI-native social and dating platform · Sourced by 韩磊",
+              "description": "Jinrong Qiu building AI-powered matching that bridges to real-world dates. Demo Day candidate.",
+              "meta": "April 6, 2026 · Social/Dating · Pre-Seed · Demo Day candidate",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Social/Dating", "variant": "default" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/some"
+            },
+            {
+              "title": "Storyverse",
+              "subtitle": "Cinematic AI production platform · Sourced by 韩磊",
+              "description": "Jesse Z recreating professional film crew workflow with AI. Demo Day candidate.",
+              "meta": "April 6, 2026 · Video · Pre-Seed · Demo Day candidate",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Video", "variant": "default" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/storyverse"
+            },
+            {
+              "title": "SYNAPUFF",
+              "subtitle": "Embodied intelligence + multimodal AI hardware · Sourced by 韩磊",
+              "description": "Jemmy LI building interactive IP universe through multimodal AI hardware. Demo Day candidate.",
+              "meta": "April 6, 2026 · Smart Hardware · Pre-Seed · Demo Day candidate",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Smart Hardware", "variant": "default" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/synapuff"
+            },
+            {
+              "title": "Virse.art",
+              "subtitle": "Human-AI collaborative design infrastructure · Sourced by 韩磊",
+              "description": "YIFAN building collaborative design infrastructure for commercial visual teams. Seed stage.",
+              "meta": "April 6, 2026 · Design · Seed Round · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Design", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/virse-art"
+            },
+            {
               "title": "Regressor",
               "subtitle": "AI Agentic infrastructure for enterprises · Sourced by 韩磊",
-              "description": "PhD AI Oxford founder (Stephen Wang) building enterprise-grade agentic infrastructure. 7 core Data Skills products launched, 97% unstructured-to-structured accuracy. Beta launched April 1. Positioned in $1.3T generative AI market as 'Software as Skills'.",
+              "description": "PhD AI Oxford founder (Stephen Wang) building enterprise-grade agentic infrastructure. 7 core Data Skills products launched, 97% accuracy. Beta launched April 1.",
               "meta": "April 5, 2026 · AI Infrastructure · Seed Round · Converted to portfolio",
               "badges": [
                 { "text": "Converted", "variant": "success" },
-                { "text": "Enterprise AI", "variant": "default" },
+                { "text": "AI Infrastructure", "variant": "default" },
                 { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/regressor"
@@ -51,7 +207,7 @@
             { "key": "last_active", "label": "Last Active" }
           ],
           "rows": [
-            { "source": "韩磊", "leads": 1, "converted": 1, "last_active": "April 5, 2026" }
+            { "source": "韩磊", "leads": 14, "converted": 10, "last_active": "April 6, 2026" }
           ]
         }
       ]

@@ -3,7 +3,7 @@
   "title": "Team",
   "subtitle": "AI agent team status, roles, and recent activity across the SSG Lab platform.",
   "eyebrow": "Agent Fleet",
-  "generated_at": "2026-04-06T02:30:00Z",
+  "generated_at": "2026-04-06T07:21:00Z",
   "blocks": [
     {
       "type": "stat-grid",

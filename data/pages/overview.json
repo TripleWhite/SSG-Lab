@@ -3,47 +3,184 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-06T02:30:00Z",
+  "generated_at": "2026-04-06T07:21:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Portfolio Companies", "value": 1, "trend": "1 active in pipeline", "icon": "briefcase" },
-        { "label": "Pipeline Stage", "value": "Invested", "trend": "Regressor — Seed Round", "icon": "target" },
-        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — Regressor", "icon": "clock" },
+        { "label": "Portfolio Companies", "value": 14, "trend": "10 invested, 4 Demo Day candidates", "icon": "briefcase" },
+        { "label": "Invested", "value": 10, "trend": "Across 10 sectors", "icon": "target" },
+        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 14 companies", "icon": "clock" },
         { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 6, 2026", "icon": "activity" }
       ]
     },
     {
       "type": "alert",
-      "severity": "green",
-      "title": "Pipeline active — Regressor (Seed) demo on April 9",
-      "body": "SSG Spring Demo is in 3 days. Regressor beta launched April 1 targeting 1,000+ beta users and 5 enterprise key customers."
+      "severity": "orange",
+      "title": "SSG Spring Demo in 3 days — April 9, 2026",
+      "body": "14 portfolio companies presenting. 10 invested companies and 4 Demo Day candidates across AI infrastructure, audio, gaming, e-commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research."
     },
     {
       "type": "section",
-      "title": "Portfolio Snapshot",
-      "subtitle": "Current investment pipeline at a glance",
+      "title": "Invested Portfolio",
+      "subtitle": "10 companies with active SSG investment",
       "blocks": [
         {
-          "type": "entity-card",
-          "entity": {
-            "name": "Regressor",
-            "type": "project",
-            "one_liner": "AI Agentic infrastructure for enterprises",
-            "badges": [
-              { "text": "Invested", "variant": "success" },
-              { "text": "Seed Round", "variant": "info" },
-              { "text": "Enterprise AI", "variant": "default" }
-            ],
-            "fields": [
-              { "label": "CEO", "value": "Stephen Wang" },
-              { "label": "Demo Date", "value": "April 9, 2026" },
-              { "label": "Source", "value": "韩磊" },
-              { "label": "Market", "value": "$1.3T GenAI" }
-            ],
-            "href": "/pipeline/regressor"
-          }
+          "type": "card-list",
+          "items": [
+            {
+              "title": "Regressor",
+              "subtitle": "AI Agentic infrastructure for enterprises · Stephen Wang",
+              "meta": "Seed Round · AI Infrastructure",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/regressor"
+            },
+            {
+              "title": "Fish Audio",
+              "subtitle": "Premium AI voice generation platform for hyper-realistic TTS and voice cloning · Rissa",
+              "meta": "B+ Round · Audio",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "B+", "variant": "info" }
+              ],
+              "href": "/pipeline/fish-audio"
+            },
+            {
+              "title": "Linear Game",
+              "subtitle": "AI-native interactive video game platform that turns video into gameplay · Heath Xiao",
+              "meta": "Series A · Gaming",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Series A", "variant": "info" }
+              ],
+              "href": "/pipeline/linear-game"
+            },
+            {
+              "title": "Ouraca",
+              "subtitle": "AI-native lifelong learning and A2A community platform · Kejia Li",
+              "meta": "Pre-A Round · Education",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Pre-A", "variant": "info" }
+              ],
+              "href": "/pipeline/ouraca"
+            },
+            {
+              "title": "Napkin Labs",
+              "subtitle": "AI agent platform for hardware engineering and manufacturing · Alex Fu",
+              "meta": "Seed Round · Engineering",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/napkin-labs"
+            },
+            {
+              "title": "Nohi",
+              "subtitle": "Agent-native commerce platform where AI discovers, evaluates, and buys from merchants · Tony Dai",
+              "meta": "Seed Round · E-commerce",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/nohi"
+            },
+            {
+              "title": "Virse.art",
+              "subtitle": "Human-AI collaborative design infrastructure for commercial visual teams · YIFAN",
+              "meta": "Seed Round · Design",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/virse-art"
+            },
+            {
+              "title": "ActionX AI",
+              "subtitle": "AI-native advertising infrastructure for in-agent conversion · Shi Jie",
+              "meta": "Pre-Seed · Advertising",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/actionx-ai"
+            },
+            {
+              "title": "ALIV",
+              "subtitle": "Autonomous commercial layer of the live internet using AI-driven 3D interactions · Leo Huang",
+              "meta": "Pre-Seed · Streaming and AdTech",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/aliv"
+            },
+            {
+              "title": "Fuschia",
+              "subtitle": "AI-powered failure analysis and multimodal reasoning for advanced manufacturing · JN",
+              "meta": "Pre-Seed · Manufacturing",
+              "badges": [
+                { "text": "Invested", "variant": "success" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/fuschia"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Demo Day Candidates",
+      "subtitle": "4 companies presenting at SSG Spring Demo for potential investment",
+      "blocks": [
+        {
+          "type": "card-list",
+          "items": [
+            {
+              "title": "Novix",
+              "subtitle": "AI research agent for scientists and researchers · Yu Shi",
+              "meta": "Seed Round · Research",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/novix"
+            },
+            {
+              "title": "SoMe",
+              "subtitle": "AI-native social and dating platform that bridges matching to real-world dates · Jinrong Qiu",
+              "meta": "Pre-Seed · Social/Dating",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/some"
+            },
+            {
+              "title": "Storyverse",
+              "subtitle": "Cinematic production platform that recreates a professional film crew workflow with AI · Jesse Z",
+              "meta": "Pre-Seed · Video",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/storyverse"
+            },
+            {
+              "title": "SYNAPUFF",
+              "subtitle": "Embodied intelligence startup building an interactive IP universe through multimodal AI hardware · Jemmy LI",
+              "meta": "Pre-Seed · Smart Hardware",
+              "badges": [
+                { "text": "Candidate", "variant": "warning" },
+                { "text": "Pre-Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/synapuff"
+            }
+          ]
         }
       ]
     },
@@ -55,14 +192,14 @@
           "type": "chart",
           "chart_type": "horizontal-bar",
           "data": [
-            { "label": "New Entry (新入站)", "value": 0, "color": "#94a3b8" },
+            { "label": "New Entry (新入站)", "value": 4, "color": "#94a3b8" },
             { "label": "Research (研究)", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence (尽调)", "value": 0, "color": "#d6ff73" },
             { "label": "Investment Committee (投委会)", "value": 0, "color": "#a78bfa" },
-            { "label": "Invested (已投)", "value": 1, "color": "#64feba" },
+            { "label": "Invested (已投)", "value": 10, "color": "#64feba" },
             { "label": "Shelved (已搁置)", "value": 0, "color": "#475569" }
           ],
-          "max": 1
+          "max": 14
         }
       ]
     },

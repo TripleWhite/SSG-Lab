@@ -3,13 +3,13 @@
   "title": "Analytics",
   "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
   "eyebrow": "Insights",
-  "generated_at": "2026-04-06T02:30:00Z",
+  "generated_at": "2026-04-06T07:21:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Pipeline Companies", "value": 1, "icon": "briefcase" },
-        { "label": "Sourcing Leads", "value": 1, "icon": "search" },
+        { "label": "Pipeline Companies", "value": 14, "icon": "briefcase" },
+        { "label": "Sourcing Leads", "value": 14, "icon": "search" },
         { "label": "Match Suggestions", "value": 0, "icon": "target" },
         { "label": "Agent Heartbeats", "value": "Active", "trend": "5 agents on 1h cadence", "icon": "activity" }
       ]
@@ -23,14 +23,32 @@
           "type": "chart",
           "chart_type": "bar",
           "data": [
-            { "label": "New Entry", "value": 0, "color": "#94a3b8" },
+            { "label": "New Entry", "value": 4, "color": "#94a3b8" },
             { "label": "Research", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence", "value": 0, "color": "#d6ff73" },
             { "label": "Inv. Committee", "value": 0, "color": "#a78bfa" },
-            { "label": "Invested", "value": 1, "color": "#64feba" },
+            { "label": "Invested", "value": 10, "color": "#64feba" },
             { "label": "Shelved", "value": 0, "color": "#475569" }
           ],
-          "max": 1
+          "max": 14
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Funding Round Distribution",
+      "blocks": [
+        {
+          "type": "chart",
+          "chart_type": "horizontal-bar",
+          "data": [
+            { "label": "Pre-Seed", "value": 6, "color": "#94a3b8" },
+            { "label": "Seed", "value": 5, "color": "#38bdf8" },
+            { "label": "Pre-A", "value": 1, "color": "#d6ff73" },
+            { "label": "Series A", "value": 1, "color": "#a78bfa" },
+            { "label": "B+", "value": 1, "color": "#64feba" }
+          ],
+          "max": 14
         }
       ]
     },
@@ -45,12 +63,43 @@
             { "key": "value", "label": "Value", "align": "right" }
           ],
           "rows": [
-            { "metric": "Total leads sourced", "value": 1 },
-            { "metric": "Leads converted to pipeline", "value": 1 },
-            { "metric": "Conversion rate", "value": "100%" },
+            { "metric": "Total leads sourced", "value": 14 },
+            { "metric": "Leads converted to portfolio", "value": 10 },
+            { "metric": "Demo Day candidates", "value": 4 },
+            { "metric": "Conversion rate", "value": "71%" },
             { "metric": "Active source employees", "value": 1 },
-            { "metric": "Sectors covered", "value": 1 },
+            { "metric": "Sectors covered", "value": 12 },
             { "metric": "Average time to conversion", "value": "< 1 day" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Sector Breakdown",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            { "key": "sector", "label": "Sector" },
+            { "key": "companies", "label": "Companies", "align": "center" },
+            { "key": "status", "label": "Status" }
+          ],
+          "rows": [
+            { "sector": "AI Infrastructure", "companies": 1, "status": "Invested (Seed)" },
+            { "sector": "Advertising", "companies": 1, "status": "Invested (Pre-Seed)" },
+            { "sector": "Audio", "companies": 1, "status": "Invested (B+)" },
+            { "sector": "Design", "companies": 1, "status": "Invested (Seed)" },
+            { "sector": "E-commerce", "companies": 1, "status": "Invested (Seed)" },
+            { "sector": "Education", "companies": 1, "status": "Invested (Pre-A)" },
+            { "sector": "Engineering", "companies": 1, "status": "Invested (Seed)" },
+            { "sector": "Gaming", "companies": 1, "status": "Invested (Series A)" },
+            { "sector": "Manufacturing", "companies": 1, "status": "Invested (Pre-Seed)" },
+            { "sector": "Research", "companies": 1, "status": "Candidate (Seed)" },
+            { "sector": "Smart Hardware", "companies": 1, "status": "Candidate (Pre-Seed)" },
+            { "sector": "Social/Dating", "companies": 1, "status": "Candidate (Pre-Seed)" },
+            { "sector": "Streaming and AdTech", "companies": 1, "status": "Invested (Pre-Seed)" },
+            { "sector": "Video", "companies": 1, "status": "Candidate (Pre-Seed)" }
           ]
         }
       ]
@@ -65,8 +114,8 @@
           "data": [
             { "label": "Project data completeness", "value": 95, "color": "#64feba" },
             { "label": "Team info coverage", "value": 90, "color": "#64feba" },
-            { "label": "Product highlights", "value": 100, "color": "#64feba" },
-            { "label": "Market context", "value": 85, "color": "#d6ff73" },
+            { "label": "Product highlights", "value": 85, "color": "#d6ff73" },
+            { "label": "Market context", "value": 80, "color": "#d6ff73" },
             { "label": "Demo scheduling", "value": 100, "color": "#64feba" }
           ],
           "max": 100
