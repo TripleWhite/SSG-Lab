@@ -24,6 +24,16 @@ const STAGE_LABELS: Record<string, { label: string; variant: "default" | "succes
 
 function formatDate(dateStr: string): string {
   try {
+    // Parse date parts directly to avoid timezone shift (e.g. "2026-04-09" stays April 9)
+    const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) {
+      const [, y, m, d] = match;
+      return new Date(+y, +m - 1, +d).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
     return new Date(dateStr).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",

@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync } from "fs";
-import { join } from "path";
+import { join, resolve } from "path";
 
 export interface ProjectTeam {
   ceo_founder?: string;
@@ -29,7 +29,9 @@ export interface ProjectData {
 
 export function getProject(id: string): ProjectData | null {
   try {
-    const filePath = join(process.cwd(), "data", "projects", `${id}.json`);
+    const projectsDir = resolve(process.cwd(), "data", "projects");
+    const filePath = resolve(projectsDir, `${id}.json`);
+    if (!filePath.startsWith(projectsDir + "/")) return null;
     const raw = readFileSync(filePath, "utf-8");
     return JSON.parse(raw) as ProjectData;
   } catch {
