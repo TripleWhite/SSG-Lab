@@ -1,0 +1,81 @@
+{
+  "page": "overview",
+  "title": "Overview",
+  "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
+  "eyebrow": "Portfolio Command",
+  "generated_at": "2026-04-06T02:30:00Z",
+  "blocks": [
+    {
+      "type": "stat-grid",
+      "items": [
+        { "label": "Portfolio Companies", "value": 1, "trend": "1 active in pipeline", "icon": "briefcase" },
+        { "label": "Pipeline Stage", "value": "Invested", "trend": "Regressor — Seed Round", "icon": "target" },
+        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — Regressor", "icon": "clock" },
+        { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 6, 2026", "icon": "activity" }
+      ]
+    },
+    {
+      "type": "alert",
+      "severity": "green",
+      "title": "Pipeline active — Regressor (Seed) demo on April 9",
+      "body": "SSG Spring Demo is in 3 days. Regressor beta launched April 1 targeting 1,000+ beta users and 5 enterprise key customers."
+    },
+    {
+      "type": "section",
+      "title": "Portfolio Snapshot",
+      "subtitle": "Current investment pipeline at a glance",
+      "blocks": [
+        {
+          "type": "entity-card",
+          "entity": {
+            "name": "Regressor",
+            "type": "project",
+            "one_liner": "AI Agentic infrastructure for enterprises",
+            "badges": [
+              { "text": "Invested", "variant": "success" },
+              { "text": "Seed Round", "variant": "info" },
+              { "text": "Enterprise AI", "variant": "default" }
+            ],
+            "fields": [
+              { "label": "CEO", "value": "Stephen Wang" },
+              { "label": "Demo Date", "value": "April 9, 2026" },
+              { "label": "Source", "value": "韩磊" },
+              { "label": "Market", "value": "$1.3T GenAI" }
+            ],
+            "href": "/pipeline/regressor"
+          }
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Stage Distribution",
+      "blocks": [
+        {
+          "type": "chart",
+          "chart_type": "horizontal-bar",
+          "data": [
+            { "label": "New Entry (新入站)", "value": 0, "color": "#94a3b8" },
+            { "label": "Research (研究)", "value": 0, "color": "#38bdf8" },
+            { "label": "Due Diligence (尽调)", "value": 0, "color": "#d6ff73" },
+            { "label": "Investment Committee (投委会)", "value": 0, "color": "#a78bfa" },
+            { "label": "Invested (已投)", "value": 1, "color": "#64feba" },
+            { "label": "Shelved (已搁置)", "value": 0, "color": "#475569" }
+          ],
+          "max": 1
+        }
+      ]
+    },
+    {
+      "type": "link-grid",
+      "items": [
+        { "label": "Pipeline", "description": "View investment kanban board", "href": "/pipeline" },
+        { "label": "Sourcing", "description": "Intelligence feed and leads", "href": "/sourcing" },
+        { "label": "Matching", "description": "Resource matching suggestions", "href": "/matching" },
+        { "label": "Team", "description": "Agent status and activity", "href": "/agents" },
+        { "label": "Analytics", "description": "Pipeline funnel and metrics", "href": "/analytics" },
+        { "label": "Resources", "description": "Network and data sources", "href": "/resources" }
+      ]
+    }
+  ]
+}

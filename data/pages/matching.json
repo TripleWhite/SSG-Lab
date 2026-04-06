@@ -1,0 +1,57 @@
+{
+  "page": "matching",
+  "title": "Matching",
+  "subtitle": "Resource matching suggestions — AI-ranked connections between portfolio companies, people, and resources.",
+  "eyebrow": "Match Engine",
+  "generated_at": "2026-04-06T02:30:00Z",
+  "blocks": [
+    {
+      "type": "stat-grid",
+      "items": [
+        { "label": "Active Matches", "value": 0, "trend": "No pending matches yet", "icon": "target" },
+        { "label": "Portfolio Companies", "value": 1, "trend": "Available for matching", "icon": "briefcase" },
+        { "label": "Match Confidence", "value": "—", "trend": "Awaiting first match run", "icon": "zap" },
+        { "label": "Resources Indexed", "value": "—", "trend": "Building resource graph", "icon": "globe" }
+      ]
+    },
+    {
+      "type": "alert",
+      "severity": "blue",
+      "title": "Matching engine warming up",
+      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 1 portfolio company (Regressor) is indexed and available for matching."
+    },
+    {
+      "type": "section",
+      "title": "How Matching Works",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "The **Matching Agent** analyzes portfolio companies, sourcing leads, and the resource network to surface high-value introductions and partnership opportunities.\n\nMatches are ranked by **confidence score** (0–100%) based on:\n- **Sector alignment** — shared industry, technology stack, or market\n- **Team complementarity** — founder backgrounds that create synergy\n- **Timing** — funding stage, growth phase, and market readiness\n- **Network proximity** — existing connections through SSG's resource graph"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Available for Matching",
+      "blocks": [
+        {
+          "type": "entity-card",
+          "entity": {
+            "name": "Regressor",
+            "type": "project",
+            "one_liner": "AI Agentic infrastructure for enterprises",
+            "badges": [
+              { "text": "Invested", "variant": "success" },
+              { "text": "Seed Round", "variant": "info" }
+            ],
+            "fields": [
+              { "label": "Sector", "value": "AI Infrastructure" },
+              { "label": "CEO", "value": "Stephen Wang" }
+            ],
+            "href": "/pipeline/regressor"
+          }
+        }
+      ]
+    }
+  ]
+}

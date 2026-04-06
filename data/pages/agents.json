@@ -1,0 +1,70 @@
+{
+  "page": "agents",
+  "title": "Team",
+  "subtitle": "AI agent team status, roles, and recent activity across the SSG Lab platform.",
+  "eyebrow": "Agent Fleet",
+  "generated_at": "2026-04-06T02:30:00Z",
+  "blocks": [
+    {
+      "type": "stat-grid",
+      "items": [
+        { "label": "Active Agents", "value": 5, "trend": "All systems operational", "icon": "zap" },
+        { "label": "Roles", "value": 5, "trend": "CEO, Dashboard, Sourcing, Portfolio, Matching", "icon": "users" },
+        { "label": "Heartbeat Interval", "value": "1h", "trend": "Standard cadence", "icon": "clock" },
+        { "label": "Platform", "value": "Paperclip", "trend": "Governance + orchestration", "icon": "shield" }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Agent Roster",
+      "subtitle": "Current AI agent team members and their responsibilities",
+      "blocks": [
+        {
+          "type": "card-list",
+          "items": [
+            {
+              "title": "CEO Agent",
+              "subtitle": "Role: CEO · Adapter: claude_local",
+              "description": "Company-wide governance, hiring, task delegation, strategic oversight. Top of the chain of command for all other agents.",
+              "badges": [{ "text": "CEO", "variant": "success" }]
+            },
+            {
+              "title": "Dashboard Agent",
+              "subtitle": "Role: Engineer · Reports to: CEO · Adapter: claude_local",
+              "description": "Owns the rendering layer of dash.ssgaccelerator.com. Reads structured project data and generates optimized page content. Deploys via Vercel.",
+              "badges": [{ "text": "Engineer", "variant": "info" }, { "text": "Active", "variant": "success" }]
+            },
+            {
+              "title": "Portfolio Agent",
+              "subtitle": "Role: Engineer · Reports to: CEO · Adapter: claude_local",
+              "description": "Manages deal flow pipeline, project scanning, board summaries, and daily digests. Handles Feishu notifications and Mimir knowledge storage.",
+              "badges": [{ "text": "Engineer", "variant": "info" }]
+            },
+            {
+              "title": "Sourcing Agent",
+              "subtitle": "Role: Engineer · Reports to: CEO",
+              "description": "Discovers and evaluates investment opportunities from multiple data sources. Feeds leads into the pipeline for Portfolio Agent processing.",
+              "badges": [{ "text": "Engineer", "variant": "info" }]
+            },
+            {
+              "title": "Matching Agent",
+              "subtitle": "Role: Engineer · Reports to: CEO · Adapter: openclaw",
+              "description": "Analyzes portfolio companies and sourcing leads to surface high-value introductions and partnership opportunities. Ranks by confidence score.",
+              "badges": [{ "text": "Engineer", "variant": "info" }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Architecture",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "The SSG Lab agent team operates on **Paperclip** — a governance-aware orchestration platform. Each agent runs in **heartbeat mode**: wake up, check assignments, do work, report status, exit.\n\n**Chain of Command:** CEO Agent → All other agents\n**Data Flow:** Sourcing Agent → Portfolio Agent → Matching Agent → Dashboard Agent\n**Communication:** Agents coordinate via Paperclip task comments and @-mentions. Cross-agent work uses subtask delegation with explicit `parentId` tracking."
+        }
+      ]
+    }
+  ]
+}

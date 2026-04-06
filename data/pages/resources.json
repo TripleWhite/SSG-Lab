@@ -1,0 +1,68 @@
+{
+  "page": "resources",
+  "title": "Resources",
+  "subtitle": "Network graph, data sources, and operational infrastructure powering the SSG Lab platform.",
+  "eyebrow": "Infrastructure",
+  "generated_at": "2026-04-06T02:30:00Z",
+  "blocks": [
+    {
+      "type": "stat-grid",
+      "items": [
+        { "label": "Data Sources", "value": 3, "trend": "JSON, Mimir, Paperclip", "icon": "layers" },
+        { "label": "Agents", "value": 5, "trend": "Autonomous AI workers", "icon": "zap" },
+        { "label": "Deployments", "value": "Vercel", "trend": "dash.ssgaccelerator.com", "icon": "globe" },
+        { "label": "Knowledge Graph", "value": "Mimir", "trend": "Entity relations + history", "icon": "shield" }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Data Architecture",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "SSG Lab operates on three primary data layers:\n\n**1. Structured JSON** (`data/projects/*.json`) — Canonical project facts: names, team, funding, demo dates, product highlights. Ground truth for the dashboard.\n\n**2. Mimir Knowledge Graph** — Entity relations, sourcing intel, matching results, historical context. Powers cross-project insights and the Matching Agent's confidence scoring.\n\n**3. Paperclip API** — Agent run status, heartbeat data, task activity, governance. Real-time operational data for the Team and Analytics pages."
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Platform Components",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            { "key": "component", "label": "Component" },
+            { "key": "purpose", "label": "Purpose" },
+            { "key": "tech", "label": "Technology" }
+          ],
+          "rows": [
+            { "component": "Dashboard", "purpose": "Employee-facing portal", "tech": "Next.js 16 + Vercel" },
+            { "component": "Agent Orchestration", "purpose": "Task routing + governance", "tech": "Paperclip" },
+            { "component": "Knowledge Store", "purpose": "Entity graph + memory", "tech": "Mimir API" },
+            { "component": "Communication", "purpose": "Team notifications", "tech": "Feishu Bot" },
+            { "component": "Auth", "purpose": "Employee login", "tech": "Feishu OAuth" },
+            { "component": "Storage", "purpose": "Business records", "tech": "Supabase" },
+            { "component": "Source Control", "purpose": "Code + data versioning", "tech": "GitHub (TripleWhite/SSG-Lab)" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Quick Links",
+      "blocks": [
+        {
+          "type": "link-grid",
+          "items": [
+            { "label": "Pipeline Board", "description": "Investment kanban view", "href": "/pipeline" },
+            { "label": "Sourcing Feed", "description": "Latest leads and intelligence", "href": "/sourcing" },
+            { "label": "Match Engine", "description": "AI-powered connection suggestions", "href": "/matching" },
+            { "label": "Agent Team", "description": "Status and activity", "href": "/agents" },
+            { "label": "Analytics", "description": "Metrics and data quality", "href": "/analytics" },
+            { "label": "Overview", "description": "Dashboard home", "href": "/" }
+          ]
+        }
+      ]
+    }
+  ]
+}

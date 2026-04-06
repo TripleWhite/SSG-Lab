@@ -1,0 +1,99 @@
+{
+  "page": "analytics",
+  "title": "Analytics",
+  "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
+  "eyebrow": "Insights",
+  "generated_at": "2026-04-06T02:30:00Z",
+  "blocks": [
+    {
+      "type": "stat-grid",
+      "items": [
+        { "label": "Pipeline Companies", "value": 1, "icon": "briefcase" },
+        { "label": "Sourcing Leads", "value": 1, "icon": "search" },
+        { "label": "Match Suggestions", "value": 0, "icon": "target" },
+        { "label": "Agent Heartbeats", "value": "Active", "trend": "5 agents on 1h cadence", "icon": "activity" }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Pipeline Funnel",
+      "subtitle": "Company distribution across investment stages",
+      "blocks": [
+        {
+          "type": "chart",
+          "chart_type": "bar",
+          "data": [
+            { "label": "New Entry", "value": 0, "color": "#94a3b8" },
+            { "label": "Research", "value": 0, "color": "#38bdf8" },
+            { "label": "Due Diligence", "value": 0, "color": "#d6ff73" },
+            { "label": "Inv. Committee", "value": 0, "color": "#a78bfa" },
+            { "label": "Invested", "value": 1, "color": "#64feba" },
+            { "label": "Shelved", "value": 0, "color": "#475569" }
+          ],
+          "max": 1
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Sourcing Metrics",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            { "key": "metric", "label": "Metric" },
+            { "key": "value", "label": "Value", "align": "right" }
+          ],
+          "rows": [
+            { "metric": "Total leads sourced", "value": 1 },
+            { "metric": "Leads converted to pipeline", "value": 1 },
+            { "metric": "Conversion rate", "value": "100%" },
+            { "metric": "Active source employees", "value": 1 },
+            { "metric": "Sectors covered", "value": 1 },
+            { "metric": "Average time to conversion", "value": "< 1 day" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Data Quality",
+      "blocks": [
+        {
+          "type": "chart",
+          "chart_type": "horizontal-bar",
+          "data": [
+            { "label": "Project data completeness", "value": 95, "color": "#64feba" },
+            { "label": "Team info coverage", "value": 90, "color": "#64feba" },
+            { "label": "Product highlights", "value": 100, "color": "#64feba" },
+            { "label": "Market context", "value": 85, "color": "#d6ff73" },
+            { "label": "Demo scheduling", "value": 100, "color": "#64feba" }
+          ],
+          "max": 100
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Agent Activity",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            { "key": "agent", "label": "Agent" },
+            { "key": "role", "label": "Role" },
+            { "key": "status", "label": "Status" },
+            { "key": "tasks", "label": "Active Tasks", "align": "center" }
+          ],
+          "rows": [
+            { "agent": "CEO Agent", "role": "CEO", "status": "Running", "tasks": "—" },
+            { "agent": "Dashboard Agent", "role": "Engineer", "status": "Running", "tasks": 1 },
+            { "agent": "Portfolio Agent", "role": "Engineer", "status": "Active", "tasks": "—" },
+            { "agent": "Sourcing Agent", "role": "Engineer", "status": "Active", "tasks": "—" },
+            { "agent": "Matching Agent", "role": "Engineer", "status": "Active", "tasks": "—" }
+          ]
+        }
+      ]
+    }
+  ]
+}

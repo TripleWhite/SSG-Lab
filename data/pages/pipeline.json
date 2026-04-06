@@ -1,0 +1,92 @@
+{
+  "page": "pipeline",
+  "title": "Pipeline",
+  "subtitle": "Investment pipeline board — track companies from first contact through investment and beyond.",
+  "eyebrow": "Deal Flow",
+  "generated_at": "2026-04-06T02:30:00Z",
+  "blocks": [
+    {
+      "type": "stat-grid",
+      "items": [
+        { "label": "Total Companies", "value": 1, "icon": "briefcase" },
+        { "label": "Active Pipeline", "value": 1, "trend": "1 invested", "icon": "trending" },
+        { "label": "Upcoming Demos", "value": 1, "trend": "Apr 9 — SSG Spring Demo", "icon": "clock" },
+        { "label": "Sectors", "value": 1, "trend": "AI Infrastructure", "icon": "layers" }
+      ]
+    },
+    {
+      "type": "kanban",
+      "columns": [
+        {
+          "title": "New Entry · 新入站",
+          "color": "#94a3b8",
+          "items": []
+        },
+        {
+          "title": "Research · 研究",
+          "color": "#38bdf8",
+          "items": []
+        },
+        {
+          "title": "Due Diligence · 尽调",
+          "color": "#d6ff73",
+          "items": []
+        },
+        {
+          "title": "Investment Committee · 投委会",
+          "color": "#a78bfa",
+          "items": []
+        },
+        {
+          "title": "Invested · 已投",
+          "color": "#64feba",
+          "items": [
+            {
+              "id": "regressor",
+              "title": "Regressor",
+              "subtitle": "AI Agentic infrastructure for enterprises · Stephen Wang",
+              "badges": [
+                { "text": "Seed Round", "variant": "info" },
+                { "text": "Enterprise AI", "variant": "default" },
+                { "text": "Demo Apr 9", "variant": "warning" }
+              ],
+              "href": "/pipeline/regressor"
+            }
+          ]
+        },
+        {
+          "title": "Shelved · 已搁置",
+          "color": "#475569",
+          "items": []
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Upcoming Events",
+      "blocks": [
+        {
+          "type": "timeline",
+          "events": [
+            {
+              "date": "April 9, 2026",
+              "title": "SSG Spring Demo — Regressor",
+              "description": "Regressor presents beta progress, targeting 1,000+ beta users and 5 enterprise key customers.",
+              "badge": { "text": "In 3 days", "variant": "warning" }
+            },
+            {
+              "date": "April 5, 2026",
+              "title": "Regressor sourced by 韩磊",
+              "description": "Initial sourcing and project data entered into SSG Lab."
+            },
+            {
+              "date": "April 1, 2026",
+              "title": "Regressor beta launch",
+              "description": "Beta product launched with 7 core Data Skills products."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
