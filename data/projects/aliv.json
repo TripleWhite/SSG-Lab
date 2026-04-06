@@ -1,0 +1,27 @@
+{
+  "id": "aliv",
+  "name": "ALIV",
+  "one_liner": "Autonomous commercial layer of the live internet using AI-driven 3D interactions",
+  "category": "Consumer AI",
+  "sector": "Streaming and AdTech",
+  "pipeline_stage": "invested",
+  "funding_round": "Pre-Seed",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Leo Huang",
+    "ceo_background": "Founder and CEO; serial entrepreneur with prior exit and 15 years of live streaming experience",
+    "core_team": "Advised by former Douyin Live leaders and supported by the Pi Corp partnership network"
+  },
+  "product_highlights": [
+    "AI-driven 3D interactions for live internet monetization",
+    "Real-time commercialization based on human context",
+    "Distribution and monetization access through Pi Corp and streamer networks"
+  ],
+  "market": "Targets live streaming and advertising infrastructure where real-time context can improve commerce conversion.",
+  "current_progress": "Exclusive technology partnership with Pi Corp provides access to 1,000+ streamers and 100+ enterprise brands; currently raising a Pre-Seed round.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

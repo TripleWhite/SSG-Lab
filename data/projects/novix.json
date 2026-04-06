@@ -1,0 +1,27 @@
+{
+  "id": "novix",
+  "name": "Novix",
+  "one_liner": "AI research agent for scientists and researchers",
+  "category": "Consumer AI",
+  "sector": "Research",
+  "pipeline_stage": "new",
+  "funding_round": "Seed Round",
+  "investment_status": "Demo Day candidate",
+  "team": {
+    "ceo_founder": "Yu Shi",
+    "ceo_background": "Former Microsoft product manager who founded Microsoft AgentOS and built multimodal copilots used by more than 100 million users",
+    "core_team": "Jiabin Tang is a founding team member with HKU PhD background, NeurIPS and KDD publications, and AutoAgent creation experience"
+  },
+  "product_highlights": [
+    "Automates literature review, ideation, modeling, and visualization",
+    "Supports end-to-end scientific and analytical workflows",
+    "Applicable across academia and industry domains"
+  ],
+  "market": "Targets the growing need for AI collaborators as scientific data and research complexity outpace human analysis capacity.",
+  "current_progress": "MVP deployed across academic and industrial use cases with rapid early adoption; website: https://novix.science/.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

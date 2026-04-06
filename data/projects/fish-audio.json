@@ -1,0 +1,27 @@
+{
+  "id": "fish-audio",
+  "name": "Fish Audio",
+  "one_liner": "Premium AI voice generation platform for hyper-realistic TTS and voice cloning",
+  "category": "Enterprise AI",
+  "sector": "Audio",
+  "pipeline_stage": "invested",
+  "funding_round": "B+",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Rissa",
+    "ceo_background": "Former Meta and Amazon operator",
+    "core_team": "Lengyue serves as CTO after prior work at NVIDIA, alongside senior AI engineers and speech scientists"
+  },
+  "product_highlights": [
+    "Hyper-realistic TTS and voice cloning across 8+ languages",
+    "Voice cloning from 10 to 30 seconds of audio",
+    "OpenAudio S1 model with emotional control and studio-quality output"
+  ],
+  "market": "Serves creators and enterprises across audiobooks, dubbing, podcasts, gaming, virtual assistants, and accessibility use cases.",
+  "current_progress": "Reached 10M+ ARR and described as the second-largest AI voice generation platform globally; official website: https://fish.audio/.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

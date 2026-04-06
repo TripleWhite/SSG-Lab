@@ -1,0 +1,27 @@
+{
+  "id": "nohi",
+  "name": "Nohi",
+  "one_liner": "Agent-native commerce platform where AI discovers, evaluates, and buys from merchants",
+  "category": "Enterprise AI",
+  "sector": "E-commerce",
+  "pipeline_stage": "invested",
+  "funding_round": "Seed Round",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Tony Dai",
+    "ceo_background": "Former strategist described as CICC's youngest; started first brand at age 14",
+    "core_team": "Founded by AI-native talent from Peking University and Yale with commerce and infrastructure experience"
+  },
+  "product_highlights": [
+    "Agent-ready infrastructure for million-scale product context",
+    "Intent-native referral engine matching buyer intent to products",
+    "Marketplace layer enabling AI to transact with real merchants"
+  ],
+  "market": "Targets agent-driven commerce where autonomous systems need structured product context and merchant connectivity.",
+  "current_progress": "Built as an agent-native commerce platform and integrated key account brands including Urbanic.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}
