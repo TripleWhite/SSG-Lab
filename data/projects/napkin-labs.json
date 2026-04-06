@@ -1,0 +1,27 @@
+{
+  "id": "napkin-labs",
+  "name": "Napkin Labs",
+  "one_liner": "AI agent platform for hardware engineering and manufacturing",
+  "category": "Enterprise AI",
+  "sector": "Engineering",
+  "pipeline_stage": "invested",
+  "funding_round": "Seed Round",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Alex Fu",
+    "ceo_background": "Stanford CS",
+    "core_team": "CTO Tom Lambot (13+ years at NASA and SpinLaunch) and CPO Taylor Sihavong (Stanford ME)"
+  },
+  "product_highlights": [
+    "Arda unifies siloed data",
+    "Automates workflows",
+    "DFM validation"
+  ],
+  "market": "EV, aerospace, consumer electronics, industrial manufacturing",
+  "current_progress": "Core platform deployed, RFQ and DFM automation use cases",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T02:54:26Z"
+}
