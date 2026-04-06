@@ -1,0 +1,33 @@
+{
+  "id": "regressor",
+  "name": "Regressor",
+  "one_liner": "AI Agentic infrastructure for enterprises",
+  "category": "Enterprise AI",
+  "sector": "AI Infrastructure",
+  "pipeline_stage": "invested",
+  "funding_round": "Seed Round",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Stephen Wang",
+    "ceo_background": "PhD AI Oxford, MS CS CMU, ex-CPG AI VP, Zhipu.ai AI Applications Lead, Oracle Engineer; 10+ top-tier AI papers, NASA/IBM/Ericsson project experience",
+    "core_team": "CMU PhDs and TikTok/Tencent/Huya business/product leaders, expertise in large-scale ML, product development, enterprise growth"
+  },
+  "product_highlights": [
+    "Data Skills for Agent AI with Copy & Use one-line code integration",
+    "Closed-loop architecture: context + skills + security + storage",
+    "7 core Data Skills products launched",
+    "Multi-modal data parsing with 97% unstructured-to-structured accuracy",
+    "Enterprise-grade security: multi-tenant isolation, SOC & GDPR compliant",
+    "Distributed Redis-based auto-scaling infrastructure",
+    "Data Connector supports 50+ common data sources",
+    "Deep Research integrates internal & public data sources",
+    "Skills Marketplace with 10,000+ high-quality Skills"
+  ],
+  "market": "$1.3T generative AI market, positioned as Software as Skills",
+  "current_progress": "Beta launched April 1, targeting 1000+ beta users and 5 enterprise key customers",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-05",
+  "updated_at": "2026-04-06T00:00:00Z"
+}
