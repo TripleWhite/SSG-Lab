@@ -1,0 +1,27 @@
+{
+  "id": "virse-art",
+  "name": "Virse.art",
+  "one_liner": "Human-AI collaborative design infrastructure for commercial visual teams",
+  "category": "Enterprise AI",
+  "sector": "Design",
+  "pipeline_stage": "invested",
+  "funding_round": "Seed Round",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "YIFAN",
+    "ceo_background": "Cornell CS graduate, serial AIGC entrepreneur, and former Tencent product manager",
+    "core_team": "Team includes ANGELA and broader talent from Cornell and Tsinghua"
+  },
+  "product_highlights": [
+    "Human-AI collaborative design workflows at commercial scale",
+    "Infrastructure for brands, e-commerce teams, and creative studios",
+    "Commercial-grade visual design generation and iteration"
+  ],
+  "market": "Focuses on enterprise design workflows where brands and creative teams need faster high-quality visual output.",
+  "current_progress": "Seed-stage company with beta partnerships including Moody, Oracle Creative Design, and Miracle Miles.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

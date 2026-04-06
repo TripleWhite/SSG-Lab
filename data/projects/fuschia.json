@@ -1,0 +1,27 @@
+{
+  "id": "fuschia",
+  "name": "Fuschia",
+  "one_liner": "AI-powered failure analysis and multimodal reasoning for advanced manufacturing",
+  "category": "Enterprise AI",
+  "sector": "Manufacturing",
+  "pipeline_stage": "invested",
+  "funding_round": "Pre-Seed",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "JN",
+    "ceo_background": "Former Apple hardware R&D and Tesla manufacturing lead; UC Berkeley graduate",
+    "core_team": "RR (former Apple Vision Pro lead), CL (former Apple hardware quality scientist; Caltech and UC Berkeley PhD), and TG (former EY AI Lab director)"
+  },
+  "product_highlights": [
+    "Central intelligence system for advanced manufacturing",
+    "Expert-level failure analysis in minutes",
+    "Multimodal reasoning engine integrating diverse production data"
+  ],
+  "market": "Targets advanced manufacturing inefficiency, including $100B+ material scrap losses and broader lifecycle inefficiency costs.",
+  "current_progress": "Pilot testing with major manufacturing companies and prototype development for zero-scrap mass production workflows.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

@@ -1,0 +1,27 @@
+{
+  "id": "synapuff",
+  "name": "SYNAPUFF",
+  "one_liner": "Embodied intelligence startup building an interactive IP universe through multimodal AI hardware",
+  "category": "Consumer AI",
+  "sector": "Smart Hardware",
+  "pipeline_stage": "new",
+  "funding_round": "Pre-Seed",
+  "investment_status": "Demo Day candidate",
+  "team": {
+    "ceo_founder": "Jemmy LI",
+    "ceo_background": "Co-founder and CEO; Hurun U30 serial entrepreneur, former Disney employee, founder of ANTHAP",
+    "core_team": "Fan Mingming is co-founder and Chief Scientist; Toronto PhD, HKUST tenured professor, and highly cited HCI researcher"
+  },
+  "product_highlights": [
+    "Embodied intelligence hardware built around multimodal AI systems",
+    "Interactive IP universe for always-on companion experiences",
+    "OUMUAMUA robotic companion concept for emotional connection"
+  ],
+  "market": "Targets the emerging consumer embodied AI and smart hardware market.",
+  "current_progress": "Currently raising a Pre-Seed round.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

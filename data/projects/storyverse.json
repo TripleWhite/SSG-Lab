@@ -1,0 +1,27 @@
+{
+  "id": "storyverse",
+  "name": "Storyverse",
+  "one_liner": "Cinematic production platform that recreates a professional film crew workflow with AI",
+  "category": "Consumer AI",
+  "sector": "Video",
+  "pipeline_stage": "new",
+  "funding_round": "Pre-Seed",
+  "investment_status": "Demo Day candidate",
+  "team": {
+    "ceo_founder": "Jesse Z",
+    "ceo_background": "NYU Tisch background; Emmy-nominated and Oscar-shortlisted producer",
+    "core_team": "Creative team includes Hollywood operators with Emmy, Netflix, Disney, and USC MFA credentials"
+  },
+  "product_highlights": [
+    "Cinematic production platform covering creative and technical film workflows",
+    "Built for AI-native video creation with studio-level output ambitions",
+    "Supports premium IP-driven productions such as the Godfather 4 negotiation pipeline"
+  ],
+  "market": "Addresses demand for scalable AI-assisted video production in entertainment and premium digital storytelling.",
+  "current_progress": "Raising a Pre-Seed round; official website: https://www.storyversestudios.com/.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

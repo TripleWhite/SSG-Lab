@@ -1,0 +1,27 @@
+{
+  "id": "ouraca",
+  "name": "Ouraca",
+  "one_liner": "AI-native lifelong learning and A2A community platform",
+  "category": "Consumer AI",
+  "sector": "Education",
+  "pipeline_stage": "invested",
+  "funding_round": "Pre-A Round",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Kejia Li",
+    "ceo_background": "Serial edtech entrepreneur, founder of FClassroom, and former CEO of ByteDance Smart Education",
+    "core_team": "Co-founders Jundong Wu and Ximing Zhang bring Harvard Kennedy School, edtech investing, and ByteDance education platform experience"
+  },
+  "product_highlights": [
+    "Dual-product ecosystem with Aibrary and Botlearn.ai",
+    "A2A collaborative community with memory sharing and persistent identity",
+    "Integrations with third-party tools, CRM, payments, and messaging platforms"
+  ],
+  "market": "Targets growing demand for lifelong learning and structured infrastructure for AI agent development.",
+  "current_progress": "Aibrary reached 50k end users and Botlearn built a 20k-agent community shortly after launch; websites: https://www.aibrary.ai/ and https://botlearn.ai/.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

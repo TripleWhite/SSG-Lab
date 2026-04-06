@@ -1,0 +1,27 @@
+{
+  "id": "some",
+  "name": "SoMe",
+  "one_liner": "AI-native social and dating platform that bridges matching to real-world dates",
+  "category": "Consumer AI",
+  "sector": "Social/Dating",
+  "pipeline_stage": "new",
+  "funding_round": "Pre-Seed",
+  "investment_status": "Demo Day candidate",
+  "team": {
+    "ceo_founder": "Jinrong Qiu",
+    "ceo_background": "Co-founder and CEO with an MBA in Marketing and experience as a serial e-commerce and restaurant entrepreneur",
+    "core_team": "Xi Jiang is co-founder and CTO from UChicago CS, and Xuhan Xie is co-founder and engineer with prior TikTok backend scale experience"
+  },
+  "product_highlights": [
+    "AI Date Concierge for intent-based matching and planning",
+    "End-to-end date workflow including venue booking and payments",
+    "Dual-sided marketplace connecting dating users with local businesses"
+  ],
+  "market": "Addresses the large dating-app market by reducing friction between matches and real-world meetings.",
+  "current_progress": "Full product prototype with partner merchant network of 13+ local and chain businesses.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

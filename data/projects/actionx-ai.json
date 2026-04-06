@@ -1,0 +1,27 @@
+{
+  "id": "actionx-ai",
+  "name": "ActionX AI",
+  "one_liner": "AI-native advertising infrastructure for in-agent conversion",
+  "category": "Enterprise AI",
+  "sector": "Advertising",
+  "pipeline_stage": "invested",
+  "funding_round": "Pre-Seed",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Shi Jie",
+    "ceo_background": "Co-founder of RightBrain AI; former researcher at Microsoft Research Asia and SenseTime focused on diffusion and multimodal models",
+    "core_team": "Supported by an advisory board of senior advertising system experts from top-tier US tech firms"
+  },
+  "product_highlights": [
+    "LLM-powered deep context understanding for commercial intent",
+    "Real-time personalized ad generation inside agent conversations",
+    "Closed-loop in-agent conversion infrastructure with SDK and MCP integrations"
+  ],
+  "market": "Targets the emerging in-agent conversion market and broader agent decision infrastructure opportunity as traditional attention-based ads weaken.",
+  "current_progress": "Product prototype completed and ready for go-to-market launch.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}

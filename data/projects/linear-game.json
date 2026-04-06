@@ -1,0 +1,27 @@
+{
+  "id": "linear-game",
+  "name": "Linear Game",
+  "one_liner": "AI-native interactive video game platform that turns video into gameplay",
+  "category": "Consumer AI",
+  "sector": "Gaming",
+  "pipeline_stage": "invested",
+  "funding_round": "Series A",
+  "investment_status": "Already invested by SSG",
+  "team": {
+    "ceo_founder": "Heath Xiao",
+    "ceo_background": "CEO of LinearGame",
+    "core_team": "Thomas Zhao serves as CPO with HiDream.ai background, supported by talent from top game studios"
+  },
+  "product_highlights": [
+    "Turns video into gameplay experiences",
+    "AI-native interactive game platform for next-generation content",
+    "Positioned around the vision of becoming the Roblox and Netflix of the AI era"
+  ],
+  "market": "Targets the gaming market with interactive AI-driven video experiences for mass consumer entertainment.",
+  "current_progress": "Series A company with public site at yoroll.ai.",
+  "demo_date": "2026-04-09",
+  "demo_event": "SSG Spring Demo",
+  "source_employee": "韩磊",
+  "source_date": "2026-04-06",
+  "updated_at": "2026-04-06T05:50:00Z"
+}
