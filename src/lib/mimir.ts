@@ -30,6 +30,7 @@ async function fetchMimir<T>(path: string): Promise<T> {
     headers: {
       Authorization: `Bearer ${MIMIR_KEY}`,
       "Content-Type": "application/json",
+      "User-Agent": "mimir-agent/1.0",
     },
     next: { revalidate: DEFAULT_REVALIDATE_SECONDS },
   });
@@ -92,22 +93,25 @@ function getSeedGraph(): ResourceGraph {
   return {
     source: "seed",
     connections: employees.map((employee) =>
-      toResourceItem(employee.name, employee.connections)
+      toResourceItem(employee.name, employee.connections),
     ),
     investors: lpInvestors.map((investor) =>
-      toResourceItem(investor.name, investor.focus_sectors)
+      toResourceItem(investor.name, investor.focus_sectors),
     ),
     mentors: mentors.map((mentor) =>
-      toResourceItem(mentor.name, mentor.expertise)
+      toResourceItem(mentor.name, mentor.expertise),
     ),
     programs: resourceSeed.partner_programs.map((program) =>
-      toResourceItem(program.name, [program.type, program.benefit])
+      toResourceItem(program.name, [program.type, program.benefit]),
     ),
   };
 }
 
-function classifyEntity(entity: MimirEntity): keyof Omit<ResourceGraph, "source"> {
-  const rawType = `${entity.type ?? ""} ${entity.entityType ?? ""} ${entity.name ?? ""}`.toLowerCase();
+function classifyEntity(
+  entity: MimirEntity,
+): keyof Omit<ResourceGraph, "source"> {
+  const rawType =
+    `${entity.type ?? ""} ${entity.entityType ?? ""} ${entity.name ?? ""}`.toLowerCase();
   if (rawType.includes("mentor")) {
     return "mentors";
   }
@@ -127,7 +131,7 @@ function tagsFromEntity(entity: MimirEntity): string[] {
 
   if (entity.metadata && typeof entity.metadata === "object") {
     const values = Object.values(entity.metadata).flatMap((value) =>
-      Array.isArray(value) ? value : typeof value === "string" ? [value] : []
+      Array.isArray(value) ? value : typeof value === "string" ? [value] : [],
     );
     return values.filter((value): value is string => typeof value === "string");
   }
@@ -142,7 +146,7 @@ export async function searchMemory(query: string): Promise<unknown[]> {
 
   try {
     const payload = await fetchMimir<unknown>(
-      `/api/v1/search?user_id=${encodeURIComponent(MIMIR_USER_ID)}&query=${encodeURIComponent(query)}&method=full&limit=20`
+      `/api/v1/search?user_id=${encodeURIComponent(MIMIR_USER_ID)}&query=${encodeURIComponent(query)}&method=full&limit=20`,
     );
     return normalizeSearchResults(payload);
   } catch {
@@ -150,7 +154,9 @@ export async function searchMemory(query: string): Promise<unknown[]> {
   }
 }
 
-export async function getProjectTimeline(projectName: string): Promise<unknown[]> {
+export async function getProjectTimeline(
+  projectName: string,
+): Promise<unknown[]> {
   return searchMemory(projectName);
 }
 
@@ -162,8 +168,8 @@ export async function getResourceGraph(): Promise<ResourceGraph> {
   try {
     const payload = await fetchMimir<unknown>(
       `/api/v1/search?user_id=${encodeURIComponent(MIMIR_USER_ID)}&query=${encodeURIComponent(
-        "resource connection mentor LP partner"
-      )}&types=entity&method=full&limit=100`
+        "resource connection mentor LP partner",
+      )}&types=entity&method=full&limit=100`,
     );
     const entities = normalizeSearchResults<MimirEntity>(payload);
 
