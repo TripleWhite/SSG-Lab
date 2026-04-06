@@ -1,0 +1,64 @@
+{
+  "page": "sourcing",
+  "title": "Sourcing",
+  "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
+  "eyebrow": "Deal Sourcing",
+  "generated_at": "2026-04-06T02:30:00Z",
+  "blocks": [
+    {
+      "type": "stat-grid",
+      "items": [
+        { "label": "Total Leads", "value": 1, "icon": "search" },
+        { "label": "Source Employees", "value": 1, "trend": "韩磊", "icon": "users" },
+        { "label": "Sectors Covered", "value": 1, "trend": "AI Infrastructure", "icon": "globe" },
+        { "label": "Conversion Rate", "value": "100%", "trend": "1 of 1 converted to portfolio", "icon": "target" }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Recent Leads",
+      "subtitle": "Chronological feed of sourcing intelligence",
+      "blocks": [
+        {
+          "type": "card-list",
+          "items": [
+            {
+              "title": "Regressor",
+              "subtitle": "AI Agentic infrastructure for enterprises · Sourced by 韩磊",
+              "description": "PhD AI Oxford founder (Stephen Wang) building enterprise-grade agentic infrastructure. 7 core Data Skills products launched, 97% unstructured-to-structured accuracy. Beta launched April 1. Positioned in $1.3T generative AI market as 'Software as Skills'.",
+              "meta": "April 5, 2026 · AI Infrastructure · Seed Round · Converted to portfolio",
+              "badges": [
+                { "text": "Converted", "variant": "success" },
+                { "text": "Enterprise AI", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/regressor"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Source Network",
+      "blocks": [
+        {
+          "type": "table",
+          "columns": [
+            { "key": "source", "label": "Source Employee" },
+            { "key": "leads", "label": "Leads", "align": "center" },
+            { "key": "converted", "label": "Converted", "align": "center" },
+            { "key": "last_active", "label": "Last Active" }
+          ],
+          "rows": [
+            { "source": "韩磊", "leads": 1, "converted": 1, "last_active": "April 5, 2026" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "content": "The sourcing feed updates as new leads are entered by source employees and the Sourcing Agent. Each lead is evaluated for sector fit, founder quality, and market timing before entering the pipeline."
+    }
+  ]
+}
