@@ -3,7 +3,7 @@
   "title": "Pipeline",
   "subtitle": "Investment pipeline board — track companies from first contact through investment and beyond.",
   "eyebrow": "Deal Flow",
-  "generated_at": "2026-04-07T06:47:00Z",
+  "generated_at": "2026-04-07T08:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -169,7 +169,7 @@
               "subtitle": "Autonomous commercial layer of live internet · Leo Huang",
               "badges": [
                 { "text": "Pre-Seed", "variant": "info" },
-                { "text": "Streaming/AdTech", "variant": "default" },
+                { "text": "Streaming and AdTech", "variant": "default" },
                 { "text": "Demo Apr 9", "variant": "warning" }
               ],
               "href": "/pipeline/aliv"

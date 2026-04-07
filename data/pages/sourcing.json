@@ -3,7 +3,7 @@
   "title": "Sourcing",
   "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
   "eyebrow": "Deal Sourcing",
-  "generated_at": "2026-04-07T07:00:00Z",
+  "generated_at": "2026-04-07T08:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -41,7 +41,7 @@
               "meta": "April 6, 2026 · Streaming and AdTech · Pre-Seed · Converted to portfolio",
               "badges": [
                 { "text": "Converted", "variant": "success" },
-                { "text": "Streaming/AdTech", "variant": "default" },
+                { "text": "Streaming and AdTech", "variant": "default" },
                 { "text": "Pre-Seed", "variant": "info" }
               ],
               "href": "/pipeline/aliv"
@@ -50,9 +50,9 @@
               "title": "Fish Audio",
               "subtitle": "Premium AI voice generation platform · Sourced by 韩磊",
               "description": "Former Meta/Amazon operator (Rissa) and NVIDIA CTO (Lengyue). 10M+ ARR, second-largest AI voice platform globally. OpenAudio S1 with emotional control.",
-              "meta": "April 6, 2026 · Audio · B+ Round · Converted to portfolio",
+              "meta": "April 6, 2026 · Audio · B+ Round · Shelved",
               "badges": [
-                { "text": "Converted", "variant": "success" },
+                { "text": "Shelved", "variant": "muted" },
                 { "text": "Audio", "variant": "default" },
                 { "text": "B+", "variant": "info" }
               ],

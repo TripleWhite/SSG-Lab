@@ -3,7 +3,7 @@
   "title": "Matching",
   "subtitle": "Resource matching suggestions — AI-ranked connections between portfolio companies, people, and resources.",
   "eyebrow": "Match Engine",
-  "generated_at": "2026-04-07T07:00:00Z",
+  "generated_at": "2026-04-07T08:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -96,7 +96,7 @@
             { "company": "Nohi", "sector": "E-commerce", "stage": "Invested", "ceo": "Tony Dai" },
             { "company": "Virse.art", "sector": "Design", "stage": "Invested", "ceo": "YIFAN" },
             { "company": "ActionX AI", "sector": "Advertising", "stage": "Invested", "ceo": "Shi Jie" },
-            { "company": "ALIV", "sector": "Streaming/AdTech", "stage": "Invested", "ceo": "Leo Huang" },
+            { "company": "ALIV", "sector": "Streaming and AdTech", "stage": "Invested", "ceo": "Leo Huang" },
             { "company": "Fuschia", "sector": "Manufacturing", "stage": "Invested", "ceo": "JN" },
             { "company": "Novix", "sector": "Research", "stage": "Candidate", "ceo": "Yu Shi" },
             { "company": "SoMe", "sector": "Social/Dating", "stage": "Candidate", "ceo": "Jinrong Qiu" },
