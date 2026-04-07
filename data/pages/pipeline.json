@@ -3,7 +3,7 @@
   "title": "Pipeline",
   "subtitle": "Investment pipeline board — track companies from first contact through investment and beyond.",
   "eyebrow": "Deal Flow",
-  "generated_at": "2026-04-07T01:51:00Z",
+  "generated_at": "2026-04-07T07:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -11,7 +11,7 @@
         { "label": "Total Companies", "value": 14, "icon": "briefcase" },
         { "label": "Active Invested", "value": 9, "trend": "Across 9 sectors", "icon": "trending" },
         { "label": "Demo Day Candidates", "value": 4, "trend": "Presenting Apr 9", "icon": "star" },
-        { "label": "Sectors", "value": 12, "trend": "AI, Audio, Gaming, Commerce +8", "icon": "layers" }
+        { "label": "Sectors", "value": 14, "trend": "AI, Audio, Gaming, Commerce +10", "icon": "layers" }
       ]
     },
     {

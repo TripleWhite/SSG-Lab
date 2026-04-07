@@ -3,7 +3,7 @@
   "title": "Analytics",
   "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
   "eyebrow": "Insights",
-  "generated_at": "2026-04-07T02:00:00Z",
+  "generated_at": "2026-04-07T07:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -68,7 +68,7 @@
             { "metric": "Demo Day candidates", "value": 4 },
             { "metric": "Conversion rate", "value": "71%" },
             { "metric": "Active source employees", "value": 1 },
-            { "metric": "Sectors covered", "value": 12 },
+            { "metric": "Sectors covered", "value": 14 },
             { "metric": "Average time to conversion", "value": "< 1 day" }
           ]
         }
