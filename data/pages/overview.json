@@ -3,27 +3,27 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-06T07:21:00Z",
+  "generated_at": "2026-04-07T02:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Portfolio Companies", "value": 14, "trend": "10 invested, 4 Demo Day candidates", "icon": "briefcase" },
-        { "label": "Invested", "value": 10, "trend": "Across 10 sectors", "icon": "target" },
+        { "label": "Portfolio Companies", "value": 14, "trend": "9 invested, 1 shelved, 4 Demo Day candidates", "icon": "briefcase" },
+        { "label": "Invested", "value": 9, "trend": "Across 9 sectors", "icon": "target" },
         { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 14 companies", "icon": "clock" },
-        { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 6, 2026", "icon": "activity" }
+        { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 7, 2026", "icon": "activity" }
       ]
     },
     {
       "type": "alert",
       "severity": "orange",
-      "title": "SSG Spring Demo in 3 days — April 9, 2026",
-      "body": "14 portfolio companies presenting. 10 invested companies and 4 Demo Day candidates across AI infrastructure, audio, gaming, e-commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research."
+      "title": "SSG Spring Demo in 2 days — April 9, 2026",
+      "body": "14 companies in pipeline. 9 invested, 1 shelved (Fish Audio), and 4 Demo Day candidates across AI infrastructure, gaming, e-commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research."
     },
     {
       "type": "section",
       "title": "Invested Portfolio",
-      "subtitle": "10 companies with active SSG investment",
+      "subtitle": "9 companies with active SSG investment",
       "blocks": [
         {
           "type": "card-list",
@@ -37,16 +37,6 @@
                 { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/regressor"
-            },
-            {
-              "title": "Fish Audio",
-              "subtitle": "Premium AI voice generation platform for hyper-realistic TTS and voice cloning · Rissa",
-              "meta": "B+ Round · Audio",
-              "badges": [
-                { "text": "Invested", "variant": "success" },
-                { "text": "B+", "variant": "info" }
-              ],
-              "href": "/pipeline/fish-audio"
             },
             {
               "title": "Linear Game",
@@ -134,6 +124,28 @@
     },
     {
       "type": "section",
+      "title": "Shelved",
+      "subtitle": "1 company shelved from active portfolio",
+      "blocks": [
+        {
+          "type": "card-list",
+          "items": [
+            {
+              "title": "Fish Audio",
+              "subtitle": "Premium AI voice generation platform for hyper-realistic TTS and voice cloning · Rissa",
+              "meta": "B+ Round · Audio",
+              "badges": [
+                { "text": "Shelved", "variant": "muted" },
+                { "text": "B+", "variant": "info" }
+              ],
+              "href": "/pipeline/fish-audio"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
       "title": "Demo Day Candidates",
       "subtitle": "4 companies presenting at SSG Spring Demo for potential investment",
       "blocks": [
@@ -196,8 +208,8 @@
             { "label": "Research (研究)", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence (尽调)", "value": 0, "color": "#d6ff73" },
             { "label": "Investment Committee (投委会)", "value": 0, "color": "#a78bfa" },
-            { "label": "Invested (已投)", "value": 10, "color": "#64feba" },
-            { "label": "Shelved (已搁置)", "value": 0, "color": "#475569" }
+            { "label": "Invested (已投)", "value": 9, "color": "#64feba" },
+            { "label": "Shelved (已搁置)", "value": 1, "color": "#475569" }
           ],
           "max": 14
         }

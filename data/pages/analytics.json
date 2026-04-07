@@ -3,7 +3,7 @@
   "title": "Analytics",
   "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
   "eyebrow": "Insights",
-  "generated_at": "2026-04-06T07:21:00Z",
+  "generated_at": "2026-04-07T02:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -27,8 +27,8 @@
             { "label": "Research", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence", "value": 0, "color": "#d6ff73" },
             { "label": "Inv. Committee", "value": 0, "color": "#a78bfa" },
-            { "label": "Invested", "value": 10, "color": "#64feba" },
-            { "label": "Shelved", "value": 0, "color": "#475569" }
+            { "label": "Invested", "value": 9, "color": "#64feba" },
+            { "label": "Shelved", "value": 1, "color": "#475569" }
           ],
           "max": 14
         }
@@ -88,7 +88,7 @@
           "rows": [
             { "sector": "AI Infrastructure", "companies": 1, "status": "Invested (Seed)" },
             { "sector": "Advertising", "companies": 1, "status": "Invested (Pre-Seed)" },
-            { "sector": "Audio", "companies": 1, "status": "Invested (B+)" },
+            { "sector": "Audio", "companies": 1, "status": "Shelved (B+)" },
             { "sector": "Design", "companies": 1, "status": "Invested (Seed)" },
             { "sector": "E-commerce", "companies": 1, "status": "Invested (Seed)" },
             { "sector": "Education", "companies": 1, "status": "Invested (Pre-A)" },

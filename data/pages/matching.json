@@ -3,7 +3,7 @@
   "title": "Matching",
   "subtitle": "Resource matching suggestions — AI-ranked connections between portfolio companies, people, and resources.",
   "eyebrow": "Match Engine",
-  "generated_at": "2026-04-06T07:21:00Z",
+  "generated_at": "2026-04-07T02:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -18,7 +18,7 @@
       "type": "alert",
       "severity": "blue",
       "title": "Matching engine warming up",
-      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 14 portfolio companies (10 invested, 4 Demo Day candidates) are indexed and available for matching across 12 sectors."
+      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 14 portfolio companies (9 invested, 1 shelved, 4 Demo Day candidates) are indexed and available for matching across 12 sectors."
     },
     {
       "type": "section",
@@ -89,7 +89,7 @@
           ],
           "rows": [
             { "company": "Regressor", "sector": "AI Infrastructure", "stage": "Invested", "ceo": "Stephen Wang" },
-            { "company": "Fish Audio", "sector": "Audio", "stage": "Invested", "ceo": "Rissa" },
+            { "company": "Fish Audio", "sector": "Audio", "stage": "Shelved", "ceo": "Rissa" },
             { "company": "Linear Game", "sector": "Gaming", "stage": "Invested", "ceo": "Heath Xiao" },
             { "company": "Ouraca", "sector": "Education", "stage": "Invested", "ceo": "Kejia Li" },
             { "company": "Napkin Labs", "sector": "Engineering", "stage": "Invested", "ceo": "Alex Fu" },
