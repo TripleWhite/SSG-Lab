@@ -3,12 +3,12 @@
   "title": "Pipeline",
   "subtitle": "Investment pipeline board — track companies from first contact through investment and beyond.",
   "eyebrow": "Deal Flow",
-  "generated_at": "2026-04-07T08:00:00Z",
+  "generated_at": "2026-04-07T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Total Companies", "value": 14, "icon": "briefcase" },
+        { "label": "Total Companies", "value": 19, "icon": "briefcase" },
         { "label": "Active Invested", "value": 9, "trend": "Across 9 sectors", "icon": "trending" },
         { "label": "Investment Committee", "value": 4, "trend": "Under review", "icon": "star" },
         { "label": "Sectors", "value": 14, "trend": "AI, Audio, Gaming, Commerce +10", "icon": "layers" }
@@ -20,7 +20,63 @@
         {
           "title": "New Entry · 新入站",
           "color": "#94a3b8",
-          "items": []
+          "items": [
+            {
+              "id": "elser-ai",
+              "title": "Elser.AI",
+              "subtitle": "AI anime and movie creation platform · Phil Liu",
+              "badges": [
+                { "text": "Angel", "variant": "info" },
+                { "text": "Video", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/elser-ai"
+            },
+            {
+              "id": "k2-lab",
+              "title": "K2 Lab",
+              "subtitle": "Agentic AI for TikTok creator commerce · Wang Ming",
+              "badges": [
+                { "text": "Seed", "variant": "info" },
+                { "text": "E-commerce", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/k2-lab"
+            },
+            {
+              "id": "isales",
+              "title": "iSales",
+              "subtitle": "AI sales tooling for cross-border commerce · Pan Yiming",
+              "badges": [
+                { "text": "Angel", "variant": "info" },
+                { "text": "E-commerce", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/isales"
+            },
+            {
+              "id": "mai",
+              "title": "MAI",
+              "subtitle": "AI performance marketing agents for SMBs · Yuchen Wu",
+              "badges": [
+                { "text": "Seed", "variant": "info" },
+                { "text": "Advertising", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/mai"
+            },
+            {
+              "id": "mirelo",
+              "title": "Mirelo",
+              "subtitle": "AI sound effects generation for media production",
+              "badges": [
+                { "text": "Seed", "variant": "info" },
+                { "text": "Audio", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/mirelo"
+            }
+          ]
         },
         {
           "title": "Research · 研究",
@@ -216,8 +272,13 @@
             {
               "date": "April 9, 2026",
               "title": "SSG Spring Demo — Full Portfolio",
-              "description": "14 companies in pipeline: 9 invested portfolio companies, 4 in Investment Committee review, and 1 shelved — across AI infrastructure, audio, gaming, commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research.",
+              "description": "19 companies in pipeline: 9 invested portfolio companies, 4 in Investment Committee review, 5 new sourced entries under review, and 1 shelved — across AI infrastructure, audio, gaming, commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research.",
               "badge": { "text": "In 2 days", "variant": "warning" }
+            },
+            {
+              "date": "April 7, 2026",
+              "title": "5 sourced companies added to pipeline",
+              "description": "Sourcing Agent scan — Elser.AI, K2 Lab, iSales, MAI, Mirelo added as new entries under review."
             },
             {
               "date": "April 6, 2026",

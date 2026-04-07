@@ -3,15 +3,15 @@
   "title": "Sourcing",
   "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
   "eyebrow": "Deal Sourcing",
-  "generated_at": "2026-04-07T08:00:00Z",
+  "generated_at": "2026-04-07T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Total Leads", "value": 14, "icon": "search" },
-        { "label": "Source Employees", "value": 1, "trend": "韩磊", "icon": "users" },
+        { "label": "Total Leads", "value": 19, "icon": "search" },
+        { "label": "Source Employees", "value": 2, "trend": "韩磊, Sourcing Agent", "icon": "users" },
         { "label": "Sectors Covered", "value": 14, "trend": "AI, Audio, Gaming, Commerce +10", "icon": "globe" },
-        { "label": "Conversion Rate", "value": "71%", "trend": "10 of 14 converted to portfolio", "icon": "target" }
+        { "label": "Conversion Rate", "value": "53%", "trend": "10 of 19 converted to portfolio", "icon": "target" }
       ]
     },
     {
@@ -22,6 +22,66 @@
         {
           "type": "card-list",
           "items": [
+            {
+              "title": "Elser.AI",
+              "subtitle": "AI anime and movie creation platform · Sourced by Sourcing Agent",
+              "description": "Phil Liu (former ByteDance content strategy lead). Generates full anime/movie productions from a single prompt with 30%+ higher character consistency. YC China-backed.",
+              "meta": "April 7, 2026 · Video · Angel · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "Video", "variant": "default" },
+                { "text": "Angel", "variant": "info" }
+              ],
+              "href": "/pipeline/elser-ai"
+            },
+            {
+              "title": "K2 Lab",
+              "subtitle": "Agentic AI for TikTok creator commerce · Sourced by Sourcing Agent",
+              "description": "Wang Ming (former DingTalk VP). Moras platform automates product selection, script generation, video creation, and analytics for TikTok creators. Funded by Yunshi Capital.",
+              "meta": "April 7, 2026 · E-commerce · Seed · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "E-commerce", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/k2-lab"
+            },
+            {
+              "title": "iSales",
+              "subtitle": "AI sales tooling for cross-border commerce · Sourced by Sourcing Agent",
+              "description": "Pan Yiming (Tsinghua). Helps Chinese manufacturers find overseas buyers. 300+ clients, $1M+ revenue since June 2025. Team of ~50 in Shanghai.",
+              "meta": "April 7, 2026 · E-commerce · Angel · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "E-commerce", "variant": "default" },
+                { "text": "Angel", "variant": "info" }
+              ],
+              "href": "/pipeline/isales"
+            },
+            {
+              "title": "MAI",
+              "subtitle": "AI performance marketing agents for SMBs · Sourced by Sourcing Agent",
+              "description": "Yuchen Wu and Jian Wang (former Google Ads/Instacart). Autonomous agents managing millions in Google ad spend. $25M raise from Kleiner Perkins.",
+              "meta": "April 7, 2026 · Advertising · Seed · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "Advertising", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/mai"
+            },
+            {
+              "title": "Mirelo",
+              "subtitle": "AI sound effects generation for media production · Sourced by Sourcing Agent",
+              "description": "German founding team. AI sound effects for video and media production. $41M raised from Index Ventures and Andreessen Horowitz.",
+              "meta": "April 7, 2026 · Audio · Seed · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "Audio", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/mirelo"
+            },
             {
               "title": "ActionX AI",
               "subtitle": "AI-native advertising infrastructure for in-agent conversion · Sourced by 韩磊",
@@ -207,7 +267,8 @@
             { "key": "last_active", "label": "Last Active" }
           ],
           "rows": [
-            { "source": "韩磊", "leads": 14, "converted": 10, "last_active": "April 6, 2026" }
+            { "source": "韩磊", "leads": 14, "converted": 10, "last_active": "April 6, 2026" },
+            { "source": "Sourcing Agent", "leads": 5, "converted": 0, "last_active": "April 7, 2026" }
           ]
         }
       ]

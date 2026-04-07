@@ -3,14 +3,14 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-07T08:00:00Z",
+  "generated_at": "2026-04-07T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Portfolio Companies", "value": 14, "trend": "9 invested, 4 in committee, 1 shelved", "icon": "briefcase" },
+        { "label": "Pipeline Companies", "value": 19, "trend": "9 invested, 4 in committee, 5 new entries, 1 shelved", "icon": "briefcase" },
         { "label": "Invested", "value": 9, "trend": "Across 9 sectors", "icon": "target" },
-        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 14 companies", "icon": "clock" },
+        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 14 presenting", "icon": "clock" },
         { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 7, 2026", "icon": "activity" }
       ]
     },
@@ -18,7 +18,7 @@
       "type": "alert",
       "severity": "orange",
       "title": "SSG Spring Demo in 2 days — April 9, 2026",
-      "body": "14 companies in pipeline. 9 invested, 4 in Investment Committee (Novix, SoMe, Storyverse, SYNAPUFF), and 1 shelved (Fish Audio) — across AI infrastructure, gaming, e-commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research."
+      "body": "19 companies in pipeline. 9 invested, 4 in Investment Committee (Novix, SoMe, Storyverse, SYNAPUFF), 5 new sourced entries under review (Elser.AI, K2 Lab, iSales, MAI, Mirelo), and 1 shelved (Fish Audio)."
     },
     {
       "type": "section",
@@ -198,20 +198,82 @@
     },
     {
       "type": "section",
+      "title": "Sourced Leads (Under Review)",
+      "subtitle": "5 companies from Sourcing Agent scan — April 7, 2026",
+      "blocks": [
+        {
+          "type": "card-list",
+          "items": [
+            {
+              "title": "Elser.AI",
+              "subtitle": "AI anime and movie creation platform · Phil Liu",
+              "meta": "Angel · Video",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Angel", "variant": "info" }
+              ],
+              "href": "/pipeline/elser-ai"
+            },
+            {
+              "title": "K2 Lab",
+              "subtitle": "Agentic AI for TikTok creator commerce · Wang Ming",
+              "meta": "Seed · E-commerce",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/k2-lab"
+            },
+            {
+              "title": "iSales",
+              "subtitle": "AI sales tooling for cross-border commerce · Pan Yiming",
+              "meta": "Angel · E-commerce",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Angel", "variant": "info" }
+              ],
+              "href": "/pipeline/isales"
+            },
+            {
+              "title": "MAI",
+              "subtitle": "AI performance marketing agents for SMBs · Yuchen Wu",
+              "meta": "Seed · Advertising",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/mai"
+            },
+            {
+              "title": "Mirelo",
+              "subtitle": "AI sound effects generation for media production",
+              "meta": "Seed · Audio",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/mirelo"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
       "title": "Stage Distribution",
       "blocks": [
         {
           "type": "chart",
           "chart_type": "horizontal-bar",
           "data": [
-            { "label": "New Entry (新入站)", "value": 0, "color": "#94a3b8" },
+            { "label": "New Entry (新入站)", "value": 5, "color": "#94a3b8" },
             { "label": "Research (研究)", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence (尽调)", "value": 0, "color": "#d6ff73" },
             { "label": "Investment Committee (投委会)", "value": 4, "color": "#a78bfa" },
             { "label": "Invested (已投)", "value": 9, "color": "#64feba" },
             { "label": "Shelved (已搁置)", "value": 1, "color": "#475569" }
           ],
-          "max": 14
+          "max": 19
         }
       ]
     },
