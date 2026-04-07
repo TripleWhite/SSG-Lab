@@ -18,7 +18,7 @@
       "type": "alert",
       "severity": "blue",
       "title": "Matching engine warming up",
-      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 14 portfolio companies (9 invested, 1 shelved, 4 Demo Day candidates) are indexed and available for matching across 14 sectors."
+      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 14 portfolio companies (9 invested, 4 in Investment Committee, 1 shelved) are indexed and available for matching across 14 sectors."
     },
     {
       "type": "section",

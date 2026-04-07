@@ -8,7 +8,7 @@
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Portfolio Companies", "value": 14, "trend": "9 invested, 1 shelved, 4 Demo Day candidates", "icon": "briefcase" },
+        { "label": "Portfolio Companies", "value": 14, "trend": "9 invested, 4 in committee, 1 shelved", "icon": "briefcase" },
         { "label": "Invested", "value": 9, "trend": "Across 9 sectors", "icon": "target" },
         { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 14 companies", "icon": "clock" },
         { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 7, 2026", "icon": "activity" }
@@ -18,7 +18,7 @@
       "type": "alert",
       "severity": "orange",
       "title": "SSG Spring Demo in 2 days — April 9, 2026",
-      "body": "14 companies in pipeline. 9 invested, 1 shelved (Fish Audio), and 4 Demo Day candidates across AI infrastructure, gaming, e-commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research."
+      "body": "14 companies in pipeline. 9 invested, 4 in Investment Committee (Novix, SoMe, Storyverse, SYNAPUFF), and 1 shelved (Fish Audio) — across AI infrastructure, gaming, e-commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research."
     },
     {
       "type": "section",
@@ -204,10 +204,10 @@
           "type": "chart",
           "chart_type": "horizontal-bar",
           "data": [
-            { "label": "New Entry (新入站)", "value": 4, "color": "#94a3b8" },
+            { "label": "New Entry (新入站)", "value": 0, "color": "#94a3b8" },
             { "label": "Research (研究)", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence (尽调)", "value": 0, "color": "#d6ff73" },
-            { "label": "Investment Committee (投委会)", "value": 0, "color": "#a78bfa" },
+            { "label": "Investment Committee (投委会)", "value": 4, "color": "#a78bfa" },
             { "label": "Invested (已投)", "value": 9, "color": "#64feba" },
             { "label": "Shelved (已搁置)", "value": 1, "color": "#475569" }
           ],

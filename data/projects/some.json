@@ -4,9 +4,9 @@
   "one_liner": "AI-native social and dating platform that bridges matching to real-world dates",
   "category": "Consumer AI",
   "sector": "Social/Dating",
-  "pipeline_stage": "new",
+  "pipeline_stage": "decision",
   "funding_round": "Pre-Seed",
-  "investment_status": "Demo Day candidate",
+  "investment_status": "Investment Committee",
   "team": {
     "ceo_founder": "Jinrong Qiu",
     "ceo_background": "Co-founder and CEO with an MBA in Marketing and experience as a serial e-commerce and restaurant entrepreneur",
@@ -23,5 +23,5 @@
   "demo_event": "SSG Spring Demo",
   "source_employee": "韩磊",
   "source_date": "2026-04-06",
-  "updated_at": "2026-04-06T05:50:00Z"
+  "updated_at": "2026-04-07T06:47:00Z"
 }

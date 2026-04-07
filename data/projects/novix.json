@@ -4,9 +4,9 @@
   "one_liner": "AI research agent for scientists and researchers",
   "category": "Consumer AI",
   "sector": "Research",
-  "pipeline_stage": "new",
+  "pipeline_stage": "decision",
   "funding_round": "Seed Round",
-  "investment_status": "Demo Day candidate",
+  "investment_status": "Investment Committee",
   "team": {
     "ceo_founder": "Yu Shi",
     "ceo_background": "Former Microsoft product manager who founded Microsoft AgentOS and built multimodal copilots used by more than 100 million users",
@@ -23,5 +23,5 @@
   "demo_event": "SSG Spring Demo",
   "source_employee": "韩磊",
   "source_date": "2026-04-06",
-  "updated_at": "2026-04-06T05:50:00Z"
+  "updated_at": "2026-04-07T06:47:00Z"
 }

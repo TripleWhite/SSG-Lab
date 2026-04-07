@@ -4,9 +4,9 @@
   "one_liner": "Cinematic production platform that recreates a professional film crew workflow with AI",
   "category": "Consumer AI",
   "sector": "Video",
-  "pipeline_stage": "new",
+  "pipeline_stage": "decision",
   "funding_round": "Pre-Seed",
-  "investment_status": "Demo Day candidate",
+  "investment_status": "Investment Committee",
   "team": {
     "ceo_founder": "Jesse Z",
     "ceo_background": "NYU Tisch background; Emmy-nominated and Oscar-shortlisted producer",
@@ -23,5 +23,5 @@
   "demo_event": "SSG Spring Demo",
   "source_employee": "韩磊",
   "source_date": "2026-04-06",
-  "updated_at": "2026-04-06T05:50:00Z"
+  "updated_at": "2026-04-07T06:47:00Z"
 }

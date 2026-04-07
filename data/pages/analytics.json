@@ -23,10 +23,10 @@
           "type": "chart",
           "chart_type": "bar",
           "data": [
-            { "label": "New Entry", "value": 4, "color": "#94a3b8" },
+            { "label": "New Entry", "value": 0, "color": "#94a3b8" },
             { "label": "Research", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence", "value": 0, "color": "#d6ff73" },
-            { "label": "Inv. Committee", "value": 0, "color": "#a78bfa" },
+            { "label": "Inv. Committee", "value": 4, "color": "#a78bfa" },
             { "label": "Invested", "value": 9, "color": "#64feba" },
             { "label": "Shelved", "value": 1, "color": "#475569" }
           ],
@@ -65,7 +65,7 @@
           "rows": [
             { "metric": "Total leads sourced", "value": 14 },
             { "metric": "Leads converted to portfolio", "value": 10 },
-            { "metric": "Demo Day candidates", "value": 4 },
+            { "metric": "Investment Committee", "value": 4 },
             { "metric": "Conversion rate", "value": "71%" },
             { "metric": "Active source employees", "value": 1 },
             { "metric": "Sectors covered", "value": 14 },

@@ -109,10 +109,10 @@
             {
               "title": "Novix",
               "subtitle": "AI research agent for scientists · Sourced by 韩磊",
-              "description": "Yu Shi building an AI research agent targeting the scientific community. Demo Day candidate.",
-              "meta": "April 6, 2026 · Research · Seed Round · Demo Day candidate",
+              "description": "Yu Shi building an AI research agent targeting the scientific community. Investment Committee.",
+              "meta": "April 6, 2026 · Research · Seed Round · Investment Committee",
               "badges": [
-                { "text": "Candidate", "variant": "warning" },
+                { "text": "Committee", "variant": "purple" },
                 { "text": "Research", "variant": "default" },
                 { "text": "Seed", "variant": "info" }
               ],
@@ -133,10 +133,10 @@
             {
               "title": "SoMe",
               "subtitle": "AI-native social and dating platform · Sourced by 韩磊",
-              "description": "Jinrong Qiu building AI-powered matching that bridges to real-world dates. Demo Day candidate.",
-              "meta": "April 6, 2026 · Social/Dating · Pre-Seed · Demo Day candidate",
+              "description": "Jinrong Qiu building AI-powered matching that bridges to real-world dates. Investment Committee.",
+              "meta": "April 6, 2026 · Social/Dating · Pre-Seed · Investment Committee",
               "badges": [
-                { "text": "Candidate", "variant": "warning" },
+                { "text": "Committee", "variant": "purple" },
                 { "text": "Social/Dating", "variant": "default" },
                 { "text": "Pre-Seed", "variant": "info" }
               ],
@@ -145,10 +145,10 @@
             {
               "title": "Storyverse",
               "subtitle": "Cinematic AI production platform · Sourced by 韩磊",
-              "description": "Jesse Z recreating professional film crew workflow with AI. Demo Day candidate.",
-              "meta": "April 6, 2026 · Video · Pre-Seed · Demo Day candidate",
+              "description": "Jesse Z recreating professional film crew workflow with AI. Investment Committee.",
+              "meta": "April 6, 2026 · Video · Pre-Seed · Investment Committee",
               "badges": [
-                { "text": "Candidate", "variant": "warning" },
+                { "text": "Committee", "variant": "purple" },
                 { "text": "Video", "variant": "default" },
                 { "text": "Pre-Seed", "variant": "info" }
               ],
@@ -157,10 +157,10 @@
             {
               "title": "SYNAPUFF",
               "subtitle": "Embodied intelligence + multimodal AI hardware · Sourced by 韩磊",
-              "description": "Jemmy LI building interactive IP universe through multimodal AI hardware. Demo Day candidate.",
-              "meta": "April 6, 2026 · Smart Hardware · Pre-Seed · Demo Day candidate",
+              "description": "Jemmy LI building interactive IP universe through multimodal AI hardware. Investment Committee.",
+              "meta": "April 6, 2026 · Smart Hardware · Pre-Seed · Investment Committee",
               "badges": [
-                { "text": "Candidate", "variant": "warning" },
+                { "text": "Committee", "variant": "purple" },
                 { "text": "Smart Hardware", "variant": "default" },
                 { "text": "Pre-Seed", "variant": "info" }
               ],
