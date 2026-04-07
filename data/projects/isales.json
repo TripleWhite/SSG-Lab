@@ -1,0 +1,27 @@
+{
+  "id": "isales",
+  "name": "iSales",
+  "one_liner": "AI sales tooling that helps Chinese manufacturers find and convert overseas buyers",
+  "category": "Enterprise AI",
+  "sector": "E-commerce",
+  "pipeline_stage": "new",
+  "funding_round": "Angel",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "Pan Yiming",
+    "ceo_background": "Tsinghua University graduate",
+    "core_team": "Shanghai-based team of about 50 people"
+  },
+  "product_highlights": [
+    "Uses AI to help Chinese manufacturers identify and sell to overseas buyers",
+    "Reported pricing of 40,000 RMB per client",
+    "Reported traction of 300+ clients and $1M+ in revenue since June 2025"
+  ],
+  "market": "Cross-border e-commerce enablement for manufacturers selling internationally.",
+  "current_progress": "Surfaced in the 2026-04-07 SSG daily sourcing scan as an angel-backed company planning AI social media marketing tools for businesses outside China.",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-07",
+  "updated_at": "2026-04-07T08:05:00Z"
+}

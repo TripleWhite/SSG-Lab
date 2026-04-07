@@ -1,0 +1,27 @@
+{
+  "id": "elser-ai",
+  "name": "Elser.AI",
+  "one_liner": "AI anime and movie creation platform that generates full productions from a single prompt",
+  "category": "Consumer AI",
+  "sector": "Video",
+  "pipeline_stage": "new",
+  "funding_round": "Angel",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "Phil Liu",
+    "ceo_background": "Former ByteDance content strategy lead",
+    "core_team": null
+  },
+  "product_highlights": [
+    "Generates script, storyboard, characters, voiceovers, and music from a single prompt",
+    "Targets AI-native anime and movie creation workflows",
+    "Reportedly delivers 30%+ higher character consistency across 180+ scenes"
+  ],
+  "market": "AI video and content creation, with direct relevance to cinematic creation platforms such as Storyverse.",
+  "current_progress": "Surfaced in the 2026-04-07 SSG daily sourcing scan as a YC China-backed angel-stage candidate.",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-07",
+  "updated_at": "2026-04-07T08:05:00Z"
+}

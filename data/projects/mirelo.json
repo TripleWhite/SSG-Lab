@@ -1,0 +1,27 @@
+{
+  "id": "mirelo",
+  "name": "Mirelo",
+  "one_liner": "AI sound effects generation platform for video and media production",
+  "category": "Enterprise AI",
+  "sector": "Audio",
+  "pipeline_stage": "new",
+  "funding_round": "Seed",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "German founding team",
+    "ceo_background": null,
+    "core_team": null
+  },
+  "product_highlights": [
+    "Generates AI sound effects for video and media production workflows",
+    "Focused on audio generation rather than voice cloning",
+    "Relevant as competitive intelligence against audio-generation companies such as Fish Audio"
+  ],
+  "market": "Audio generation tools for creators and media production teams working with AI video.",
+  "current_progress": "Surfaced in the 2026-04-07 SSG daily sourcing scan as a German seed-stage company that raised $41M from Index Ventures and Andreessen Horowitz.",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-07",
+  "updated_at": "2026-04-07T08:05:00Z"
+}

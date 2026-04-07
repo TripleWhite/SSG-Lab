@@ -1,0 +1,27 @@
+{
+  "id": "k2-lab",
+  "name": "K2 Lab",
+  "one_liner": "Agentic AI platform for TikTok creators that automates content commerce workflows",
+  "category": "Consumer AI",
+  "sector": "E-commerce",
+  "pipeline_stage": "new",
+  "funding_round": "Seed",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "Wang Ming",
+    "ceo_background": "Former DingTalk VP and Open Platform GM",
+    "core_team": "CTO Zhao Xianlie formerly led DingTalk AI PaaS; CSO Tang Minglei previously focused on DingTalk ecosystem investment"
+  },
+  "product_highlights": [
+    "Moras automates product selection, script generation, multi-shot video creation, smart editing, and commercial analytics",
+    "Built for overseas TikTok creators and creator-commerce workflows",
+    "Backed by a founding team with deep DingTalk and Alibaba operating experience"
+  ],
+  "market": "AI-native creator commerce infrastructure for TikTok and social commerce sellers.",
+  "current_progress": "Surfaced in the 2026-04-07 SSG daily sourcing scan as a seed-stage company funded by Yunshi Capital.",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-07",
+  "updated_at": "2026-04-07T08:05:00Z"
+}
