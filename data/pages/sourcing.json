@@ -3,15 +3,15 @@
   "title": "Sourcing",
   "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
   "eyebrow": "Deal Sourcing",
-  "generated_at": "2026-04-08T08:00:00Z",
+  "generated_at": "2026-04-08T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Total Leads", "value": 19, "icon": "search" },
+        { "label": "Total Leads", "value": 24, "icon": "search" },
         { "label": "Source Employees", "value": 2, "trend": "韩磊, Sourcing Agent", "icon": "users" },
-        { "label": "Sectors Covered", "value": 14, "trend": "AI, Audio, Gaming, Commerce +10", "icon": "globe" },
-        { "label": "Conversion Rate", "value": "47%", "trend": "9 of 19 converted to portfolio", "icon": "target" }
+        { "label": "Sectors Covered", "value": 19, "trend": "AI, Audio, Gaming, Commerce +15", "icon": "globe" },
+        { "label": "Conversion Rate", "value": "42%", "trend": "10 of 24 converted to portfolio", "icon": "target" }
       ]
     },
     {
@@ -22,6 +22,66 @@
         {
           "type": "card-list",
           "items": [
+            {
+              "title": "Perle Interactive",
+              "subtitle": "AI + IP digital content platform · Sourced by Sourcing Agent",
+              "description": "Yang Sheng (杨晟). Combines AI large models with IP development and operations. Serves Tencent, Baidu, ByteDance and offline cultural venues.",
+              "meta": "April 8, 2026 · AI Content Creation · Angel · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "AI Content Creation", "variant": "default" },
+                { "text": "Angel", "variant": "info" }
+              ],
+              "href": "/pipeline/perle-interactive"
+            },
+            {
+              "title": "Stewdio",
+              "subtitle": "AI creative collaboration platform · Sourced by Sourcing Agent",
+              "description": "JZ (Brown University CS). All-in-one AI collaboration platform for visual content. Created music videos for Quavo and Loco. YC F24-backed.",
+              "meta": "April 8, 2026 · AI Design Tools · Pre-seed · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "AI Design Tools", "variant": "default" },
+                { "text": "Pre-seed", "variant": "info" }
+              ],
+              "href": "/pipeline/stewdio"
+            },
+            {
+              "title": "Button Computer",
+              "subtitle": "Wearable AI computer · Sourced by Sourcing Agent",
+              "description": "Ryan Burgoyne and Chris Nolet (former Apple Vision Pro engineers). Tiny wearable device connecting to email, Slack, and Salesforce via voice. YC W26.",
+              "meta": "April 8, 2026 · Wearable AI · Pre-seed · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "Wearable AI", "variant": "default" },
+                { "text": "Pre-seed", "variant": "info" }
+              ],
+              "href": "/pipeline/button-computer"
+            },
+            {
+              "title": "Tripo AI",
+              "subtitle": "AI 3D content generation platform · Sourced by Sourcing Agent",
+              "description": "Simon Song (former MiniMax co-founder, SenseTime leader). 6.5M creators, 90K developers, 100M generated assets. $12M revenue reported.",
+              "meta": "April 8, 2026 · 3D Content Generation · Series A · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "3D Content Generation", "variant": "default" },
+                { "text": "Series A", "variant": "info" }
+              ],
+              "href": "/pipeline/tripo-ai"
+            },
+            {
+              "title": "Gradium",
+              "subtitle": "Ultra-low-latency multilingual AI voice models · Sourced by Sourcing Agent",
+              "description": "Neil Zeghidour (former Google DeepMind researcher, Kyutai founding member). Supports English, French, German, Spanish, Portuguese.",
+              "meta": "April 8, 2026 · AI Voice · Seed · Under Review",
+              "badges": [
+                { "text": "New", "variant": "warning" },
+                { "text": "AI Voice", "variant": "default" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/gradium"
+            },
             {
               "title": "Elser.AI",
               "subtitle": "AI anime and movie creation platform · Sourced by Sourcing Agent",
@@ -268,7 +328,7 @@
           ],
           "rows": [
             { "source": "韩磊", "leads": 14, "converted": 9, "last_active": "April 6, 2026" },
-            { "source": "Sourcing Agent", "leads": 5, "converted": 0, "last_active": "April 7, 2026" }
+            { "source": "Sourcing Agent", "leads": 10, "converted": 0, "last_active": "April 8, 2026" }
           ]
         }
       ]

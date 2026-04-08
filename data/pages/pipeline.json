@@ -3,15 +3,15 @@
   "title": "Pipeline",
   "subtitle": "Investment pipeline board — track companies from first contact through investment and beyond.",
   "eyebrow": "Deal Flow",
-  "generated_at": "2026-04-08T06:00:00Z",
+  "generated_at": "2026-04-08T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Total Companies", "value": 19, "icon": "briefcase" },
+        { "label": "Total Companies", "value": 24, "icon": "briefcase" },
         { "label": "Active Invested", "value": 9, "trend": "Across 9 sectors", "icon": "trending" },
         { "label": "Investment Committee", "value": 4, "trend": "Under review", "icon": "star" },
-        { "label": "Sectors", "value": 14, "trend": "AI, Audio, Gaming, Commerce +10", "icon": "layers" }
+        { "label": "Sectors", "value": 19, "trend": "AI, Audio, Gaming, Commerce +15", "icon": "layers" }
       ]
     },
     {
@@ -75,6 +75,61 @@
                 { "text": "Under Review", "variant": "warning" }
               ],
               "href": "/pipeline/mirelo"
+            },
+            {
+              "id": "perle-interactive",
+              "title": "Perle Interactive",
+              "subtitle": "AI + IP digital content platform · Yang Sheng",
+              "badges": [
+                { "text": "Angel", "variant": "info" },
+                { "text": "AI Content Creation", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/perle-interactive"
+            },
+            {
+              "id": "stewdio",
+              "title": "Stewdio",
+              "subtitle": "AI creative collaboration platform · JZ",
+              "badges": [
+                { "text": "Pre-seed", "variant": "info" },
+                { "text": "AI Design Tools", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/stewdio"
+            },
+            {
+              "id": "button-computer",
+              "title": "Button Computer",
+              "subtitle": "Wearable AI computer for voice-driven work · Ryan Burgoyne",
+              "badges": [
+                { "text": "Pre-seed", "variant": "info" },
+                { "text": "Wearable AI", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/button-computer"
+            },
+            {
+              "id": "tripo-ai",
+              "title": "Tripo AI",
+              "subtitle": "AI 3D content generation platform · Simon Song",
+              "badges": [
+                { "text": "Series A", "variant": "info" },
+                { "text": "3D Content Generation", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/tripo-ai"
+            },
+            {
+              "id": "gradium",
+              "title": "Gradium",
+              "subtitle": "Ultra-low-latency multilingual AI voice models · Neil Zeghidour",
+              "badges": [
+                { "text": "Seed", "variant": "info" },
+                { "text": "AI Voice", "variant": "default" },
+                { "text": "Under Review", "variant": "warning" }
+              ],
+              "href": "/pipeline/gradium"
             }
           ]
         },
@@ -272,8 +327,13 @@
             {
               "date": "April 9, 2026",
               "title": "SSG Spring Demo — Full Portfolio",
-              "description": "19 companies in pipeline: 9 invested portfolio companies, 4 in Investment Committee review, 5 new sourced entries under review, and 1 shelved — across AI infrastructure, audio, gaming, commerce, design, manufacturing, education, advertising, streaming, social, video, smart hardware, engineering, and research.",
+              "description": "24 companies in pipeline: 9 invested portfolio companies, 4 in Investment Committee review, 10 new sourced entries under review, and 1 shelved — across 19 sectors including AI infrastructure, audio, gaming, commerce, design, manufacturing, education, advertising, streaming, and more.",
               "badge": { "text": "Tomorrow", "variant": "warning" }
+            },
+            {
+              "date": "April 8, 2026",
+              "title": "5 sourced companies added to pipeline",
+              "description": "Sourcing Agent scan — Perle Interactive, Stewdio, Button Computer, Tripo AI, Gradium added as new entries under review."
             },
             {
               "date": "April 7, 2026",

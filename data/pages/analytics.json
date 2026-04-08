@@ -3,13 +3,13 @@
   "title": "Analytics",
   "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
   "eyebrow": "Insights",
-  "generated_at": "2026-04-08T06:00:00Z",
+  "generated_at": "2026-04-08T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Pipeline Companies", "value": 19, "icon": "briefcase" },
-        { "label": "Sourcing Leads", "value": 19, "icon": "search" },
+        { "label": "Pipeline Companies", "value": 24, "icon": "briefcase" },
+        { "label": "Sourcing Leads", "value": 24, "icon": "search" },
         { "label": "Match Suggestions", "value": 0, "icon": "target" },
         { "label": "Agent Heartbeats", "value": "Active", "trend": "5 agents on 1h cadence", "icon": "activity" }
       ]
@@ -23,14 +23,14 @@
           "type": "chart",
           "chart_type": "bar",
           "data": [
-            { "label": "New Entry", "value": 5, "color": "#94a3b8" },
+            { "label": "New Entry", "value": 10, "color": "#94a3b8" },
             { "label": "Research", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence", "value": 0, "color": "#d6ff73" },
             { "label": "Inv. Committee", "value": 4, "color": "#a78bfa" },
             { "label": "Invested", "value": 9, "color": "#64feba" },
             { "label": "Shelved", "value": 1, "color": "#475569" }
           ],
-          "max": 19
+          "max": 24
         }
       ]
     },
@@ -42,14 +42,14 @@
           "type": "chart",
           "chart_type": "horizontal-bar",
           "data": [
-            { "label": "Angel", "value": 2, "color": "#e2e8f0" },
-            { "label": "Pre-Seed", "value": 6, "color": "#94a3b8" },
-            { "label": "Seed", "value": 8, "color": "#38bdf8" },
+            { "label": "Angel", "value": 3, "color": "#e2e8f0" },
+            { "label": "Pre-Seed", "value": 8, "color": "#94a3b8" },
+            { "label": "Seed", "value": 9, "color": "#38bdf8" },
             { "label": "Pre-A", "value": 1, "color": "#d6ff73" },
-            { "label": "Series A", "value": 1, "color": "#a78bfa" },
+            { "label": "Series A", "value": 2, "color": "#a78bfa" },
             { "label": "B+", "value": 1, "color": "#64feba" }
           ],
-          "max": 19
+          "max": 24
         }
       ]
     },
@@ -64,13 +64,13 @@
             { "key": "value", "label": "Value", "align": "right" }
           ],
           "rows": [
-            { "metric": "Total leads sourced", "value": 19 },
+            { "metric": "Total leads sourced", "value": 24 },
             { "metric": "Leads converted to portfolio", "value": 10 },
             { "metric": "Investment Committee", "value": 4 },
-            { "metric": "New entries under review", "value": 5 },
-            { "metric": "Conversion rate", "value": "53%" },
+            { "metric": "New entries under review", "value": 10 },
+            { "metric": "Conversion rate", "value": "42%" },
             { "metric": "Active source employees", "value": 2 },
-            { "metric": "Sectors covered", "value": 14 },
+            { "metric": "Sectors covered", "value": 19 },
             { "metric": "Average time to conversion", "value": "< 1 day" }
           ]
         }
@@ -101,7 +101,12 @@
             { "sector": "Smart Hardware", "companies": 1, "status": "Candidate (Pre-Seed)" },
             { "sector": "Social/Dating", "companies": 1, "status": "Candidate (Pre-Seed)" },
             { "sector": "Streaming and AdTech", "companies": 1, "status": "Invested (Pre-Seed)" },
-            { "sector": "Video", "companies": 2, "status": "Candidate (Pre-Seed) + Sourced (Angel)" }
+            { "sector": "Video", "companies": 2, "status": "Candidate (Pre-Seed) + Sourced (Angel)" },
+            { "sector": "AI Content Creation", "companies": 1, "status": "Sourced (Angel)" },
+            { "sector": "AI Design Tools", "companies": 1, "status": "Sourced (Pre-seed)" },
+            { "sector": "Wearable AI", "companies": 1, "status": "Sourced (Pre-seed)" },
+            { "sector": "3D Content Generation", "companies": 1, "status": "Sourced (Series A)" },
+            { "sector": "AI Voice", "companies": 1, "status": "Sourced (Seed)" }
           ]
         }
       ]

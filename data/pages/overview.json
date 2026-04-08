@@ -3,12 +3,12 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-08T08:00:00Z",
+  "generated_at": "2026-04-08T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
-        { "label": "Pipeline Companies", "value": 19, "trend": "9 invested, 4 in committee, 5 new entries, 1 shelved", "icon": "briefcase" },
+        { "label": "Pipeline Companies", "value": 24, "trend": "9 invested, 4 in committee, 10 new entries, 1 shelved", "icon": "briefcase" },
         { "label": "Invested", "value": 9, "trend": "Across 9 sectors", "icon": "target" },
         { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 14 presenting", "icon": "clock" },
         { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 8, 2026", "icon": "activity" }
@@ -18,7 +18,7 @@
       "type": "alert",
       "severity": "orange",
       "title": "SSG Spring Demo tomorrow — April 9, 2026",
-      "body": "19 companies in pipeline. 9 invested, 4 in Investment Committee (Novix, SoMe, Storyverse, SYNAPUFF), 5 new sourced entries under review (Elser.AI, K2 Lab, iSales, MAI, Mirelo), and 1 shelved (Fish Audio)."
+      "body": "24 companies in pipeline. 9 invested, 4 in Investment Committee (Novix, SoMe, Storyverse, SYNAPUFF), 10 new sourced entries under review, and 1 shelved (Fish Audio)."
     },
     {
       "type": "section",
@@ -199,7 +199,7 @@
     {
       "type": "section",
       "title": "Sourced Leads (Under Review)",
-      "subtitle": "5 companies from Sourcing Agent scan — April 7, 2026",
+      "subtitle": "10 companies from Sourcing Agent scans — April 7–8, 2026",
       "blocks": [
         {
           "type": "card-list",
@@ -253,6 +253,56 @@
                 { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/mirelo"
+            },
+            {
+              "title": "Perle Interactive",
+              "subtitle": "AI + IP digital content platform for large Chinese internet platforms · Yang Sheng",
+              "meta": "Angel · AI Content Creation",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Angel", "variant": "info" }
+              ],
+              "href": "/pipeline/perle-interactive"
+            },
+            {
+              "title": "Stewdio",
+              "subtitle": "All-in-one AI creative collaboration platform · JZ",
+              "meta": "Pre-seed · AI Design Tools",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Pre-seed", "variant": "info" }
+              ],
+              "href": "/pipeline/stewdio"
+            },
+            {
+              "title": "Button Computer",
+              "subtitle": "Wearable AI computer for voice-driven access to work apps · Ryan Burgoyne",
+              "meta": "Pre-seed · Wearable AI",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Pre-seed", "variant": "info" }
+              ],
+              "href": "/pipeline/button-computer"
+            },
+            {
+              "title": "Tripo AI",
+              "subtitle": "AI 3D content generation platform · Simon Song",
+              "meta": "Series A · 3D Content Generation",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Series A", "variant": "info" }
+              ],
+              "href": "/pipeline/tripo-ai"
+            },
+            {
+              "title": "Gradium",
+              "subtitle": "Ultra-low-latency multilingual AI voice models · Neil Zeghidour",
+              "meta": "Seed · AI Voice",
+              "badges": [
+                { "text": "Under Review", "variant": "warning" },
+                { "text": "Seed", "variant": "info" }
+              ],
+              "href": "/pipeline/gradium"
             }
           ]
         }
@@ -266,14 +316,14 @@
           "type": "chart",
           "chart_type": "horizontal-bar",
           "data": [
-            { "label": "New Entry (新入站)", "value": 5, "color": "#94a3b8" },
+            { "label": "New Entry (新入站)", "value": 10, "color": "#94a3b8" },
             { "label": "Research (研究)", "value": 0, "color": "#38bdf8" },
             { "label": "Due Diligence (尽调)", "value": 0, "color": "#d6ff73" },
             { "label": "Investment Committee (投委会)", "value": 4, "color": "#a78bfa" },
             { "label": "Invested (已投)", "value": 9, "color": "#64feba" },
             { "label": "Shelved (已搁置)", "value": 1, "color": "#475569" }
           ],
-          "max": 19
+          "max": 24
         }
       ]
     },

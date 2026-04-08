@@ -3,13 +3,13 @@
   "title": "Matching",
   "subtitle": "Resource matching suggestions — AI-ranked connections between portfolio companies, people, and resources.",
   "eyebrow": "Match Engine",
-  "generated_at": "2026-04-08T06:00:00Z",
+  "generated_at": "2026-04-08T10:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
         { "label": "Active Matches", "value": 0, "trend": "No pending matches yet", "icon": "target" },
-        { "label": "Pipeline Companies", "value": 19, "trend": "Available for matching", "icon": "briefcase" },
+        { "label": "Pipeline Companies", "value": 24, "trend": "Available for matching", "icon": "briefcase" },
         { "label": "Match Confidence", "value": "—", "trend": "Awaiting first match run", "icon": "zap" },
         { "label": "Resources Indexed", "value": "—", "trend": "Building resource graph", "icon": "globe" }
       ]
@@ -18,7 +18,7 @@
       "type": "alert",
       "severity": "blue",
       "title": "Matching engine warming up",
-      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 19 pipeline companies (9 invested, 4 in Investment Committee, 5 new entries, 1 shelved) are indexed and available for matching across 14 sectors."
+      "body": "The Matching Agent will generate connection suggestions once enough sourcing leads and resource data accumulate. Currently 24 pipeline companies (9 invested, 4 in Investment Committee, 10 new entries, 1 shelved) are indexed and available for matching across 19 sectors."
     },
     {
       "type": "section",
@@ -77,7 +77,7 @@
     {
       "type": "section",
       "title": "Available for Matching",
-      "subtitle": "19 companies across 14 sectors",
+      "subtitle": "24 companies across 19 sectors",
       "blocks": [
         {
           "type": "table",
@@ -106,7 +106,12 @@
             { "company": "K2 Lab", "sector": "E-commerce", "stage": "New Entry", "ceo": "Wang Ming" },
             { "company": "iSales", "sector": "E-commerce", "stage": "New Entry", "ceo": "Pan Yiming" },
             { "company": "MAI", "sector": "Advertising", "stage": "New Entry", "ceo": "Yuchen Wu" },
-            { "company": "Mirelo", "sector": "Audio", "stage": "New Entry", "ceo": "German founding team" }
+            { "company": "Mirelo", "sector": "Audio", "stage": "New Entry", "ceo": "German founding team" },
+            { "company": "Perle Interactive", "sector": "AI Content Creation", "stage": "New Entry", "ceo": "Yang Sheng" },
+            { "company": "Stewdio", "sector": "AI Design Tools", "stage": "New Entry", "ceo": "JZ" },
+            { "company": "Button Computer", "sector": "Wearable AI", "stage": "New Entry", "ceo": "Ryan Burgoyne" },
+            { "company": "Tripo AI", "sector": "3D Content Generation", "stage": "New Entry", "ceo": "Simon Song" },
+            { "company": "Gradium", "sector": "AI Voice", "stage": "New Entry", "ceo": "Neil Zeghidour" }
           ]
         }
       ]
