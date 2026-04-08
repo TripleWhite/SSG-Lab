@@ -3,7 +3,7 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-08T06:00:00Z",
+  "generated_at": "2026-04-08T08:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -133,7 +133,7 @@
             {
               "title": "Fish Audio",
               "subtitle": "Premium AI voice generation platform for hyper-realistic TTS and voice cloning · Rissa",
-              "meta": "B+ Round · Audio",
+              "meta": "B+ · Audio",
               "badges": [
                 { "text": "Shelved", "variant": "muted" },
                 { "text": "B+", "variant": "info" }

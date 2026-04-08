@@ -3,7 +3,7 @@
   "title": "Sourcing",
   "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
   "eyebrow": "Deal Sourcing",
-  "generated_at": "2026-04-08T06:00:00Z",
+  "generated_at": "2026-04-08T08:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -11,7 +11,7 @@
         { "label": "Total Leads", "value": 19, "icon": "search" },
         { "label": "Source Employees", "value": 2, "trend": "韩磊, Sourcing Agent", "icon": "users" },
         { "label": "Sectors Covered", "value": 14, "trend": "AI, Audio, Gaming, Commerce +10", "icon": "globe" },
-        { "label": "Conversion Rate", "value": "53%", "trend": "10 of 19 converted to portfolio", "icon": "target" }
+        { "label": "Conversion Rate", "value": "47%", "trend": "9 of 19 converted to portfolio", "icon": "target" }
       ]
     },
     {
@@ -110,7 +110,7 @@
               "title": "Fish Audio",
               "subtitle": "Premium AI voice generation platform · Sourced by 韩磊",
               "description": "Former Meta/Amazon operator (Rissa) and NVIDIA CTO (Lengyue). 10M+ ARR, second-largest AI voice platform globally. OpenAudio S1 with emotional control.",
-              "meta": "April 6, 2026 · Audio · B+ Round · Shelved",
+              "meta": "April 6, 2026 · Audio · B+ · Shelved",
               "badges": [
                 { "text": "Shelved", "variant": "muted" },
                 { "text": "Audio", "variant": "default" },
@@ -267,7 +267,7 @@
             { "key": "last_active", "label": "Last Active" }
           ],
           "rows": [
-            { "source": "韩磊", "leads": 14, "converted": 10, "last_active": "April 6, 2026" },
+            { "source": "韩磊", "leads": 14, "converted": 9, "last_active": "April 6, 2026" },
             { "source": "Sourcing Agent", "leads": 5, "converted": 0, "last_active": "April 7, 2026" }
           ]
         }
