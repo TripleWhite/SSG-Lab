@@ -1,0 +1,27 @@
+{
+  "id": "gradium",
+  "name": "Gradium",
+  "one_liner": "Ultra-low-latency multilingual AI voice models with emotional expressiveness",
+  "category": "Voice AI",
+  "sector": "AI Voice",
+  "pipeline_stage": "new",
+  "funding_round": "Seed",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "Neil Zeghidour",
+    "ceo_background": "Former Google DeepMind researcher and Kyutai founding member",
+    "core_team": null
+  },
+  "product_highlights": [
+    "Ultra-low-latency AI voice models",
+    "Supports English, French, German, Spanish, and Portuguese",
+    "Target use cases include gaming, film dubbing, and customer service"
+  ],
+  "market": "Voice AI infrastructure for media, gaming, and customer interaction products",
+  "current_progress": "Sourced by the SSG Sourcing Agent as a Fish Audio-adjacent voice AI company with lower fit due to Europe geography and a large reported seed round",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-08",
+  "updated_at": "2026-04-08T08:00:00Z"
+}

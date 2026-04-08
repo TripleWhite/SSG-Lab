@@ -1,0 +1,27 @@
+{
+  "id": "tripo-ai",
+  "name": "Tripo AI",
+  "one_liner": "AI 3D content generation platform with large creator and developer adoption",
+  "category": "3D AI",
+  "sector": "3D Content Generation",
+  "pipeline_stage": "new",
+  "funding_round": "Series A",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "Simon Song",
+    "ceo_background": "Former MiniMax co-founder, former SenseTime leader, Johns Hopkins affiliate",
+    "core_team": null
+  },
+  "product_highlights": [
+    "AI 3D content generation platform",
+    "Reported 6.5 million creators and 90,000 developers",
+    "Reported 100 million generated assets and Smart Mesh P1.0"
+  ],
+  "market": "3D asset generation for gaming, design, and creator workflows",
+  "current_progress": "Sourced by the SSG Sourcing Agent as a later-stage 3D and gaming infrastructure candidate with reported 12 million US dollars in revenue",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-08",
+  "updated_at": "2026-04-08T08:00:00Z"
+}

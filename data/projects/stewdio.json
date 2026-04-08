@@ -1,0 +1,27 @@
+{
+  "id": "stewdio",
+  "name": "Stewdio",
+  "one_liner": "All-in-one AI creative collaboration platform for visual content creation",
+  "category": "Creative AI",
+  "sector": "AI Design Tools",
+  "pipeline_stage": "new",
+  "funding_round": "Pre-seed",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "JZ",
+    "ceo_background": "Brown University computer science",
+    "core_team": "Blake, chief product officer, studied computer science and film at Brown University"
+  },
+  "product_highlights": [
+    "AI collaboration platform for visual content creation",
+    "Used by music video directors, ad agencies, and architects",
+    "Created music videos for Quavo and Loco"
+  ],
+  "market": "Creative tooling for advertising, entertainment, and visual design teams",
+  "current_progress": "Sourced by the SSG Sourcing Agent as a Virse.art-adjacent creative tooling opportunity backed by Y Combinator F24",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-08",
+  "updated_at": "2026-04-08T08:00:00Z"
+}

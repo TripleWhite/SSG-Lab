@@ -1,0 +1,27 @@
+{
+  "id": "button-computer",
+  "name": "Button Computer",
+  "one_liner": "Wearable AI computer for voice-driven access to work applications",
+  "category": "AI Hardware",
+  "sector": "Wearable AI",
+  "pipeline_stage": "new",
+  "funding_round": "Pre-seed",
+  "investment_status": "Under review",
+  "team": {
+    "ceo_founder": "Ryan Burgoyne",
+    "ceo_background": "Former Apple Vision Pro engineer",
+    "core_team": "Chris Nolet, co-founder and former Apple Vision Pro engineer"
+  },
+  "product_highlights": [
+    "Tiny wearable AI hardware device",
+    "Connects to email, Slack, and Salesforce through voice commands",
+    "Built by former Apple Vision Pro engineers"
+  ],
+  "market": "Voice-first productivity hardware and AI agent interfaces for workplace software",
+  "current_progress": "Sourced by the SSG Sourcing Agent as a SYNAPUFF-adjacent smart hardware and AI agents opportunity in Y Combinator W26",
+  "demo_date": null,
+  "demo_event": null,
+  "source_employee": "Sourcing Agent",
+  "source_date": "2026-04-08",
+  "updated_at": "2026-04-08T08:00:00Z"
+}
