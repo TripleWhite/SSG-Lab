@@ -3,7 +3,7 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-08T10:00:00Z",
+  "generated_at": "2026-04-09T18:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -34,7 +34,7 @@
               "meta": "Seed Round · AI Infrastructure",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed", "variant": "info" }
+                { "text": "Seed Round", "variant": "info" }
               ],
               "href": "/pipeline/regressor"
             },
@@ -54,7 +54,7 @@
               "meta": "Pre-A Round · Education",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Pre-A", "variant": "info" }
+                { "text": "Pre-A Round", "variant": "info" }
               ],
               "href": "/pipeline/ouraca"
             },
@@ -64,7 +64,7 @@
               "meta": "Seed Round · Engineering",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed", "variant": "info" }
+                { "text": "Seed Round", "variant": "info" }
               ],
               "href": "/pipeline/napkin-labs"
             },
@@ -74,7 +74,7 @@
               "meta": "Seed Round · E-commerce",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed", "variant": "info" }
+                { "text": "Seed Round", "variant": "info" }
               ],
               "href": "/pipeline/nohi"
             },
@@ -84,7 +84,7 @@
               "meta": "Seed Round · Design",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed", "variant": "info" }
+                { "text": "Seed Round", "variant": "info" }
               ],
               "href": "/pipeline/virse-art"
             },
@@ -158,7 +158,7 @@
               "meta": "Seed Round · Research",
               "badges": [
                 { "text": "Candidate", "variant": "warning" },
-                { "text": "Seed", "variant": "info" }
+                { "text": "Seed Round", "variant": "info" }
               ],
               "href": "/pipeline/novix"
             },
@@ -246,7 +246,7 @@
             },
             {
               "title": "Mirelo",
-              "subtitle": "AI sound effects generation for media production",
+              "subtitle": "AI sound effects generation for media production · German founding team",
               "meta": "Seed · Audio",
               "badges": [
                 { "text": "Under Review", "variant": "warning" },
@@ -256,7 +256,7 @@
             },
             {
               "title": "Perle Interactive",
-              "subtitle": "AI + IP digital content platform for large Chinese internet platforms · Yang Sheng",
+              "subtitle": "AI + IP digital content platform for large Chinese internet platforms · Yang Sheng (杨晟)",
               "meta": "Angel · AI Content Creation",
               "badges": [
                 { "text": "Under Review", "variant": "warning" },

@@ -3,7 +3,7 @@
   "title": "Pipeline",
   "subtitle": "Investment pipeline board — track companies from first contact through investment and beyond.",
   "eyebrow": "Deal Flow",
-  "generated_at": "2026-04-08T10:00:00Z",
+  "generated_at": "2026-04-09T18:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -68,7 +68,7 @@
             {
               "id": "mirelo",
               "title": "Mirelo",
-              "subtitle": "AI sound effects generation for media production",
+              "subtitle": "AI sound effects generation for media production · German founding team",
               "badges": [
                 { "text": "Seed", "variant": "info" },
                 { "text": "Audio", "variant": "default" },
@@ -79,7 +79,7 @@
             {
               "id": "perle-interactive",
               "title": "Perle Interactive",
-              "subtitle": "AI + IP digital content platform · Yang Sheng",
+              "subtitle": "AI + IP digital content platform · Yang Sheng (杨晟)",
               "badges": [
                 { "text": "Angel", "variant": "info" },
                 { "text": "AI Content Creation", "variant": "default" },
@@ -152,7 +152,7 @@
               "title": "Novix",
               "subtitle": "AI research agent for scientists · Yu Shi",
               "badges": [
-                { "text": "Seed", "variant": "info" },
+                { "text": "Seed Round", "variant": "info" },
                 { "text": "Research", "variant": "default" },
                 { "text": "Demo Apr 9", "variant": "warning" }
               ],
@@ -202,7 +202,7 @@
               "title": "Regressor",
               "subtitle": "AI Agentic infrastructure for enterprises · Stephen Wang",
               "badges": [
-                { "text": "Seed", "variant": "info" },
+                { "text": "Seed Round", "variant": "info" },
                 { "text": "AI Infrastructure", "variant": "default" },
                 { "text": "Demo Apr 9", "variant": "warning" }
               ],
@@ -224,7 +224,7 @@
               "title": "Ouraca",
               "subtitle": "AI-native lifelong learning platform · Kejia Li",
               "badges": [
-                { "text": "Pre-A", "variant": "info" },
+                { "text": "Pre-A Round", "variant": "info" },
                 { "text": "Education", "variant": "default" },
                 { "text": "Demo Apr 9", "variant": "warning" }
               ],
@@ -235,7 +235,7 @@
               "title": "Napkin Labs",
               "subtitle": "AI agent platform for hardware engineering · Alex Fu",
               "badges": [
-                { "text": "Seed", "variant": "info" },
+                { "text": "Seed Round", "variant": "info" },
                 { "text": "Engineering", "variant": "default" },
                 { "text": "Demo Apr 9", "variant": "warning" }
               ],
@@ -246,7 +246,7 @@
               "title": "Nohi",
               "subtitle": "Agent-native commerce platform · Tony Dai",
               "badges": [
-                { "text": "Seed", "variant": "info" },
+                { "text": "Seed Round", "variant": "info" },
                 { "text": "E-commerce", "variant": "default" },
                 { "text": "Demo Apr 9", "variant": "warning" }
               ],
@@ -257,7 +257,7 @@
               "title": "Virse.art",
               "subtitle": "Human-AI collaborative design infrastructure · YIFAN",
               "badges": [
-                { "text": "Seed", "variant": "info" },
+                { "text": "Seed Round", "variant": "info" },
                 { "text": "Design", "variant": "default" },
                 { "text": "Demo Apr 9", "variant": "warning" }
               ],
