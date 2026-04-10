@@ -3,21 +3,21 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-10T04:00:00Z",
+  "generated_at": "2026-04-10T12:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
         { "label": "Pipeline Companies", "value": 24, "trend": "9 invested, 4 in committee, 10 new entries, 1 shelved", "icon": "briefcase" },
         { "label": "Invested", "value": 9, "trend": "Across 9 sectors", "icon": "target" },
-        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 13 presenting", "icon": "clock" },
-        { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 8, 2026", "icon": "activity" }
+        { "label": "Last Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 13 presented", "icon": "clock" },
+        { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 10, 2026", "icon": "activity" }
       ]
     },
     {
       "type": "alert",
-      "severity": "orange",
-      "title": "SSG Spring Demo tomorrow — April 9, 2026",
+      "severity": "green",
+      "title": "SSG Spring Demo completed — April 9, 2026",
       "body": "24 companies in pipeline. 9 invested, 4 in Investment Committee (Novix, SoMe, Storyverse, SYNAPUFF), 10 new sourced entries under review, and 1 shelved (Fish Audio)."
     },
     {

@@ -3,7 +3,7 @@
   "title": "Pipeline",
   "subtitle": "Investment pipeline board — track companies from first contact through investment and beyond.",
   "eyebrow": "Deal Flow",
-  "generated_at": "2026-04-09T18:00:00Z",
+  "generated_at": "2026-04-10T12:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -328,7 +328,7 @@
               "date": "April 9, 2026",
               "title": "SSG Spring Demo — Full Portfolio",
               "description": "24 companies in pipeline: 9 invested portfolio companies, 4 in Investment Committee review, 10 new sourced entries under review, and 1 shelved — across 19 sectors including AI infrastructure, audio, gaming, commerce, design, manufacturing, education, advertising, streaming, and more.",
-              "badge": { "text": "Tomorrow", "variant": "warning" }
+              "badge": { "text": "Completed", "variant": "success" }
             },
             {
               "date": "April 8, 2026",
