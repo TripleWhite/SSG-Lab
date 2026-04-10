@@ -3,7 +3,7 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-10T12:00:00Z",
+  "generated_at": "2026-04-10T14:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -31,10 +31,10 @@
             {
               "title": "Regressor",
               "subtitle": "AI Agentic infrastructure for enterprises · Stephen Wang",
-              "meta": "Seed Round · AI Infrastructure",
+              "meta": "Seed · AI Infrastructure",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed Round", "variant": "info" }
+                { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/regressor"
             },
@@ -61,30 +61,30 @@
             {
               "title": "Napkin Labs",
               "subtitle": "AI agent platform for hardware engineering and manufacturing · Alex Fu",
-              "meta": "Seed Round · Engineering",
+              "meta": "Seed · Engineering",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed Round", "variant": "info" }
+                { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/napkin-labs"
             },
             {
               "title": "Nohi",
               "subtitle": "Agent-native commerce platform where AI discovers, evaluates, and buys from merchants · Tony Dai",
-              "meta": "Seed Round · E-commerce",
+              "meta": "Seed · E-commerce",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed Round", "variant": "info" }
+                { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/nohi"
             },
             {
               "title": "Virse.art",
               "subtitle": "Human-AI collaborative design infrastructure for commercial visual teams · YIFAN",
-              "meta": "Seed Round · Design",
+              "meta": "Seed · Design",
               "badges": [
                 { "text": "Invested", "variant": "success" },
-                { "text": "Seed Round", "variant": "info" }
+                { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/virse-art"
             },
@@ -155,10 +155,10 @@
             {
               "title": "Novix",
               "subtitle": "AI research agent for scientists and researchers · Yu Shi",
-              "meta": "Seed Round · Research",
+              "meta": "Seed · Research",
               "badges": [
                 { "text": "Candidate", "variant": "warning" },
-                { "text": "Seed Round", "variant": "info" }
+                { "text": "Seed", "variant": "info" }
               ],
               "href": "/pipeline/novix"
             },
@@ -267,20 +267,20 @@
             {
               "title": "Stewdio",
               "subtitle": "All-in-one AI creative collaboration platform · JZ",
-              "meta": "Pre-seed · AI Design Tools",
+              "meta": "Pre-Seed · AI Design Tools",
               "badges": [
                 { "text": "Under Review", "variant": "warning" },
-                { "text": "Pre-seed", "variant": "info" }
+                { "text": "Pre-Seed", "variant": "info" }
               ],
               "href": "/pipeline/stewdio"
             },
             {
               "title": "Button Computer",
               "subtitle": "Wearable AI computer for voice-driven access to work apps · Ryan Burgoyne",
-              "meta": "Pre-seed · Wearable AI",
+              "meta": "Pre-Seed · Wearable AI",
               "badges": [
                 { "text": "Under Review", "variant": "warning" },
-                { "text": "Pre-seed", "variant": "info" }
+                { "text": "Pre-Seed", "variant": "info" }
               ],
               "href": "/pipeline/button-computer"
             },

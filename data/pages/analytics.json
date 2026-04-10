@@ -3,7 +3,7 @@
   "title": "Analytics",
   "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
   "eyebrow": "Insights",
-  "generated_at": "2026-04-10T12:00:00Z",
+  "generated_at": "2026-04-10T14:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -103,8 +103,8 @@
             { "sector": "Streaming and AdTech", "companies": 1, "status": "Invested (Pre-Seed)" },
             { "sector": "Video", "companies": 2, "status": "Candidate (Pre-Seed) + Sourced (Angel)" },
             { "sector": "AI Content Creation", "companies": 1, "status": "Sourced (Angel)" },
-            { "sector": "AI Design Tools", "companies": 1, "status": "Sourced (Pre-seed)" },
-            { "sector": "Wearable AI", "companies": 1, "status": "Sourced (Pre-seed)" },
+            { "sector": "AI Design Tools", "companies": 1, "status": "Sourced (Pre-Seed)" },
+            { "sector": "Wearable AI", "companies": 1, "status": "Sourced (Pre-Seed)" },
             { "sector": "3D Content Generation", "companies": 1, "status": "Sourced (Series A)" },
             { "sector": "AI Voice", "companies": 1, "status": "Sourced (Seed)" }
           ]
