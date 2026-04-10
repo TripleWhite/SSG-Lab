@@ -3,7 +3,7 @@
   "title": "Matching",
   "subtitle": "Resource matching suggestions — AI-ranked connections between portfolio companies, people, and resources.",
   "eyebrow": "Match Engine",
-  "generated_at": "2026-04-08T10:00:00Z",
+  "generated_at": "2026-04-10T04:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -107,7 +107,7 @@
             { "company": "iSales", "sector": "E-commerce", "stage": "New Entry", "ceo": "Pan Yiming" },
             { "company": "MAI", "sector": "Advertising", "stage": "New Entry", "ceo": "Yuchen Wu and Jian Wang" },
             { "company": "Mirelo", "sector": "Audio", "stage": "New Entry", "ceo": "German founding team" },
-            { "company": "Perle Interactive", "sector": "AI Content Creation", "stage": "New Entry", "ceo": "Yang Sheng" },
+            { "company": "Perle Interactive", "sector": "AI Content Creation", "stage": "New Entry", "ceo": "Yang Sheng (杨晟)" },
             { "company": "Stewdio", "sector": "AI Design Tools", "stage": "New Entry", "ceo": "JZ" },
             { "company": "Button Computer", "sector": "Wearable AI", "stage": "New Entry", "ceo": "Ryan Burgoyne" },
             { "company": "Tripo AI", "sector": "3D Content Generation", "stage": "New Entry", "ceo": "Simon Song" },

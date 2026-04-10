@@ -3,14 +3,14 @@
   "title": "Overview",
   "subtitle": "Live sourcing, matching, and portfolio signals for the SSG business pipeline.",
   "eyebrow": "Portfolio Command",
-  "generated_at": "2026-04-09T18:00:00Z",
+  "generated_at": "2026-04-10T04:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
       "items": [
         { "label": "Pipeline Companies", "value": 24, "trend": "9 invested, 4 in committee, 10 new entries, 1 shelved", "icon": "briefcase" },
         { "label": "Invested", "value": 9, "trend": "Across 9 sectors", "icon": "target" },
-        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 14 presenting", "icon": "clock" },
+        { "label": "Next Demo", "value": "Apr 9", "trend": "SSG Spring Demo — 13 presenting", "icon": "clock" },
         { "label": "Data Freshness", "value": "Live", "trend": "Last update: Apr 8, 2026", "icon": "activity" }
       ]
     },
