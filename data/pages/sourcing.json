@@ -3,7 +3,7 @@
   "title": "Sourcing",
   "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
   "eyebrow": "Deal Sourcing",
-  "generated_at": "2026-04-11T08:00:00Z",
+  "generated_at": "2026-04-11T16:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -246,7 +246,7 @@
               "badges": [
                 { "text": "Converted", "variant": "success" },
                 { "text": "Education", "variant": "default" },
-                { "text": "Pre-A", "variant": "info" }
+                { "text": "Pre-A Round", "variant": "info" }
               ],
               "href": "/pipeline/ouraca"
             },

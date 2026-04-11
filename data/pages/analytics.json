@@ -3,7 +3,7 @@
   "title": "Analytics",
   "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
   "eyebrow": "Insights",
-  "generated_at": "2026-04-11T08:00:00Z",
+  "generated_at": "2026-04-11T16:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -45,7 +45,7 @@
             { "label": "Angel", "value": 3, "color": "#e2e8f0" },
             { "label": "Pre-Seed", "value": 8, "color": "#94a3b8" },
             { "label": "Seed", "value": 9, "color": "#38bdf8" },
-            { "label": "Pre-A", "value": 1, "color": "#d6ff73" },
+            { "label": "Pre-A Round", "value": 1, "color": "#d6ff73" },
             { "label": "Series A", "value": 2, "color": "#a78bfa" },
             { "label": "B+", "value": 1, "color": "#64feba" }
           ],
@@ -93,7 +93,7 @@
             { "sector": "Audio", "companies": 2, "status": "Shelved (B+) + Sourced (Seed)" },
             { "sector": "Design", "companies": 1, "status": "Invested (Seed)" },
             { "sector": "E-commerce", "companies": 3, "status": "Invested (Seed) + 2 Sourced (Seed, Angel)" },
-            { "sector": "Education", "companies": 1, "status": "Invested (Pre-A)" },
+            { "sector": "Education", "companies": 1, "status": "Invested (Pre-A Round)" },
             { "sector": "Engineering", "companies": 1, "status": "Invested (Seed)" },
             { "sector": "Gaming", "companies": 1, "status": "Invested (Series A)" },
             { "sector": "Manufacturing", "companies": 1, "status": "Invested (Pre-Seed)" },
