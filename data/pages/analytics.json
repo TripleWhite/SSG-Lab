@@ -3,7 +3,7 @@
   "title": "Analytics",
   "subtitle": "Pipeline metrics, agent costs, and data quality indicators.",
   "eyebrow": "Insights",
-  "generated_at": "2026-04-10T14:00:00Z",
+  "generated_at": "2026-04-11T08:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -65,10 +65,10 @@
           ],
           "rows": [
             { "metric": "Total leads sourced", "value": 24 },
-            { "metric": "Leads converted to portfolio", "value": 10 },
+            { "metric": "Leads converted to portfolio", "value": 9 },
             { "metric": "Investment Committee", "value": 4 },
             { "metric": "New entries under review", "value": 10 },
-            { "metric": "Conversion rate", "value": "42%" },
+            { "metric": "Conversion rate", "value": "38%" },
             { "metric": "Active source employees", "value": 2 },
             { "metric": "Sectors covered", "value": 19 },
             { "metric": "Average time to conversion", "value": "< 1 day" }

@@ -3,7 +3,7 @@
   "title": "Sourcing",
   "subtitle": "Intelligence feed — incoming founder and company leads from the sourcing network.",
   "eyebrow": "Deal Sourcing",
-  "generated_at": "2026-04-10T14:00:00Z",
+  "generated_at": "2026-04-11T08:00:00Z",
   "blocks": [
     {
       "type": "stat-grid",
@@ -11,7 +11,7 @@
         { "label": "Total Leads", "value": 24, "icon": "search" },
         { "label": "Source Employees", "value": 2, "trend": "韩磊, Sourcing Agent", "icon": "users" },
         { "label": "Sectors Covered", "value": 19, "trend": "AI, Audio, Gaming, Commerce +15", "icon": "globe" },
-        { "label": "Conversion Rate", "value": "42%", "trend": "10 of 24 converted to portfolio", "icon": "target" }
+        { "label": "Conversion Rate", "value": "38%", "trend": "9 of 24 converted to portfolio", "icon": "target" }
       ]
     },
     {
@@ -327,7 +327,7 @@
             { "key": "last_active", "label": "Last Active" }
           ],
           "rows": [
-            { "source": "韩磊", "leads": 14, "converted": 10, "last_active": "April 6, 2026" },
+            { "source": "韩磊", "leads": 14, "converted": 9, "last_active": "April 6, 2026" },
             { "source": "Sourcing Agent", "leads": 10, "converted": 0, "last_active": "April 8, 2026" }
           ]
         }
